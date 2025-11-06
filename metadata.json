@@ -1,0 +1,5 @@
+{
+  "name": "Above The Line: Translanguager's Companion",
+  "description": "An advanced tool for exploring texts. Generate detailed grammatical annotations for any text using the Gemini API. Features include saving sessions to local storage and exporting results as JSON, PDF, or images.",
+  "requestFramePermissions": []
+}
