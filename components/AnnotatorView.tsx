@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Annotation, SavedAnnotation, SlideshowData, StudySessionResult } from '../types';
 import AnnotationForm from './AnnotationForm';
 import AnnotationOutput from './AnnotationOutput';
@@ -50,6 +50,101 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
   handleAnnotationUpdate, onTitleChange, setStudyModeTarget, onSessionComplete, handleSaveSlideshowData
 }) => {
 
+  const exportAsJson = useCallback(() => {
+    const exportData = handleSaveOnExport();
+    if (!exportData) {
+      console.error("Could not get data for JSON export.");
+      return;
+    }
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(exportData, null, 2)
+    )}`;
+    const link = document.createElement('a');
+    link.href = jsonString;
+    link.download = `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.json`;
+    link.click();
+  }, [handleSaveOnExport]);
+  
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        return;
+    }
+    
+    let actionTaken = false;
+    const key = e.key.toLowerCase();
+
+    switch (key) {
+      case 'a':
+        setStudyModeTarget(null);
+        setIsDeepReadVisible(false);
+        setIsSlideshowVisible(false);
+        actionTaken = true;
+        break;
+      case 'r':
+        if (annotation) {
+            setIsDeepReadVisible(true);
+            setIsSlideshowVisible(false);
+            setStudyModeTarget(null);
+            actionTaken = true;
+        }
+        break;
+      case 'h':
+        if (annotation) {
+            setIsSlideshowVisible(true);
+            setIsDeepReadVisible(false);
+            setStudyModeTarget(null);
+            actionTaken = true;
+        }
+        break;
+      case 's':
+        if (annotation) {
+            handleEnterStudyMode();
+            setIsSlideshowVisible(false);
+            setIsDeepReadVisible(false);
+            actionTaken = true;
+        }
+        break;
+       case 'n':
+        if (annotation) {
+            handleClear();
+            actionTaken = true;
+        }
+        break;
+      case 'u':
+         if (annotation) {
+            handleSave();
+            actionTaken = true;
+        }
+        break;
+      case 'e':
+        if (annotation) {
+            exportAsJson();
+            actionTaken = true;
+        }
+        break;
+      case 'p':
+        if (annotation) {
+            window.dispatchEvent(new CustomEvent('exportPdf'));
+            actionTaken = true;
+        }
+        break;
+      default:
+        return;
+    }
+
+    if (actionTaken) {
+      e.preventDefault();
+    }
+  }, [annotation, setIsDeepReadVisible, setIsSlideshowVisible, setStudyModeTarget, handleEnterStudyMode, handleClear, handleSave, exportAsJson]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   if (studyModeTarget) {
     return <StudyModeView 
       savedAnnotation={studyModeTarget}
@@ -92,22 +187,28 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
           onClear={handleClear}
         />
       ) : (
-        <AnnotationOutput
-          annotation={annotation}
-          title={currentTitle}
-          isSaved={isCurrentAnnotationSaved}
-          slideshowData={currentSlideshowData}
-          studyHistory={currentSavedAnnotation?.studyHistory}
-          onSave={handleSave}
-          onStartNew={handleClear}
-          onSaveOnExport={handleSaveOnExport}
-          onEnterSlideshow={() => setIsSlideshowVisible(true)}
-          onEnterDeepRead={() => setIsDeepReadVisible(true)}
-          onEnterStudyMode={handleEnterStudyMode}
-          onAnnotationUpdate={handleAnnotationUpdate}
-          onTitleChange={onTitleChange}
-          currentAnnotationId={currentAnnotationId}
-        />
+        <>
+          <AnnotationOutput
+            annotation={annotation}
+            title={currentTitle}
+            isSaved={isCurrentAnnotationSaved}
+            slideshowData={currentSlideshowData}
+            studyHistory={currentSavedAnnotation?.studyHistory}
+            onSave={handleSave}
+            onStartNew={handleClear}
+            onSaveOnExport={handleSaveOnExport}
+            onEnterSlideshow={() => setIsSlideshowVisible(true)}
+            onEnterDeepRead={() => setIsDeepReadVisible(true)}
+            onEnterStudyMode={handleEnterStudyMode}
+            onAnnotationUpdate={handleAnnotationUpdate}
+            onTitleChange={onTitleChange}
+            currentAnnotationId={currentAnnotationId}
+            onExportJson={exportAsJson}
+          />
+          <div className="text-center mt-4 text-xs text-gray-500 dark:text-gray-400">
+            Shortcuts: (s) Study | (r) Read | (h) Slideshow | (n) New | (u) Update | (e) Export | (p) Export PDF | (a) Annotation View
+          </div>
+        </>
       )}
     </>
   );

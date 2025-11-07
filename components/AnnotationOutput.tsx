@@ -32,10 +32,11 @@ interface AnnotationOutputProps {
   onAnnotationUpdate: (annotation: Annotation) => void;
   onTitleChange: (newTitle: string) => void;
   currentAnnotationId: string | null;
+  onExportJson: () => void;
 }
 
-const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, isSaved, slideshowData, studyHistory, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onEnterStudyMode, onAnnotationUpdate, onTitleChange, currentAnnotationId }) => {
-  const [showTranslation, setShowTranslation] = useState(false);
+const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, isSaved, slideshowData, studyHistory, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onEnterStudyMode, onAnnotationUpdate, onTitleChange, currentAnnotationId, onExportJson }) => {
+  const [showTranslation, setShowTranslation] = useState(true);
   const [showGrammar, setShowGrammar] = useState(false);
   const [showLineTranslation, setShowLineTranslation] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -110,21 +111,6 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
     cacheBust: true,
     backgroundColor: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff'
   });
-
-  const exportAsJson = useCallback(() => {
-    const exportData = onSaveOnExport();
-    if (!exportData) {
-      console.error("Could not get data for JSON export.");
-      return;
-    }
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(exportData, null, 2)
-    )}`;
-    const link = document.createElement('a');
-    link.href = jsonString;
-    link.download = `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.json`;
-    link.click();
-  }, [onSaveOnExport]);
   
   const exportStanzaAsImage = useCallback((element: HTMLDivElement | null, fileName: string) => {
     if (element === null) {
@@ -144,7 +130,8 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
   }, [onSaveOnExport]);
 
   const exportAsPdf = useCallback(async () => {
-    onSaveOnExport();
+    const savedAnnotation = onSaveOnExport();
+    if (!savedAnnotation) return;
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const padding = 10;
@@ -177,8 +164,16 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
             pdf.addImage(dataUrl, 'PNG', x, y, finalImgWidth, finalImgHeight);
         }
     }
-    pdf.save('annotation.pdf');
+    pdf.save(`${savedAnnotation.title.toLowerCase().replace(/\s+/g, '_')}.pdf`);
   }, [onSaveOnExport]);
+
+  useEffect(() => {
+    const handler = () => exportAsPdf();
+    window.addEventListener('exportPdf', handler);
+    return () => {
+      window.removeEventListener('exportPdf', handler);
+    };
+  }, [exportAsPdf]);
 
 
   return (
@@ -234,22 +229,23 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
       <div className="flex justify-between items-center gap-4 mb-6">
         {/* Left-aligned interaction modes */}
         <div className="flex items-center space-x-2 flex-wrap gap-2">
-            <button onClick={onEnterStudyMode} className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition flex items-center gap-2">
+            <button onClick={onEnterStudyMode} title="Switch to Study Mode (s)" className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition flex items-center gap-2">
                 <GraduationCapIcon className="w-4 h-4" /> Study Mode
             </button>
-            <button onClick={onEnterDeepRead} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
+            <button onClick={onEnterDeepRead} title="Switch to Deep Read (r)" className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
                 <BookOpenIcon className="w-4 h-4" /> Deep Read
             </button>
-            <button onClick={onEnterSlideshow} className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
+            <button onClick={onEnterSlideshow} title="Switch to Slideshow (h)" className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
                 <SlideshowIcon className="w-4 h-4" /> Slideshow
             </button>
         </div>
 
         {/* Right-aligned file actions */}
         <div className="flex items-center space-x-2 flex-wrap gap-2">
-            <button onClick={onStartNew} className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">New Annotation</button>
-            <button onClick={onSave} className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">{isSaved ? 'Update' : 'Save'}</button>
-            <button onClick={exportAsJson} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">Export JSON</button>
+            <button onClick={onStartNew} title="Start a New Annotation (n)" className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">New Annotation</button>
+            <button onClick={onSave} title="Save or Update Annotation (u)" className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">{isSaved ? 'Update' : 'Save'}</button>
+            <button onClick={onExportJson} title="Export as JSON (e)" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">Export JSON</button>
+            <button onClick={exportAsPdf} title="Export as PDF (p)" className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition">Export PDF</button>
         </div>
       </div>
       
