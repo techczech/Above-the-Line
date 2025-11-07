@@ -6,6 +6,7 @@ import AnnotationForm from './components/AnnotationForm';
 import AnnotationOutput from './components/AnnotationOutput';
 import SavedAnnotations from './components/SavedAnnotations';
 import SlideshowPlayer from './components/SlideshowPlayer';
+import DeepReadView from './components/DeepReadView';
 import { generateAnnotation } from './services/geminiService';
 
 const defaultSlideshowData: SlideshowData = { youtubeUrl: '', timecodes: [] };
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isCurrentAnnotationSaved, setIsCurrentAnnotationSaved] = useState(false);
   const [isSlideshowVisible, setIsSlideshowVisible] = useState(false);
+  const [isDeepReadVisible, setIsDeepReadVisible] = useState(false);
   const [currentSlideshowData, setCurrentSlideshowData] = useState<SlideshowData>(defaultSlideshowData);
 
   useEffect(() => {
@@ -125,6 +127,19 @@ const App: React.FC = () => {
     showToast("Slideshow data updated. Save the annotation to keep changes.");
   }
 
+  const handleAnnotationUpdate = useCallback((updatedAnnotation: Annotation) => {
+    setAnnotation(updatedAnnotation);
+    setIsCurrentAnnotationSaved(false);
+    showToast("Annotation updated. Save to keep changes.");
+  }, []);
+
+  if (isDeepReadVisible && annotation) {
+    return <DeepReadView 
+      annotation={annotation}
+      onExit={() => setIsDeepReadVisible(false)}
+    />
+  }
+
   if (isSlideshowVisible && annotation) {
     return <SlideshowPlayer 
       annotation={annotation}
@@ -166,6 +181,8 @@ const App: React.FC = () => {
           onStartNew={handleClear}
           onSaveOnExport={handleSaveOnExport}
           onEnterSlideshow={() => setIsSlideshowVisible(true)}
+          onEnterDeepRead={() => setIsDeepReadVisible(true)}
+          onAnnotationUpdate={handleAnnotationUpdate}
         />
       )}
 

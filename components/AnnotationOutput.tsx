@@ -3,6 +3,7 @@ import { Annotation, SlideshowData } from '../types';
 import * as htmlToImage from 'html-to-image';
 import DownloadIcon from './icons/DownloadIcon';
 import SlideshowIcon from './icons/SlideshowIcon';
+import BookOpenIcon from './icons/BookOpenIcon';
 
 // Add type declaration for jsPDF loaded from CDN
 declare global {
@@ -18,17 +19,38 @@ interface AnnotationOutputProps {
   onStartNew: () => void;
   onSaveOnExport: () => void;
   onEnterSlideshow: () => void;
+  onEnterDeepRead: () => void;
+  onAnnotationUpdate: (annotation: Annotation) => void;
 }
 
-const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slideshowData, onSave, onStartNew, onSaveOnExport, onEnterSlideshow }) => {
-  const [showTranslation, setShowTranslation] = useState(true);
-  const [showGrammar, setShowGrammar] = useState(true);
+const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slideshowData, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onAnnotationUpdate }) => {
+  const [showTranslation, setShowTranslation] = useState(false);
+  const [showGrammar, setShowGrammar] = useState(false);
+  const [showLineTranslation, setShowLineTranslation] = useState(false);
   const stanzaRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Ensure refs array is the correct size
   useEffect(() => {
     stanzaRefs.current = stanzaRefs.current.slice(0, annotation.stanzas.length);
   }, [annotation]);
+
+  const handleTranslationChange = useCallback((
+    e: React.FocusEvent<HTMLSpanElement>,
+    sIndex: number,
+    lIndex: number,
+    wIndex: number
+  ) => {
+    const newTranslation = e.currentTarget.textContent || '';
+    // Avoid triggering update if content is the same
+    if (annotation.stanzas[sIndex].lines[lIndex].words[wIndex].translation === newTranslation) {
+      return;
+    }
+
+    // Create a deep copy to avoid mutating the prop directly
+    const newAnnotation = JSON.parse(JSON.stringify(annotation));
+    newAnnotation.stanzas[sIndex].lines[lIndex].words[wIndex].translation = newTranslation;
+    onAnnotationUpdate(newAnnotation);
+  }, [annotation, onAnnotationUpdate]);
 
   const getLineHeightClass = () => {
     if (showTranslation && showGrammar) return 'leading-[3.5]';
@@ -126,7 +148,16 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
               checked={showTranslation}
               onChange={() => setShowTranslation(!showTranslation)}
             />
-            <span>Show Translation</span>
+            <span>Word Translation</span>
+          </label>
+          <label className="flex items-center space-x-2 cursor-pointer text-sm">
+            <input
+              type="checkbox"
+              className="form-checkbox h-4 w-4 rounded bg-gray-200 dark:bg-gray-600 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-500"
+              checked={showLineTranslation}
+              onChange={() => setShowLineTranslation(!showLineTranslation)}
+            />
+            <span>Line Translation</span>
           </label>
           <label className="flex items-center space-x-2 cursor-pointer text-sm">
             <input
@@ -141,6 +172,9 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
         <div className="flex items-center space-x-2 flex-wrap justify-center gap-2">
             <button onClick={onStartNew} className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">Start New</button>
             <button onClick={onSave} className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">Save</button>
+            <button onClick={onEnterDeepRead} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
+                <BookOpenIcon className="w-4 h-4" /> Deep Read
+            </button>
             <button onClick={onEnterSlideshow} className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
                 <SlideshowIcon className="w-4 h-4" /> Slideshow
             </button>
@@ -162,15 +196,31 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
               <DownloadIcon className="w-4 h-4" />
             </button>
             {stanza.lines.map((line, lIndex) => (
-              <p key={lIndex} className={`font-serif text-xl transition-all duration-200 ease-in-out ${getLineHeightClass()}`}>
-                {line.words.map((word, wIndex) => (
-                  <div key={wIndex} className="inline-block text-center align-top mx-1 px-1 py-2">
-                    {showTranslation && <span className="block text-sm text-gray-600 dark:text-gray-400 font-sans font-medium">{word.translation || ' '}</span>}
-                    <span className="block my-0.5">{word.original || ' '}</span>
-                    {showGrammar && <span className="block text-xs text-emerald-600 dark:text-emerald-400 font-sans italic">{word.grammar || ' '}</span>}
-                  </div>
-                ))}
-              </p>
+              <div key={lIndex} className="mb-2">
+                <p className={`font-serif text-xl transition-all duration-200 ease-in-out ${getLineHeightClass()}`}>
+                  {line.words.map((word, wIndex) => (
+                    <div key={wIndex} className="inline-block text-center align-top mx-1 px-1 py-2">
+                      {showTranslation && (
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning={true}
+                          onBlur={(e) => handleTranslationChange(e, sIndex, lIndex, wIndex)}
+                          className="block text-sm text-gray-600 dark:text-gray-400 font-sans font-medium rounded-sm px-1 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:bg-gray-700 focus:bg-gray-100 cursor-text"
+                        >
+                          {word.translation || ' '}
+                        </span>
+                      )}
+                      <span className="block my-0.5">{word.original || ' '}</span>
+                      {showGrammar && <span className="block text-xs text-emerald-600 dark:text-emerald-400 font-sans italic">{word.grammar || ' '}</span>}
+                    </div>
+                  ))}
+                </p>
+                {showLineTranslation && line.idiomaticTranslation && (
+                    <p className="font-sans text-md italic text-gray-600 dark:text-gray-400 mt-2 pl-2 border-l-2 border-blue-500">
+                        {line.idiomaticTranslation}
+                    </p>
+                )}
+              </div>
             ))}
           </div>
         ))}

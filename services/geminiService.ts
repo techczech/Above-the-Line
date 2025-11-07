@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { Annotation } from '../types';
 
@@ -16,7 +15,10 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
   const prompt = `
     ${langInstruction} provide a detailed grammatical annotation for the following text.
     Analyze the text paragraph by paragraph, and line by line.
-    For each word, provide:
+
+    For each line, provide an idiomatic, natural-sounding translation of the entire line in ${targetLang}.
+
+    Then, for each word within that line, provide:
     1. A literal, word-for-word translation in ${targetLang}.
     2. A detailed grammatical analysis.
     
@@ -49,6 +51,10 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
                         items: {
                             type: Type.OBJECT,
                             properties: {
+                                idiomaticTranslation: {
+                                    type: Type.STRING,
+                                    description: `An idiomatic, natural-sounding translation of the entire line in ${targetLang}.`
+                                },
                                 words: {
                                     type: Type.ARRAY,
                                     description: "Each object represents a single word with its analysis.",
