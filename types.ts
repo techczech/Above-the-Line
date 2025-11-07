@@ -6,6 +6,7 @@ export interface Word {
 
 export interface Line {
   words: Word[];
+  idiomaticTranslation?: string;
 }
 
 export interface Stanza {
