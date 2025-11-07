@@ -50,6 +50,21 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
                 <li><strong>Import & Export:</strong> Export your saved texts as a JSON file to back them up or share with others. You can easily import files to load annotations from another device or user.</li>
             </ul>
 
+            <h3 className="text-2xl font-bold mt-6 mb-2">Keyboard Shortcuts</h3>
+            <p>
+                For faster navigation, you can use the following keyboard shortcuts when viewing an annotation:
+            </p>
+            <ul>
+                <li><strong>a:</strong> Return to the main <strong>A</strong>nnotation Output view.</li>
+                <li><strong>r:</strong> Enter Deep <strong>R</strong>ead mode.</li>
+                <li><strong>h:</strong> Enter Slides<strong>h</strong>ow mode.</li>
+                <li><strong>s:</strong> Enter <strong>S</strong>tudy Mode.</li>
+                <li><strong>n:</strong> Start a <strong>N</strong>ew annotation.</li>
+                <li><strong>u:</strong> <strong>U</strong>pdate the current annotation.</li>
+                <li><strong>e:</strong> <strong>E</strong>xport the current annotation as a JSON file.</li>
+                <li><strong>p:</strong> Ex<strong>p</strong>ort the current annotation as a <strong>P</strong>DF file.</li>
+            </ul>
+
             <div className="text-center mt-8 not-prose">
                 <button 
                 onClick={onNavigateHome}
