@@ -1,3 +1,4 @@
+
 export interface Word {
   original: string;
   translation: string;
@@ -36,6 +37,35 @@ export interface SavedAnnotation {
   sourceLang: string;
   targetLang: string;
   slideshowData?: SlideshowData;
+  studyHistory?: StudySessionResult[];
 }
 
 export type Theme = 'light' | 'dark';
+
+export interface StudySessionResult {
+  score: number;
+  totalWords: number;
+  durationSeconds: number;
+  completedAt: string; // ISO string
+  gameMode: 'translation' | 'grammar';
+  studyUnit: 'stanza' | 'line';
+}
+
+export interface StudySession {
+  id: string; // unique id for this session
+  annotationId: string; // FK to SavedAnnotation.id
+  gameMode: 'translation' | 'grammar';
+  playMode: 'points' | 'timed';
+  studyUnit: 'stanza' | 'line';
+  selectedStanzaIndices?: number[];
+
+  status: 'in-progress' | 'completed';
+  currentItemIndex: number;
+  currentScore: number;
+  timeElapsedSeconds: number;
+
+  result?: StudySessionResult;
+  
+  createdAt: string; // ISO string
+  updatedAt: string; // ISO string
+}

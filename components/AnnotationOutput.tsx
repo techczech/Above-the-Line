@@ -1,9 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Annotation, SlideshowData } from '../types';
+import { Annotation, SlideshowData, StudySessionResult, SavedAnnotation } from '../types';
 import * as htmlToImage from 'html-to-image';
 import DownloadIcon from './icons/DownloadIcon';
 import SlideshowIcon from './icons/SlideshowIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
+import GraduationCapIcon from './icons/GraduationCapIcon';
+import StudyHistory from './StudyHistory';
+import CheckCircleIcon from './icons/CheckCircleIcon';
+import FilmIcon from './icons/FilmIcon';
+import PencilIcon from './icons/PencilIcon';
 
 // Add type declaration for jsPDF loaded from CDN
 declare global {
@@ -14,20 +19,65 @@ declare global {
 
 interface AnnotationOutputProps {
   annotation: Annotation;
+  title: string;
+  isSaved: boolean;
   slideshowData?: SlideshowData;
+  studyHistory?: StudySessionResult[];
   onSave: () => void;
   onStartNew: () => void;
-  onSaveOnExport: () => void;
+  onSaveOnExport: () => SavedAnnotation | null;
   onEnterSlideshow: () => void;
   onEnterDeepRead: () => void;
+  onEnterStudyMode: () => void;
   onAnnotationUpdate: (annotation: Annotation) => void;
+  onTitleChange: (newTitle: string) => void;
+  currentAnnotationId: string | null;
 }
 
-const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slideshowData, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onAnnotationUpdate }) => {
+const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, isSaved, slideshowData, studyHistory, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onEnterStudyMode, onAnnotationUpdate, onTitleChange, currentAnnotationId }) => {
   const [showTranslation, setShowTranslation] = useState(false);
   const [showGrammar, setShowGrammar] = useState(false);
   const [showLineTranslation, setShowLineTranslation] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editableTitle, setEditableTitle] = useState(title);
   const stanzaRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  // Calculate stats
+  const stanzaCount = annotation.stanzas.length;
+  const lineCount = annotation.stanzas.reduce((sum, s) => sum + s.lines.length, 0);
+  const wordCount = annotation.stanzas.reduce((sum, s) => sum + s.lines.reduce((lSum, l) => lSum + l.words.length, 0), 0);
+
+  // Sync local title state with prop
+  useEffect(() => {
+    setEditableTitle(title);
+  }, [title]);
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isEditingTitle]);
+
+  const handleTitleBlur = () => {
+    setIsEditingTitle(false);
+    if (editableTitle.trim() && editableTitle !== title) {
+      onTitleChange(editableTitle.trim());
+    } else {
+      setEditableTitle(title); // Revert if empty or unchanged
+    }
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleTitleBlur();
+    } else if (e.key === 'Escape') {
+      setEditableTitle(title);
+      setIsEditingTitle(false);
+    }
+  };
 
   // Ensure refs array is the correct size
   useEffect(() => {
@@ -41,12 +91,10 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
     wIndex: number
   ) => {
     const newTranslation = e.currentTarget.textContent || '';
-    // Avoid triggering update if content is the same
     if (annotation.stanzas[sIndex].lines[lIndex].words[wIndex].translation === newTranslation) {
       return;
     }
 
-    // Create a deep copy to avoid mutating the prop directly
     const newAnnotation = JSON.parse(JSON.stringify(annotation));
     newAnnotation.stanzas[sIndex].lines[lIndex].words[wIndex].translation = newTranslation;
     onAnnotationUpdate(newAnnotation);
@@ -64,19 +112,19 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
   });
 
   const exportAsJson = useCallback(() => {
-    onSaveOnExport();
-    const exportData = {
-        annotation,
-        slideshowData,
+    const exportData = onSaveOnExport();
+    if (!exportData) {
+      console.error("Could not get data for JSON export.");
+      return;
     }
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
       JSON.stringify(exportData, null, 2)
     )}`;
     const link = document.createElement('a');
     link.href = jsonString;
-    link.download = 'annotation_with_slideshow.json';
+    link.download = `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.json`;
     link.click();
-  }, [annotation, slideshowData, onSaveOnExport]);
+  }, [onSaveOnExport]);
   
   const exportStanzaAsImage = useCallback((element: HTMLDivElement | null, fileName: string) => {
     if (element === null) {
@@ -134,13 +182,79 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
 
 
   return (
-    <div className="mt-12">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
-        Generated Annotation
-      </h2>
+    <div className="mt-8">
+      <div className="text-center mb-8">
+        <div className="group relative inline-flex justify-center items-center">
+            {isEditingTitle ? (
+              <input
+                ref={titleInputRef}
+                type="text"
+                value={editableTitle}
+                onChange={(e) => setEditableTitle(e.target.value)}
+                onBlur={handleTitleBlur}
+                onKeyDown={handleTitleKeyDown}
+                className="text-3xl font-bold text-center bg-gray-100 dark:bg-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md text-gray-900 dark:text-white px-2"
+                aria-label="Edit title"
+              />
+            ) : (
+              <h2
+                className="text-3xl font-bold text-gray-900 dark:text-white truncate py-1 px-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                title="Click to edit title"
+                onClick={() => setIsEditingTitle(true)}
+              >
+                {title}
+                <PencilIcon className="inline-block w-5 h-5 ml-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </h2>
+            )}
+        </div>
+        <div className="flex justify-center items-center gap-6 mt-3 text-sm text-gray-500 dark:text-gray-400">
+          <span>{stanzaCount} {stanzaCount === 1 ? 'Stanza' : 'Stanzas'}</span>
+          <span>{lineCount} {lineCount === 1 ? 'Line' : 'Lines'}</span>
+          <span>{wordCount} {wordCount === 1 ? 'Word' : 'Words'}</span>
+        </div>
+        <div className="flex justify-center items-center gap-4 mt-3 text-xs">
+          {isSaved && (
+            <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-medium">
+              <CheckCircleIcon className="w-4 h-4" /> Saved
+            </span>
+          )}
+          {slideshowData?.youtubeUrl && (
+            <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 font-medium">
+              <FilmIcon className="w-4 h-4" /> Slideshow
+            </span>
+          )}
+          {studyHistory && studyHistory.length > 0 && (
+            <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-medium">
+              <GraduationCapIcon className="w-4 h-4" /> Study History
+            </span>
+          )}
+        </div>
+      </div>
 
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
-        <div className="flex justify-center items-center space-x-6 p-3 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+      <div className="flex justify-between items-center gap-4 mb-6">
+        {/* Left-aligned interaction modes */}
+        <div className="flex items-center space-x-2 flex-wrap gap-2">
+            <button onClick={onEnterStudyMode} className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition flex items-center gap-2">
+                <GraduationCapIcon className="w-4 h-4" /> Study Mode
+            </button>
+            <button onClick={onEnterDeepRead} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
+                <BookOpenIcon className="w-4 h-4" /> Deep Read
+            </button>
+            <button onClick={onEnterSlideshow} className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
+                <SlideshowIcon className="w-4 h-4" /> Slideshow
+            </button>
+        </div>
+
+        {/* Right-aligned file actions */}
+        <div className="flex items-center space-x-2 flex-wrap gap-2">
+            <button onClick={onStartNew} className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">New Annotation</button>
+            <button onClick={onSave} className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">{isSaved ? 'Update' : 'Save'}</button>
+            <button onClick={exportAsJson} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">Export JSON</button>
+        </div>
+      </div>
+      
+      <div>
+        <div className="flex justify-center items-center space-x-6 p-3 mb-6 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
           <label className="flex items-center space-x-2 cursor-pointer text-sm">
             <input
               type="checkbox"
@@ -166,26 +280,11 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
               checked={showGrammar}
               onChange={() => setShowGrammar(!showGrammar)}
             />
-            <span>Show Grammar</span>
+            <span>Grammar</span>
           </label>
         </div>
-        <div className="flex items-center space-x-2 flex-wrap justify-center gap-2">
-            <button onClick={onStartNew} className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">Start New</button>
-            <button onClick={onSave} className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">Save</button>
-            <button onClick={onEnterDeepRead} className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
-                <BookOpenIcon className="w-4 h-4" /> Deep Read
-            </button>
-            <button onClick={onEnterSlideshow} className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
-                <SlideshowIcon className="w-4 h-4" /> Slideshow
-            </button>
-            <button onClick={exportAsJson} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">Export JSON</button>
-            <button onClick={exportAsPdf} className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition">Export PDF</button>
-        </div>
-      </div>
-      
-      <div>
+
         {annotation.stanzas.map((stanza, sIndex) => (
-          // FIX: The ref callback must have a void return type. An arrow function with a concise body `() => expression` returns the expression's result. By using a block body `{ ... }`, the function implicitly returns undefined, satisfying the `void` requirement.
           <div key={sIndex} ref={el => { stanzaRefs.current[sIndex] = el; }} className="relative mb-10 p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <button 
               onClick={() => exportStanzaAsImage(stanzaRefs.current[sIndex], `section-${sIndex + 1}.png`)}
@@ -225,6 +324,9 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, slidesh
           </div>
         ))}
       </div>
+      
+      <StudyHistory history={studyHistory} />
+
     </div>
   );
 };

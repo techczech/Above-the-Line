@@ -7,6 +7,33 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
+export const generateTitle = async (text: string): Promise<string> => {
+  const prompt = `Analyze the following text. First, identify its language. Second, identify its type (e.g., Poem, Prose, Article, Dialogue). Third, briefly summarize its content in a few words.
+Based on this analysis, generate a title in the following format: "[Type] in [Language] about [Content Summary]".
+
+Example output for a Czech poem about a mother: "Poem in Czech about a Mother's Love"
+Example output for a Latin text about war: "Prose in Latin about the Trojan War"
+
+Return ONLY the generated title as a single line of plain text, without any introductory phrases, labels, or quotation marks.
+
+Text:
+---
+${text.substring(0, 1000)}
+---
+`;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    // The model might return the title in quotes, so let's remove them.
+    return response.text.trim().replace(/^"|"$/g, '');
+  } catch (error) {
+    console.error("Failed to generate title:", error);
+    return "Untitled Text"; // Fallback title
+  }
+};
+
 export const generateAnnotation = async (text: string, sourceLang: string, targetLang: string): Promise<Annotation> => {
   const langInstruction = sourceLang === 'Autodetect Language'
     ? 'First, automatically detect the language of the text. Then, for that language,'
@@ -98,7 +125,8 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
     const parsedJson = JSON.parse(jsonText);
     return parsedJson as Annotation;
 
-  } catch (error) {
+  } catch (error)
+ {
     console.error("Gemini API call failed:", error);
     if (error instanceof Error) {
         throw new Error(`Failed to generate annotation: ${error.message}`);
