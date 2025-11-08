@@ -72,6 +72,9 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
 
   // Resume prompt state
   const [inProgressSession, setInProgressSession] = useState<StudySession | null>(null);
+  
+  const unitName = savedAnnotation.annotation.textType === 'prose' ? 'Paragraph' : 'Stanza';
+  const unitNamePlural = savedAnnotation.annotation.textType === 'prose' ? 'Paragraphs' : 'Stanzas';
 
   useEffect(() => {
     const session = studySessions.find(
@@ -326,13 +329,13 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
             <label className="block text-lg font-medium mb-2">Study Unit</label>
             <select value={studyUnit} onChange={e => setStudyUnit(e.target.value as StudyUnit)} className="w-full p-3 rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
               <option value="line">Line by Line</option>
-              <option value="stanza">Stanza / Paragraph</option>
+              <option value="stanza">{unitName}</option>
             </select>
           </div>
 
           {savedAnnotation.annotation.stanzas.length > 1 && (
             <div>
-              <label className="block text-lg font-medium mb-2">Which Stanzas to Study?</label>
+              <label className="block text-lg font-medium mb-2">Which {unitNamePlural} to Study?</label>
               <div className="space-y-2 max-h-32 overflow-y-auto p-3 rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600">
                 {savedAnnotation.annotation.stanzas.map((_, index) => (
                   <label key={index} className="flex items-center space-x-3 cursor-pointer">
@@ -342,7 +345,7 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
                       onChange={() => handleStanzaSelection(index)}
                       className="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-200 dark:bg-gray-600 border-gray-400 dark:border-gray-500 focus:ring-blue-500"
                     />
-                    <span>Stanza {index + 1}</span>
+                    <span>{unitName} {index + 1}</span>
                   </label>
                 ))}
               </div>
@@ -452,21 +455,26 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
         <div className="md:col-span-2 bg-gray-50 dark:bg-gray-800 rounded-lg p-6 overflow-y-auto">
           <div className="font-serif text-xl leading-loose">
             {currentItem?.lines.map((line, lineIdx) => (
-              <p key={lineIdx} className="mb-4">
-                {line.words.map((word, wordIdx) => {
-                  const zone = dropZones.find(dz => dz.word === word);
-                  if (!zone) return null;
-                  const feedbackClasses = { correct: 'bg-green-100 dark:bg-green-900/50 border-green-500', incorrect: 'bg-red-100 dark:bg-red-900/50 border-red-500', none: 'border-gray-300 dark:border-gray-600' };
-                  return (
-                    <div key={wordIdx} className="inline-block text-center mx-1 align-top">
-                      <span className="block mb-1">{word.original}</span>
-                      <div id={zone.id} onDrop={(e) => handleDrop(e, zone.id)} onDragOver={handleDragOver} onDragLeave={handleDragLeave} className={`w-32 h-12 border-2 border-dashed rounded-md flex items-center justify-center p-2 text-sm font-sans transition-colors ${feedbackClasses[zone.feedback]}`}>
-                        {zone.placedItem?.text}
-                      </div>
-                    </div>
-                  );
-                })}
-              </p>
+              <div key={lineIdx} className="mb-6">
+                {savedAnnotation.annotation.textType === 'dialogue' && line.speaker && (
+                  <p className="font-sans text-lg font-bold mb-2 text-gray-800 dark:text-gray-200">{line.speaker}:</p>
+                )}
+                <div className="flex flex-wrap items-end gap-x-4 gap-y-6">
+                    {line.words.map((word, wordIdx) => {
+                    const zone = dropZones.find(dz => dz.word === word);
+                    if (!zone) return null;
+                    const feedbackClasses = { correct: 'bg-green-100 dark:bg-green-900/50 border-green-500', incorrect: 'bg-red-100 dark:bg-red-900/50 border-red-500', none: 'border-gray-300 dark:border-gray-600' };
+                    return (
+                        <div key={wordIdx} className="inline-block text-center">
+                        <span className="block mb-1">{word.original}</span>
+                        <div id={zone.id} onDrop={(e) => handleDrop(e, zone.id)} onDragOver={handleDragOver} onDragLeave={handleDragLeave} className={`w-32 h-12 border-2 border-dashed rounded-md flex items-center justify-center p-2 text-sm font-sans transition-colors ${feedbackClasses[zone.feedback]}`}>
+                            {zone.placedItem?.text}
+                        </div>
+                        </div>
+                    );
+                    })}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -487,7 +495,7 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
         <button onClick={() => setupItem()} disabled={isChecked} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50">Reset</button>
         {isChecked ? (
           <button onClick={nextItem} className="px-6 py-2 font-bold rounded-md bg-blue-600 text-white hover:bg-blue-700">
-            {activeSession && activeSession.currentItemIndex < studyItems.length - 1 ? `Next ${activeSession.studyUnit}` : 'Finish'}
+            {activeSession && activeSession.currentItemIndex < studyItems.length - 1 ? `Next ${activeSession.studyUnit === 'stanza' ? unitName : 'Line'}` : 'Finish'}
           </button>
         ) : (
           <button onClick={checkAnswers} className="px-6 py-2 font-bold rounded-md bg-green-600 text-white hover:bg-green-700">Check Answers</button>

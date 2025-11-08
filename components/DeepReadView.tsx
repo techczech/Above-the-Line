@@ -87,7 +87,7 @@ const DeepReadView: React.FC<DeepReadViewProps> = ({ annotation, onExit }) => {
     const containerRect = containerRef.current.getBoundingClientRect();
     const { rect } = popover;
     
-    const top = rect.bottom - containerRect.top + 8;
+    const top = rect.bottom - containerRect.top + containerRef.current.scrollTop + 8;
     const left = rect.left - containerRect.left + rect.width / 2;
     
     return {
@@ -121,28 +121,31 @@ const DeepReadView: React.FC<DeepReadViewProps> = ({ annotation, onExit }) => {
         </div>
       </div>
 
-      <div ref={containerRef} className="flex-grow bg-gray-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 overflow-y-auto relative" onClick={closePopover}>
-        {annotation.stanzas.map((stanza, sIndex) => (
-          <div key={sIndex} className="mb-8">
-            {stanza.lines.map((line, lIndex) => (
-              <p key={lIndex} className="font-serif text-2xl leading-loose mb-2">
-                {line.words.map((word, wIndex) => (
-                  <span
-                    key={wIndex}
-                    onClick={(e) => handleWordClick(e, sIndex, lIndex, wIndex)}
-                    className={`cursor-pointer rounded px-1 transition-colors duration-150 ${
-                      popover && popover.sIndex === sIndex && popover.lIndex === lIndex && popover.wIndex === wIndex
-                        ? 'bg-blue-200 dark:bg-blue-800'
-                        : 'hover:bg-gray-200 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {word.original}
-                  </span>
+      <div ref={containerRef} className="flex-grow bg-gray-50 dark:bg-gray-800 rounded-lg py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-8 overflow-y-auto relative" onClick={closePopover}>
+        <div className="max-w-4xl mx-auto">
+            {annotation.stanzas.map((stanza, sIndex) => (
+            <div key={sIndex} className="mb-8">
+                {stanza.lines.map((line, lIndex) => (
+                <p key={lIndex} className="font-serif text-2xl leading-loose mb-2">
+                    {line.words.map((word, wIndex) => (
+                    <React.Fragment key={wIndex}>
+                        <span
+                        onClick={(e) => handleWordClick(e, sIndex, lIndex, wIndex)}
+                        className={`cursor-pointer rounded px-1 transition-colors duration-150 ${
+                            popover && popover.sIndex === sIndex && popover.lIndex === lIndex && popover.wIndex === wIndex
+                            ? 'bg-blue-200 dark:bg-blue-800'
+                            : 'hover:bg-gray-200 dark:hover:bg-gray-700'
+                        }`}
+                        >
+                        {word.original}
+                        </span>{' '}
+                    </React.Fragment>
+                    ))}
+                </p>
                 ))}
-              </p>
+            </div>
             ))}
-          </div>
-        ))}
+        </div>
 
         {popover && (
           <div

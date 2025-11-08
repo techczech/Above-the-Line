@@ -1,4 +1,6 @@
 
+export type TextType = 'poem' | 'prose' | 'dialogue';
+
 export interface Word {
   original: string;
   translation: string;
@@ -8,6 +10,7 @@ export interface Word {
 export interface Line {
   words: Word[];
   idiomaticTranslation?: string;
+  speaker?: string;
 }
 
 export interface Stanza {
@@ -16,11 +19,13 @@ export interface Stanza {
 
 export interface Annotation {
   stanzas: Stanza[];
+  textType: TextType;
 }
 
 export interface Timecode {
-  itemId: string; // e.g., "s0-l1-w3" for word or "s0-l1" for line
-  time: number; // in seconds
+  itemId: string; // e.g., "s0-l1" for line
+  startTime: number; // in seconds
+  endTime: number | null; // in seconds, can be null for the last item
 }
 
 export interface SlideshowData {
