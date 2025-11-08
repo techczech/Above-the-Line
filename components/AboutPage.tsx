@@ -10,57 +10,73 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
         <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 prose prose-lg dark:prose-invert max-w-none">
             <h2 className="text-3xl font-bold mb-4">About Above The Line</h2>
             <p>
-                <strong>Above The Line</strong> was created by Dominik Lukeš in Google AI Studio and is powered by the Gemini API. It is designed as a powerful companion for students, educators, and language enthusiasts to explore texts in depth.
+                <strong>Above The Line</strong> was created by Dominik Lukeš in Google AI Studio and is powered by the Gemini API. It is designed as a comprehensive suite of tools for students, educators, and language enthusiasts to explore texts and video transcripts in depth.
             </p>
 
-            <h3 className="text-2xl font-bold mt-6 mb-2">Core Functionality</h3>
+            <h3 className="text-2xl font-bold mt-8 mb-2">Core Features</h3>
+            <ul>
+                <li><strong>Detailed Text & Video Annotation:</strong> Paste any text or a timecoded video transcript to generate line-by-line analysis. The app provides word-for-word translations, detailed grammatical information, and natural-sounding idiomatic translations for each line.</li>
+                <li><strong>Multiple Interaction Modes:</strong> Go beyond static text with three dynamic modes designed for different learning styles: a focused <strong>Deep Read</strong> view, a multimedia <strong>Slideshow</strong> mode for syncing text with video, and an interactive <strong>Study Mode</strong> to gamify your learning.</li>
+                <li><strong>Progress Tracking & Gamification:</strong> Turn your annotations into practice sessions. Study Mode tracks your score, time, and progress, helping you identify areas for improvement.</li>
+                <li><strong>Flexible Data Management:</strong> Save your work to your browser, export everything for backup, or share with others. You can export individual annotations as JSON or PDF, and even export stanzas as PNG images.</li>
+            </ul>
+            
+            <h3 className="text-2xl font-bold mt-8 mb-2">How It Works: Annotation</h3>
             <p>
-                The primary function of the app is to take a piece of text and generate a detailed, interactive annotation. You can:
+                The annotation process is simple but powerful:
             </p>
+            <ol>
+                <li><strong>Choose Your Mode:</strong> Select "Annotate Text" for written works or "Annotate Video Transcript" to sync with a YouTube video.</li>
+                <li><strong>Provide Input:</strong> For text, simply paste it in. For video, provide the YouTube URL and a timecoded transcript. A helper prompt is available to assist in generating transcripts with Gemini.</li>
+                <li><strong>Select Languages:</strong> Choose the source language (or let the app autodetect it) and the target language for translations.</li>
+                <li><strong>Generate:</strong> With a single click, Gemini analyzes the text and produces a rich, interactive annotation.</li>
+            </ol>
+            <p>In the output view, you can toggle the visibility of word translations, grammar details, and idiomatic line translations. You can also click to edit any word translation or the main title to refine the results.</p>
+            
+            <h3 className="text-2xl font-bold mt-8 mb-2">Interaction Modes in Detail</h3>
+            
+            <h4>Deep Read Mode</h4>
+            <p>A focused, minimalist environment for close reading. The text is displayed cleanly in a single column. Click on any word to reveal a pop-up with its translation, grammar, or the full line's idiomatic translation, allowing you to get more information without losing your place.</p>
+            
+            <h4>Slideshow Mode</h4>
+            <p>Transform your annotation into an engaging multimedia presentation. This mode syncs your annotated text with a YouTube video, highlighting each line, sentence, or paragraph as it's spoken. It's perfect for lectures, language classes, or poetry readings. Key features include:</p>
             <ul>
-                <li><strong>Enter Any Text:</strong> Paste or type any text into the text area.</li>
-                <li><strong>Select Languages:</strong> Choose the source language of your text (or let the app autodetect it) and specify the target language for translations.</li>
-                <li><strong>Generate Annotation:</strong> With a single click, Gemini analyzes the text, providing stanza-by-stanza and line-by-line analysis.</li>
+                <li><strong>Automatic Playback:</strong> Play the video from the beginning or the current slide, and the text will automatically scroll in sync.</li>
+                <li><strong>Timecode Recording:</strong> Don't have timecodes? Create them yourself! Play the video and press a button at the start of each segment to record the timestamp.</li>
+                <li><strong>Timecode Editor:</strong> Fine-tune your timings with a detailed editor that lets you manually adjust the start and end time for every slide.</li>
+                <li><strong>Customizable View:</strong> Change the granularity (line, sentence, or paragraph) and what annotations are displayed on the fly.</li>
             </ul>
 
-            <h3 className="text-2xl font-bold mt-6 mb-2">The Annotation View</h3>
-            <p>
-                Once an annotation is generated, you have multiple ways to view and interact with the information:
-            </p>
+            <h4>Study Mode</h4>
+            <p>Gamify your learning by turning any annotation into an interactive drag-and-drop quiz. This mode is designed to test and reinforce your knowledge.</p>
             <ul>
-                <li><strong>Word Translation:</strong> Toggle to see a literal, word-for-word translation above each original word.</li>
-                <li><strong>Grammar Analysis:</strong> Toggle to view a concise grammatical breakdown below each word (e.g., part of speech, tense, case, etc.).</li>
-                <li><strong>Line Translation:</strong> See an idiomatic, natural-sounding translation of each complete line.</li>
-                <li><strong>Editable Translations:</strong> You can click on any word's translation to edit it, allowing you to refine the output for your specific needs.</li>
+                <li><strong>Flexible Setup:</strong> Choose what to study (specific stanzas or the whole text), what to match (word translations or grammar), and how to play (a relaxed practice mode or a timed challenge).</li>
+                <li><strong>Interactive Gameplay:</strong> Drag words from a "Word Bank" and drop them onto their corresponding original words in the text.</li>
+                <li><strong>Instant Feedback:</strong> Check your answers at any time to see which words you matched correctly and which you didn't.</li>
+                <li><strong>Session Management:</strong> The app saves your progress, so you can exit a session and resume it later. Completed sessions are saved to your study history.</li>
+                <li><strong>Track Your Progress:</strong> After each session, view a summary of your score and time. The app compares your performance to your last session, helping you see your improvement over time.</li>
             </ul>
 
-            <h3 className="text-2xl font-bold mt-6 mb-2">Advanced Interaction Modes</h3>
-            <p>
-                Go beyond simple reading with three specialized modes:
-            </p>
+            <h3 className="text-2xl font-bold mt-8 mb-2">Saving, Exporting & Sharing</h3>
+            <p>Your work is always within reach. The app offers multiple ways to save and share your annotations:</p>
             <ul>
-                <li><strong>Deep Read:</strong> A focused reading environment. Click on any word to see a pop-up with its translation, grammar, or line translation, minimizing distraction.</li>
-                <li><strong>Slideshow:</strong> Sync your annotation with a YouTube video. You can create timecodes for each line, sentence, or stanza, turning your text into a karaoke-style presentation. This is perfect for lectures, language classes, or poetry readings.</li>
-                <li><strong>Study Mode:</strong> Turn your annotation into an interactive learning game. Test your knowledge by dragging and dropping translations or grammar tags to their corresponding words. Choose between practice mode or a timed challenge to track your progress over time.</li>
+                <li><strong>Save to Browser:</strong> Save sessions, including edits, slideshow data, and study history, to your browser's local storage for easy access.</li>
+                <li><strong>Export All:</strong> Export your entire collection of saved annotations as a single JSON file for backup or transferring to another device.</li>
+                <li><strong>Import:</strong> Load annotations from a JSON file shared by others or from one of your backups.</li>
+                <li><strong>Single Export Options:</strong> Export the current annotation as a <strong>JSON</strong> file, a multi-page <strong>PDF</strong> document, or export individual stanzas/paragraphs as <strong>PNG</strong> images.</li>
             </ul>
 
-            <h3 className="text-2xl font-bold mt-6 mb-2">Saving & Sharing</h3>
-            <ul>
-                <li><strong>Save Your Work:</strong> Save your generated annotations, including any edits and slideshow data, to your browser's local storage.</li>
-                <li><strong>Import & Export:</strong> Export your saved texts as a JSON file to back them up or share with others. You can easily import files to load annotations from another device or user.</li>
-            </ul>
-
-            <h3 className="text-2xl font-bold mt-6 mb-2">Keyboard Shortcuts</h3>
+            <h3 className="text-2xl font-bold mt-8 mb-2">Keyboard Shortcuts</h3>
             <p>
                 For faster navigation, you can use the following keyboard shortcuts when viewing an annotation:
             </p>
             <ul>
                 <li><strong>a:</strong> Return to the main <strong>A</strong>nnotation Output view.</li>
                 <li><strong>r:</strong> Enter Deep <strong>R</strong>ead mode.</li>
-                <li><strong>h:</strong> Enter Slides<strong>h</strong>ow mode.</li>
+                <li><strong>h:</strong> Enter Slides<strong>h</strong>ow mode (Karaoke view).</li>
                 <li><strong>s:</strong> Enter <strong>S</strong>tudy Mode.</li>
                 <li><strong>n:</strong> Start a <strong>N</strong>ew annotation.</li>
-                <li><strong>u:</strong> <strong>U</strong>pdate the current annotation.</li>
+                <li><strong>u:</strong> Save or <strong>U</strong>pdate the current annotation.</li>
                 <li><strong>e:</strong> <strong>E</strong>xport the current annotation as a JSON file.</li>
                 <li><strong>p:</strong> Ex<strong>p</strong>ort the current annotation as a <strong>P</strong>DF file.</li>
             </ul>

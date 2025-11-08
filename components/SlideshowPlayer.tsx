@@ -32,17 +32,22 @@ interface SlideshowItem {
 }
 
 const formatTime = (totalSeconds: number): string => {
-    if (isNaN(totalSeconds) || totalSeconds < 0) return '00:00.00';
+    if (isNaN(totalSeconds) || totalSeconds < 0) return '';
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${seconds.toFixed(2).padStart(5, '0')}`;
 };
   
 const parseTime = (timeStr: string): number => {
+    if (!timeStr || timeStr.trim() === '') return NaN;
     const parts = timeStr.split(':');
-    if (parts.length !== 2) return NaN;
-    const minutes = parseFloat(parts[0]);
-    const seconds = parseFloat(parts[1]);
+    if (parts.length > 2) return NaN;
+    const secondsPart = parts.length > 1 ? parts[1] : parts[0];
+    const minutesPart = parts.length > 1 ? parts[0] : '0';
+    
+    const seconds = parseFloat(secondsPart);
+    const minutes = parseFloat(minutesPart);
+    
     if (isNaN(minutes) || isNaN(seconds)) return NaN;
     return minutes * 60 + seconds;
 };
@@ -65,92 +70,81 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   const playerRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<number | null>(null);
 
-  const timecodesMap = useMemo(() => new Map(timecodes.map(tc => [tc.itemId, tc.time])), [timecodes]);
+  const unitName = annotation.textType === 'prose' ? 'Paragraph' : 'Stanza';
+
+  const timecodesMap = useMemo(() => new Map(timecodes.map(tc => [tc.itemId, tc])), [timecodes]);
 
   const flattenedItems = useMemo<SlideshowItem[]>(() => {
     const renderWordsBlock = (words: Word[], displayType: AnnotationDisplay) => (
-        <p className="font-serif text-2xl text-left w-full flex flex-wrap justify-start leading-relaxed">
-          {words.map((word, wIndex) => (
-            <div key={wIndex} className="inline-block text-left align-top mx-1 px-1 py-2 leading-tight">
-              {displayType === 'word' && (
-                  <span className="block text-sm text-gray-600 dark:text-gray-400 font-sans font-medium">{word.translation || ' '}</span>
-              )}
-              <span className="block my-0.5 text-gray-900 dark:text-white">{word.original || ' '}</span>
-            </div>
-          ))}
-        </p>
+      <div className="flex flex-wrap items-baseline">
+        {words.map((word, wIndex) => (
+          <div key={wIndex} className="inline-block text-left align-top mx-1 px-1 py-2 leading-tight">
+            {displayType === 'word' && (
+              <span className="block text-sm text-gray-600 dark:text-gray-400 font-sans font-medium">{word.translation || ' '}</span>
+            )}
+            <span className="block my-0.5 text-gray-900 dark:text-white">{word.original || ' '}</span>
+          </div>
+        ))}
+      </div>
     );
 
-    const renderLineTranslationBlock = (lines: Line[]) => (
-        <div className="mt-4 w-full space-y-2">
-            {lines.map((line, lIndex) =>
-                line.idiomaticTranslation ? (
-                    <p key={lIndex} className="font-sans text-md italic text-gray-600 dark:text-gray-400 pl-2 border-l-2 border-blue-500">
-                        {line.idiomaticTranslation}
-                    </p>
-                ) : null
-            )}
+    const renderLine = (line: Line, key: string | number, displayType: AnnotationDisplay) => (
+      <div key={key}>
+        <div className={`font-serif text-2xl w-full ${annotation.textType === 'dialogue' ? 'flex' : ''}`}>
+          {annotation.textType === 'dialogue' && line.speaker && <strong className="font-sans mr-2 shrink-0">{line.speaker}:</strong>}
+          {renderWordsBlock(line.words, displayType)}
         </div>
-    );
-    
-    const renderItemContent = (words: Word[], lines: Line[], displayType: AnnotationDisplay) => (
-        <div className="text-left w-full">
-            {renderWordsBlock(words, displayType)}
-            {displayType === 'line' && renderLineTranslationBlock(lines)}
-        </div>
+        {displayType === 'line' && line.idiomaticTranslation && (
+          <p className={`font-sans text-md italic text-gray-600 dark:text-gray-400 mt-2 pl-2 border-l-2 border-blue-500 ${annotation.textType === 'dialogue' ? 'ml-4' : ''}`}>
+            {line.idiomaticTranslation}
+          </p>
+        )}
+      </div>
     );
 
     const items: SlideshowItem[] = [];
     if (granularity === 'paragraph') {
-        annotation.stanzas.forEach((stanza, sIndex) => {
-            const allWords = stanza.lines.flatMap(line => line.words);
-            items.push({
-                id: `s${sIndex}`,
-                content: renderItemContent(allWords, stanza.lines, annotationDisplay),
-            });
+      annotation.stanzas.forEach((stanza, sIndex) => {
+        items.push({
+          id: `s${sIndex}`,
+          content: <div className="space-y-4">{stanza.lines.map((line, lIndex) => renderLine(line, lIndex, annotationDisplay))}</div>,
         });
+      });
     } else if (granularity === 'sentence') {
-        const sentences: { id: string; words: Word[]; lines: Line[] }[] = [];
-        let currentSentenceWords: Word[] = [];
-        let currentSentenceLines = new Map<Line, boolean>();
-        let stanzaSentenceIndex = 0;
+      const sentences: { id: string; lines: Line[] }[] = [];
+      let stanzaSentenceIndex = 0;
 
-        annotation.stanzas.forEach((stanza, sIndex) => {
-            stanzaSentenceIndex = 0;
-            stanza.lines.forEach((line) => {
-                line.words.forEach((word) => {
-                    currentSentenceWords.push(word);
-                    currentSentenceLines.set(line, true);
-                    if (word.original.match(/[.?!]"?[']?$/)) {
-                        if (currentSentenceWords.length > 0) {
-                            sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, words: currentSentenceWords, lines: Array.from(currentSentenceLines.keys()) });
-                        }
-                        currentSentenceWords = [];
-                        currentSentenceLines.clear();
-                    }
-                });
-            });
-
-            if (currentSentenceWords.length > 0) {
-                sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, words: currentSentenceWords, lines: Array.from(currentSentenceLines.keys()) });
-                currentSentenceWords = [];
-                currentSentenceLines.clear();
-            }
+      annotation.stanzas.forEach((stanza, sIndex) => {
+        stanzaSentenceIndex = 0;
+        let lineBuffer: Line[] = [];
+        
+        stanza.lines.forEach((line) => {
+          lineBuffer.push(line);
+          const lastWord = line.words[line.words.length - 1];
+          if (lastWord && lastWord.original.match(/[.?!]"?[']?$/)) {
+            sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, lines: lineBuffer });
+            lineBuffer = [];
+          }
         });
 
-        sentences.forEach(({ id, words, lines }) => {
-            items.push({ id, content: renderItemContent(words, lines, annotationDisplay) });
-        });
+        if (lineBuffer.length > 0) {
+            sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, lines: lineBuffer });
+        }
+      });
+      
+      sentences.forEach(({ id, lines }) => {
+        items.push({ id, content: <div className="space-y-4">{lines.map((line, lIndex) => renderLine(line, lIndex, annotationDisplay))}</div> });
+      });
 
     } else { // line
-        annotation.stanzas.forEach((stanza, sIndex) => {
-          stanza.lines.forEach((line, lIndex) => {
-            items.push({
-              id: `s${sIndex}-l${lIndex}`,
-              content: renderItemContent(line.words, [line], annotationDisplay),
-            });
+      annotation.stanzas.forEach((stanza, sIndex) => {
+        stanza.lines.forEach((line, lIndex) => {
+          items.push({
+            id: `s${sIndex}-l${lIndex}`,
+            content: renderLine(line, lIndex, annotationDisplay),
           });
         });
+      });
     }
     return items;
   }, [annotation, granularity, annotationDisplay]);
@@ -159,10 +153,26 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
     if (!player || typeof player.getCurrentTime !== 'function' || recordingStatus !== 'recording') return;
     const currentTime = player.getCurrentTime();
     const currentItemId = flattenedItems[currentIndex].id;
+    const nextItemId = flattenedItems[currentIndex + 1]?.id;
     
     setTimecodes(prev => {
-        const otherTimecodes = prev.filter(tc => tc.itemId !== currentItemId);
-        return [...otherTimecodes, { itemId: currentItemId, time: currentTime }].sort((a, b) => a.time - b.time);
+        // Update end time of current item
+        let updatedTimecodes = prev.map(tc => 
+            tc.itemId === currentItemId ? { ...tc, endTime: currentTime } : tc
+        );
+
+        // Add start time for next item
+        if (nextItemId) {
+            const nextItemExists = updatedTimecodes.some(tc => tc.itemId === nextItemId);
+            if (!nextItemExists) {
+                updatedTimecodes.push({ itemId: nextItemId, startTime: currentTime, endTime: null });
+            } else {
+                updatedTimecodes = updatedTimecodes.map(tc => 
+                    tc.itemId === nextItemId ? { ...tc, startTime: currentTime } : tc
+                );
+            }
+        }
+        return updatedTimecodes;
     });
 
     if (currentIndex < flattenedItems.length - 1) {
@@ -251,10 +261,18 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   const startRecording = () => {
     setIsSettingStartTime(false);
     const startTime = parseTime(startTimeInput);
-    if (isNaN(startTime)) return;
+    if (isNaN(startTime) || flattenedItems.length === 0) return;
 
     const currentItemIds = new Set(flattenedItems.map(item => item.id));
-    setTimecodes(prev => prev.filter(tc => currentItemIds.has(tc.itemId))); // Clear only relevant timecodes
+    const otherTimecodes = timecodes.filter(tc => !currentItemIds.has(tc.itemId));
+
+    const firstTimecode: Timecode = {
+        itemId: flattenedItems[0].id,
+        startTime: startTime,
+        endTime: null
+    };
+
+    setTimecodes([...otherTimecodes, firstTimecode]);
     setCurrentIndex(0);
     setRecordingStatus('recording');
     player?.seekTo(startTime, true);
@@ -275,41 +293,31 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
     setRecordingStatus('idle');
   }
 
-  const handleManualPlay = () => {
-    player?.playVideo();
-  };
-
   const handlePausePlayback = () => {
     setIsAutoPlaying(false);
     player?.pauseVideo();
   };
 
   const handlePlayFromBeginning = () => {
-    if (!player || timecodes.length === 0) return;
+    if (!player) return;
+    const sortedTimecodes = timecodes
+        .filter(tc => flattenedItems.some(item => item.id === tc.itemId))
+        .sort((a, b) => a.startTime - b.startTime);
+
+    const startTime = sortedTimecodes.length > 0 ? sortedTimecodes[0].startTime : 0;
     setCurrentIndex(0);
-    player.seekTo(0, true);
+    player.seekTo(startTime, true);
     player.playVideo();
     setIsAutoPlaying(true);
   };
 
   const handlePlayFromCurrent = () => {
-    if (!player || timecodes.length === 0) return;
+    if (!player) return;
+    const currentItemId = flattenedItems[currentIndex]?.id;
+    if (!currentItemId) return;
 
-    const sortedTimecodes = timecodes
-        .filter(tc => flattenedItems.some(item => item.id === tc.itemId))
-        .sort((a, b) => a.time - b.time);
-
-    let startTime = 0;
-    if (currentIndex > 0) {
-        const timecodesBefore = sortedTimecodes.filter(tc => {
-            const itemIndex = flattenedItems.findIndex(item => item.id === tc.itemId);
-            return itemIndex >= 0 && itemIndex < currentIndex;
-        });
-
-        if (timecodesBefore.length > 0) {
-            startTime = timecodesBefore[timecodesBefore.length - 1].time;
-        }
-    }
+    const tc = timecodes.find(t => t.itemId === currentItemId);
+    const startTime = tc ? tc.startTime : 0;
     
     player.seekTo(startTime, true);
     player.playVideo();
@@ -317,41 +325,45 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   };
 
   useEffect(() => {
-      if (isAutoPlaying) {
-          intervalRef.current = window.setInterval(() => {
-              if (!player || typeof player.getCurrentTime !== 'function' || typeof player.getPlayerState !== 'function' || player.getPlayerState() !== 1) return;
-              
-              const currentTime = player.getCurrentTime();
+    if (isAutoPlaying) {
+        intervalRef.current = window.setInterval(() => {
+            if (!player || typeof player.getCurrentTime !== 'function' || typeof player.getPlayerState !== 'function' || player.getPlayerState() !== 1) return;
+            
+            const currentTime = player.getCurrentTime();
 
-              const sortedTimecodes = timecodes
-                .filter(tc => flattenedItems.some(item => item.id === tc.itemId))
-                .sort((a, b) => a.time - b.time);
+            const sortedTimecodes = timecodes
+              .filter(tc => flattenedItems.some(item => item.id === tc.itemId))
+              .sort((a, b) => a.startTime - b.startTime);
 
-              let newIndex = 0; // Default to first slide
-              
-              for (const timecode of sortedTimecodes) {
-                  if (currentTime >= timecode.time) {
-                      const timedSlideIndex = flattenedItems.findIndex(item => item.id === timecode.itemId);
-                      if (timedSlideIndex !== -1) {
-                          newIndex = timedSlideIndex + 1;
-                      }
-                  } else {
-                      break; 
-                  }
-              }
+            if (sortedTimecodes.length === 0) return;
+            
+            let newActiveItemIndex = -1;
 
-              const finalIndex = Math.min(newIndex, flattenedItems.length - 1);
-              
-              if (finalIndex !== currentIndex) {
-                  setCurrentIndex(finalIndex);
-              }
-          }, 250);
-      } else {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-      }
-      return () => {
-          if (intervalRef.current) clearInterval(intervalRef.current);
-      }
+            for (let i = 0; i < sortedTimecodes.length; i++) {
+                const currentTc = sortedTimecodes[i];
+                const start = currentTc.startTime;
+                const end = currentTc.endTime ?? Infinity;
+
+                if (currentTime >= start && currentTime < end) {
+                    newActiveItemIndex = flattenedItems.findIndex(item => item.id === currentTc.itemId);
+                    break;
+                }
+            }
+            
+            if (newActiveItemIndex === -1 && currentTime < sortedTimecodes[0].startTime) {
+                newActiveItemIndex = flattenedItems.findIndex(item => item.id === sortedTimecodes[0].itemId);
+            }
+
+            if (newActiveItemIndex !== -1 && newActiveItemIndex !== currentIndex) {
+                setCurrentIndex(newActiveItemIndex);
+            }
+        }, 250);
+    } else {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    }
   }, [isAutoPlaying, player, timecodes, flattenedItems, currentIndex]);
   
   const handleSaveAndExit = () => {
@@ -360,28 +372,38 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   };
 
   const openTimecodeEditor = () => {
-    setTempTimecodes([...timecodes]);
+    setTempTimecodes(JSON.parse(JSON.stringify(timecodes)));
     setIsEditingTimecodes(true);
   };
 
   const saveTimecodeChanges = () => {
-    setTimecodes(tempTimecodes.sort((a,b) => a.time - b.time));
+    setTimecodes(tempTimecodes.sort((a,b) => a.startTime - b.startTime));
     setIsEditingTimecodes(false);
   };
 
-  const handleTempTimecodeChange = (itemId: string, newTimeStr: string) => {
+  const handleTempTimecodeChange = (itemId: string, field: 'startTime' | 'endTime', newTimeStr: string) => {
     const newTimeInSeconds = parseTime(newTimeStr);
-    if (isNaN(newTimeInSeconds)) return;
+    const finalTime = newTimeStr.trim() === '' ? null : (isNaN(newTimeInSeconds) ? 'invalid' : newTimeInSeconds);
+    
+    if (finalTime === 'invalid') return;
 
     setTempTimecodes(prev => {
-        const existing = prev.find(tc => tc.itemId === itemId);
-        if (existing) {
-            return prev.map(tc => tc.itemId === itemId ? { ...tc, time: newTimeInSeconds } : tc);
+        const existingIndex = prev.findIndex(tc => tc.itemId === itemId);
+        if (existingIndex > -1) {
+            const updated = [...prev];
+            updated[existingIndex] = { ...updated[existingIndex], [field]: finalTime };
+            return updated;
         } else {
-            return [...prev, { itemId, time: newTimeInSeconds }];
+            const newTc: Timecode = { 
+                itemId, 
+                startTime: 0,
+                endTime: null,
+                [field]: finalTime,
+            };
+            return [...prev, newTc];
         }
     });
-  }
+  };
 
   const currentItemHasTimecode = useMemo(() => {
     if (!flattenedItems[currentIndex]) return false;
@@ -395,7 +417,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
         <h2 className="text-2xl font-bold">Slideshow Mode</h2>
         <div className="flex items-center gap-4">
             <button onClick={handleSaveAndExit} className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Save & Exit</button>
-            <button onClick={onExit} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover-bg-gray-600"><CloseIcon/></button>
+            <button onClick={onExit} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"><CloseIcon/></button>
         </div>
       </div>
       
@@ -418,7 +440,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
         {/* Annotation Viewer */}
         <div className={`bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center p-8 relative ${!showVideo ? 'col-span-1 md:col-span-2' : ''}`}>
           <div className="absolute top-4 right-4 flex items-center gap-4 z-10">
-            {currentItemHasTimecode && <ClockIcon className="w-5 h-5 text-blue-500" title={`Timecode: ${formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id) ?? 0)}`} />}
+            {currentItemHasTimecode && <ClockIcon className="w-5 h-5 text-blue-500" title={`Start: ${formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.startTime)} | End: ${timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime !== null ? formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime!) : 'N/A'}`} />}
             <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500 dark:text-gray-400">Annotation:</span>
                 <select value={annotationDisplay} onChange={e => setAnnotationDisplay(e.target.value as AnnotationDisplay)} className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 dark:border-gray-600">
@@ -432,7 +454,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                 <select value={granularity} onChange={e => setGranularity(e.target.value as Granularity)} className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 dark:border-gray-600">
                     <option value="line">Line</option>
                     <option value="sentence">Sentence</option>
-                    <option value="paragraph">Paragraph/Stanza</option>
+                    <option value="paragraph">{unitName}</option>
                 </select>
             </div>
           </div>
@@ -444,61 +466,64 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
 
       {/* Controls */}
       <div className="flex-shrink-0 mt-4 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg">
-         <div className="flex justify-between items-center w-full">
-             <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex justify-between items-center w-full gap-4">
+            {/* Left-aligned controls */}
+            <div className="flex items-center gap-2 flex-wrap justify-start">
                 <button onClick={() => setShowVideo(p => !p)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" title={showVideo ? "Hide Video" : "Show Video"}>
-                  {showVideo ? <VideoOffIcon className="w-6 h-6"/> : <VideoIcon className="w-6 h-6"/>}
+                    {showVideo ? <VideoOffIcon className="w-6 h-6"/> : <VideoIcon className="w-6 h-6"/>}
                 </button>
-                
-                {isAutoPlaying ? (
-                  <button onClick={handlePausePlayback} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Pause Sync">
-                      <PauseIcon className="w-5 h-5"/> Pause Playback
-                  </button>
+                 {isAutoPlaying ? (
+                    <button onClick={handlePausePlayback} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Pause Sync">
+                        <PauseIcon className="w-5 h-5"/> Pause Playback
+                    </button>
                 ) : (
-                  <>
-                    <button onClick={handleManualPlay} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={!showVideo || !player} title="Manual Playback">
-                        <PlayIcon className="w-5 h-5"/> Manual Playback
-                    </button>
-                    <button onClick={handlePlayFromBeginning} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Start">
-                        Play from Beginning
-                    </button>
-                    <button onClick={handlePlayFromCurrent} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Current">
-                        Play from Current Slide
-                    </button>
-                  </>
+                    <>
+                        <button onClick={handlePlayFromBeginning} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Start">
+                           <PlayIcon className="w-5 h-5"/> Play from Beginning
+                        </button>
+                        <button onClick={handlePlayFromCurrent} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Current">
+                           <PlayIcon className="w-5 h-5"/> Play from Current
+                        </button>
+                    </>
                 )}
+            </div>
 
-                <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={flattenedItems.length === 0}>Edit Timecodes</button>
-                
-                {recordingStatus === 'idle' && (
-                  <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white disabled:opacity-50" disabled={!showVideo || !player}>Record Timecodes</button>
-                )}
-                {recordingStatus === 'recording' && (
-                  <>
-                    <button onClick={stopRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 hover:bg-yellow-700 text-white">Stop Recording</button>
-                    <button onClick={handleRecordTimecode} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
-                      <RecordIcon className="w-5 h-5" /> Record & Next (R)
-                    </button>
-                  </>
-                )}
-                {recordingStatus === 'paused' && (
-                  <>
-                    <button onClick={resumeRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-green-600 hover:bg-green-700 text-white">Resume Recording</button>
-                    <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-500 hover:bg-gray-600 text-white">Start Over</button>
-                    <button onClick={finishRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white">Finish Recording</button>
-                  </>
-                )}
-             </div>
+            {/* Right-aligned editing and navigation controls */}
+            <div className="flex items-center gap-4 justify-end">
+                <div className="flex items-center gap-2 flex-wrap">
+                    <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={flattenedItems.length === 0}>Edit Timecodes</button>
+                    
+                    {recordingStatus === 'idle' && (
+                        <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player}>
+                          <RecordIcon className="w-5 h-5" /> Record Timecodes
+                        </button>
+                    )}
+                    {recordingStatus === 'recording' && (
+                        <>
+                            <button onClick={stopRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 hover:bg-yellow-700 text-white">Stop</button>
+                            <button onClick={handleRecordTimecode} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
+                                <RecordIcon className="w-5 h-5" /> Next (R)
+                            </button>
+                        </>
+                    )}
+                    {recordingStatus === 'paused' && (
+                        <>
+                            <button onClick={resumeRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-green-600 hover:bg-green-700 text-white">Resume</button>
+                            <button onClick={finishRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white">Finish</button>
+                        </>
+                    )}
+                </div>
 
-             <div className="flex items-center gap-4 font-medium">
-                <button onClick={() => setCurrentIndex(p => Math.max(0, p - 1))} disabled={currentIndex === 0} className="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Prev</button>
-                <span className="text-sm text-gray-500 dark:text-gray-400 select-none">{flattenedItems.length > 0 ? currentIndex + 1 : 0} / {flattenedItems.length}</span>
-                <button onClick={() => setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1))} disabled={currentIndex >= flattenedItems.length - 1} className="px-4 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Next</button>
-             </div>
-         </div>
+                <div className="flex items-center gap-2 font-medium border-l border-gray-300 dark:border-gray-600 pl-4">
+                    <button onClick={() => setCurrentIndex(p => Math.max(0, p - 1))} disabled={currentIndex === 0} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Prev</button>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 select-none w-12 text-center">{flattenedItems.length > 0 ? currentIndex + 1 : 0} / {flattenedItems.length}</span>
+                    <button onClick={() => setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1))} disabled={currentIndex >= flattenedItems.length - 1} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Next</button>
+                </div>
+            </div>
+        </div>
          <div className="text-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 w-full">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-                Keyboard Shortcuts: <b>Space</b> (Play/Pause Video), <b>← →</b> (Prev/Next Slide), <b>R</b> (Record Timecode)
+                Keyboard Shortcuts: Click video to play/pause, <b>← →</b> (Prev/Next Slide), <b>R</b> (Record Timecode)
             </p>
          </div>
       </div>
@@ -529,25 +554,36 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       {/* Timecode Editor Modal */}
       {isEditingTimecodes && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setIsEditingTimecodes(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-0 w-full max-w-2xl flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-0 w-full max-w-3xl flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                     <h3 className="text-lg font-bold">Edit Timecodes</h3>
                 </div>
                 <div className="p-4 overflow-y-auto flex-grow">
                     <div className="space-y-2">
                         {flattenedItems.map(item => {
-                             const tempTimecodeValue = tempTimecodes.find(tc => tc.itemId === item.id)?.time ?? null;
-                             return (
-                                <div key={item.id} className="grid grid-cols-4 items-center gap-4 p-2 rounded-md bg-gray-50 dark:bg-gray-700/50">
+                            const tempTc = tempTimecodes.find(tc => tc.itemId === item.id) ?? { itemId: item.id, startTime: NaN, endTime: null };
+                            return (
+                                <div key={item.id} className="grid grid-cols-5 items-center gap-4 p-2 rounded-md bg-gray-50 dark:bg-gray-700/50">
                                     <div className="col-span-3 text-sm truncate text-gray-600 dark:text-gray-300">
                                         <div className="w-full max-h-12 overflow-hidden text-ellipsis">{item.content}</div>
                                     </div>
-                                    <div className="col-span-1">
+                                    <div className="col-span-2 flex items-center gap-2">
                                         <input
                                             type="text"
-                                            value={formatTime(tempTimecodeValue ?? -1)}
-                                            onChange={(e) => handleTempTimecodeChange(item.id, e.target.value)}
+                                            placeholder="--:--.--"
+                                            value={formatTime(tempTc.startTime)}
+                                            onChange={(e) => handleTempTimecodeChange(item.id, 'startTime', e.target.value)}
                                             className="w-full p-1 text-sm rounded-md bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-center"
+                                            title="Start Time"
+                                        />
+                                        <span className="text-gray-400">-</span>
+                                        <input
+                                            type="text"
+                                            placeholder="--:--.--"
+                                            value={tempTc.endTime !== null ? formatTime(tempTc.endTime) : ''}
+                                            onChange={(e) => handleTempTimecodeChange(item.id, 'endTime', e.target.value)}
+                                            className="w-full p-1 text-sm rounded-md bg-gray-200 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-center"
+                                            title="End Time"
                                         />
                                     </div>
                                 </div>

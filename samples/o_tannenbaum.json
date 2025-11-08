@@ -1,0 +1,213 @@
+{
+  "id": "sample-tannenbaum",
+  "title": "O Tannenbaum: German song with video slideshow",
+  "timestamp": "2024-01-02T12:00:00.000Z",
+  "sourceText": "O Tannenbaum, o Tannenbaum,\nwie treu sind deine Blätter!\nDu grünst nicht nur zur Sommerzeit,\nnein, auch im Winter, wenn es schneit.\nO Tannenbaum, o Tannenbaum,\nwie treu sind deine Blätter!\n\nO Tannenbaum, o Tannenbaum,\ndu kannst mir sehr gefallen!\nWie oft hat nicht zur Weihnachtszeit\nein Baum von dir mich hoch erfreut!\nO Tannenbaum, o Tannenbaum,\ndu kannst mir sehr gefallen!\n\nO Tannenbaum, o Tannenbaum,\ndein Kleid will mich was lehren:\nDie Hoffnung und Beständigkeit\ngibt Trost und Kraft zu jeder Zeit.\nO Tannenbaum, o Tannenbaum,\ndein Kleid will mich was lehren.",
+  "sourceLang": "German",
+  "targetLang": "English",
+  "annotation": {
+    "textType": "poem",
+    "stanzas": [
+      {
+        "lines": [
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "wie", "translation": "how", "grammar": "Adverb" },
+              { "original": "treu", "translation": "faithful", "grammar": "Adjective" },
+              { "original": "sind", "translation": "are", "grammar": "V: Pres, Ind, Act, 3rd, Pl" },
+              { "original": "deine", "translation": "your", "grammar": "Poss Det: Nom, Pl" },
+              { "original": "Blätter!", "translation": "leaves!", "grammar": "Noun: Nom, Neut, Pl" }
+            ], "idiomaticTranslation": "how faithful are your leaves!"
+          },
+          {
+            "words": [
+              { "original": "Du", "translation": "You", "grammar": "Pron: Nom, 2nd, Sg" },
+              { "original": "grünst", "translation": "are green", "grammar": "V: Pres, Ind, Act, 2nd, Sg" },
+              { "original": "nicht", "translation": "not", "grammar": "Adverb" },
+              { "original": "nur", "translation": "only", "grammar": "Adverb" },
+              { "original": "zur", "translation": "to the (at the)", "grammar": "Prep + Art: zu + der, Dat" },
+              { "original": "Sommerzeit,", "translation": "summer time,", "grammar": "Noun: Dat, Fem, Sg" }
+            ], "idiomaticTranslation": "You are green not only in summer,"
+          },
+          {
+            "words": [
+              { "original": "nein,", "translation": "no,", "grammar": "Interjection" },
+              { "original": "auch", "translation": "also", "grammar": "Adverb" },
+              { "original": "im", "translation": "in the", "grammar": "Prep + Art: in + dem, Dat" },
+              { "original": "Winter,", "translation": "winter,", "grammar": "Noun: Dat, Masc, Sg" },
+              { "original": "wenn", "translation": "when", "grammar": "Conjunction" },
+              { "original": "es", "translation": "it", "grammar": "Pron: Nom, Neut, Sg" },
+              { "original": "schneit.", "translation": "snows.", "grammar": "V: Pres, Ind, Act, 3rd, Sg (impersonal)" }
+            ], "idiomaticTranslation": "no, also in winter, when it snows."
+          },
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "wie", "translation": "how", "grammar": "Adverb" },
+              { "original": "treu", "translation": "faithful", "grammar": "Adjective" },
+              { "original": "sind", "translation": "are", "grammar": "V: Pres, Ind, Act, 3rd, Pl" },
+              { "original": "deine", "translation": "your", "grammar": "Poss Det: Nom, Pl" },
+              { "original": "Blätter!", "translation": "leaves!", "grammar": "Noun: Nom, Neut, Pl" }
+            ], "idiomaticTranslation": "how faithful are your leaves!"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "du", "translation": "you", "grammar": "Pron: Nom, 2nd, Sg" },
+              { "original": "kannst", "translation": "can", "grammar": "V: Pres, Ind, Act, 2nd, Sg (modal)" },
+              { "original": "mir", "translation": "me (to me)", "grammar": "Pron: Dat, 1st, Sg" },
+              { "original": "sehr", "translation": "very", "grammar": "Adverb" },
+              { "original": "gefallen!", "translation": "please!", "grammar": "V: Inf" }
+            ], "idiomaticTranslation": "you can please me greatly!"
+          },
+          {
+            "words": [
+              { "original": "Wie", "translation": "How", "grammar": "Adverb" },
+              { "original": "oft", "translation": "often", "grammar": "Adverb" },
+              { "original": "hat", "translation": "has", "grammar": "Aux V: Pres, Ind, Act, 3rd, Sg" },
+              { "original": "nicht", "translation": "not", "grammar": "Adverb" },
+              { "original": "zur", "translation": "to the (at the)", "grammar": "Prep + Art: zu + der, Dat" },
+              { "original": "Weihnachtszeit", "translation": "Christmas time", "grammar": "Noun: Dat, Fem, Sg" }
+            ], "idiomaticTranslation": "How often, not at Christmas time,"
+          },
+          {
+            "words": [
+              { "original": "ein", "translation": "a", "grammar": "Art: Nom, Masc, Sg" },
+              { "original": "Baum", "translation": "tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "von", "translation": "from", "grammar": "Prep: Dat" },
+              { "original": "dir", "translation": "you", "grammar": "Pron: Dat, 2nd, Sg" },
+              { "original": "mich", "translation": "me", "grammar": "Pron: Acc, 1st, Sg" },
+              { "original": "hoch", "translation": "highly", "grammar": "Adverb" },
+              { "original": "erfreut!", "translation": "delighted!", "grammar": "V: Past Participle" }
+            ], "idiomaticTranslation": "a tree like you delighted me highly!"
+          },
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "du", "translation": "you", "grammar": "Pron: Nom, 2nd, Sg" },
+              { "original": "kannst", "translation": "can", "grammar": "V: Pres, Ind, Act, 2nd, Sg (modal)" },
+              { "original": "mir", "translation": "me (to me)", "grammar": "Pron: Dat, 1st, Sg" },
+              { "original": "sehr", "translation": "very", "grammar": "Adverb" },
+              { "original": "gefallen!", "translation": "please!", "grammar": "V: Inf" }
+            ], "idiomaticTranslation": "you can please me greatly!"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "dein", "translation": "your", "grammar": "Poss Det: Nom, Neut, Sg" },
+              { "original": "Kleid", "translation": "garment/dress", "grammar": "Noun: Nom, Neut, Sg" },
+              { "original": "will", "translation": "wants", "grammar": "V: Pres, Ind, Act, 3rd, Sg (modal)" },
+              { "original": "mich", "translation": "me", "grammar": "Pron: Acc, 1st, Sg" },
+              { "original": "was", "translation": "something", "grammar": "Pron: Indef, Acc, Neut, Sg" },
+              { "original": "lehren:", "translation": "teach:", "grammar": "V: Inf" }
+            ], "idiomaticTranslation": "your garment wants to teach me something:"
+          },
+          {
+            "words": [
+              { "original": "Die", "translation": "The", "grammar": "Art: Nom, Fem, Sg" },
+              { "original": "Hoffnung", "translation": "hope", "grammar": "Noun: Nom, Fem, Sg" },
+              { "original": "und", "translation": "and", "grammar": "Conjunction" },
+              { "original": "Beständigkeit", "translation": "constancy", "grammar": "Noun: Nom, Fem, Sg" }
+            ], "idiomaticTranslation": "Hope and constancy"
+          },
+          {
+            "words": [
+              { "original": "gibt", "translation": "gives", "grammar": "V: Pres, Ind, Act, 3rd, Sg" },
+              { "original": "Trost", "translation": "comfort", "grammar": "Noun: Acc, Masc, Sg" },
+              { "original": "und", "translation": "and", "grammar": "Conjunction" },
+              { "original": "Kraft", "translation": "strength", "grammar": "Noun: Acc, Fem, Sg" },
+              { "original": "zu", "translation": "at", "grammar": "Prep: Dat" },
+              { "original": "jeder", "translation": "every", "grammar": "Det/Adj: Dat, Fem, Sg" },
+              { "original": "Zeit.", "translation": "time.", "grammar": "Noun: Dat, Fem, Sg" }
+            ], "idiomaticTranslation": "give comfort and strength at all times."
+          },
+          {
+            "words": [
+              { "original": "O", "translation": "Oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" },
+              { "original": "o", "translation": "oh", "grammar": "Interjection" },
+              { "original": "Tannenbaum,", "translation": "fir tree", "grammar": "Noun: Nom, Masc, Sg" }
+            ], "idiomaticTranslation": "Oh fir tree, oh fir tree,"
+          },
+          {
+            "words": [
+              { "original": "dein", "translation": "your", "grammar": "Poss Det: Nom, Neut, Sg" },
+              { "original": "Kleid", "translation": "garment/dress", "grammar": "Noun: Nom, Neut, Sg" },
+              { "original": "will", "translation": "wants", "grammar": "V: Pres, Ind, Act, 3rd, Sg (modal)" },
+              { "original": "mich", "translation": "me", "grammar": "Pron: Acc, 1st, Sg" },
+              { "original": "was", "translation": "something", "grammar": "Pron: Indef, Acc, Neut, Sg" },
+              { "original": "lehren.", "translation": "teach.", "grammar": "V: Inf" }
+            ], "idiomaticTranslation": "your garment wants to teach me something."
+          }
+        ]
+      }
+    ]
+  },
+  "slideshowData": {
+    "youtubeUrl": "https://www.youtube.com/watch?v=j9U1gJy8AvE",
+    "timecodes": [
+      { "itemId": "s0-l0", "startTime": 0.5, "endTime": 5.5 },
+      { "itemId": "s0-l1", "startTime": 5.5, "endTime": 10.5 },
+      { "itemId": "s0-l2", "startTime": 11, "endTime": 15 },
+      { "itemId": "s0-l3", "startTime": 15, "endTime": 20 },
+      { "itemId": "s0-l4", "startTime": 20.5, "endTime": 25.5 },
+      { "itemId": "s0-l5", "startTime": 25.5, "endTime": 30 },
+      { "itemId": "s1-l0", "startTime": 31.5, "endTime": 36.5 },
+      { "itemId": "s1-l1", "startTime": 36.5, "endTime": 40.5 },
+      { "itemId": "s1-l2", "startTime": 42, "endTime": 45.5 },
+      { "itemId": "s1-l3", "startTime": 46, "endTime": 50 },
+      { "itemId": "s1-l4", "startTime": 50.5, "endTime": 55.5 },
+      { "itemId": "s1-l5", "startTime": 55.5, "endTime": 59.5 },
+      { "itemId": "s2-l0", "startTime": 61, "endTime": 65.5 },
+      { "itemId": "s2-l1", "startTime": 65.5, "endTime": 70 },
+      { "itemId": "s2-l2", "startTime": 71, "endTime": 74 },
+      { "itemId": "s2-l3", "startTime": 74, "endTime": 78.5 },
+      { "itemId": "s2-l4", "startTime": 79, "endTime": 84 },
+      { "itemId": "s2-l5", "startTime": 84, "endTime": 88.5 }
+    ]
+  }
+}

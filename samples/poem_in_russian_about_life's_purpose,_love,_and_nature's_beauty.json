@@ -1,0 +1,919 @@
+{
+  "id": "94630f87-382a-4efc-8348-b72434468999",
+  "title": "Song by a Russian Bard",
+  "timestamp": "2025-11-08T01:24:01.879Z",
+  "annotation": {
+    "stanzas": [
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Виноградную",
+                "translation": "Grape",
+                "grammar": "Adj: Acc, Fem, Sg"
+              },
+              {
+                "original": "косточку",
+                "translation": "seed",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "в",
+                "translation": "into",
+                "grammar": "Prep: Acc"
+              },
+              {
+                "original": "теплую",
+                "translation": "warm",
+                "grammar": "Adj: Acc, Fem, Sg"
+              },
+              {
+                "original": "землю",
+                "translation": "earth",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "зарою",
+                "translation": "I will bury",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "I will bury a grape seed in the warm earth,"
+          },
+          {
+            "words": [
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "лозу",
+                "translation": "vine",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "поцелую",
+                "translation": "I will kiss",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "спелые",
+                "translation": "ripe",
+                "grammar": "Adj: Acc, Pl"
+              },
+              {
+                "original": "гроздья",
+                "translation": "clusters",
+                "grammar": "Noun: Acc, Pl"
+              },
+              {
+                "original": "сорву",
+                "translation": "I will pluck",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "and kiss the vine, and pluck the ripe clusters,"
+          },
+          {
+            "words": [
+              {
+                "original": "И",
+                "translation": "And",
+                "grammar": "Conj"
+              },
+              {
+                "original": "друзей",
+                "translation": "friends",
+                "grammar": "Noun: Acc, Pl"
+              },
+              {
+                "original": "созову",
+                "translation": "I will invite",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "на",
+                "translation": "for",
+                "grammar": "Prep: Acc"
+              },
+              {
+                "original": "любовь",
+                "translation": "love",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "свое",
+                "translation": "my own",
+                "grammar": "Pron: Poss, Refl, Acc, Neu, Sg"
+              },
+              {
+                "original": "сердце",
+                "translation": "heart",
+                "grammar": "Noun: Acc, Neu, Sg"
+              },
+              {
+                "original": "настрою",
+                "translation": "I will tune",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "And I will invite friends, and tune my heart to love."
+          },
+          {
+            "words": [
+              {
+                "original": "А",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "иначе",
+                "translation": "otherwise",
+                "grammar": "Adv"
+              },
+              {
+                "original": "зачем",
+                "translation": "why",
+                "grammar": "Adv"
+              },
+              {
+                "original": "на",
+                "translation": "on",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "земле",
+                "translation": "earth",
+                "grammar": "Noun: Loc, Fem, Sg"
+              },
+              {
+                "original": "этой",
+                "translation": "this",
+                "grammar": "Pron: Dem, Loc, Fem, Sg"
+              },
+              {
+                "original": "вечной",
+                "translation": "eternal",
+                "grammar": "Adj: Loc, Fem, Sg"
+              },
+              {
+                "original": "живу",
+                "translation": "I live",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Otherwise, why do I live on this eternal earth?"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Собирайтесь",
+                "translation": "Gather",
+                "grammar": "V: Impv, Act, 2nd, Pl"
+              },
+              {
+                "original": "-ка",
+                "translation": "-please",
+                "grammar": "Part"
+              },
+              {
+                "original": "гости",
+                "translation": "guests",
+                "grammar": "Noun: Voc (Nom), Pl"
+              },
+              {
+                "original": "мои",
+                "translation": "my",
+                "grammar": "Pron: Poss, Nom, Pl"
+              },
+              {
+                "original": "на",
+                "translation": "for",
+                "grammar": "Prep: Acc"
+              },
+              {
+                "original": "мое",
+                "translation": "my",
+                "grammar": "Pron: Poss, Acc, Neu, Sg"
+              },
+              {
+                "original": "угощенье",
+                "translation": "treat",
+                "grammar": "Noun: Acc, Neu, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Gather, my guests, for my treat,"
+          },
+          {
+            "words": [
+              {
+                "original": "Говорите",
+                "translation": "Speak",
+                "grammar": "V: Impv, Act, 2nd, Pl"
+              },
+              {
+                "original": "мне",
+                "translation": "to me",
+                "grammar": "Pron: Pers, Dat, 1st, Sg"
+              },
+              {
+                "original": "прямо",
+                "translation": "directly",
+                "grammar": "Adv"
+              },
+              {
+                "original": "в",
+                "translation": "in",
+                "grammar": "Prep: Acc"
+              },
+              {
+                "original": "лицо",
+                "translation": "face",
+                "grammar": "Noun: Acc, Neu, Sg"
+              },
+              {
+                "original": "кем",
+                "translation": "as whom",
+                "grammar": "Pron: Rel, Inst, Sg"
+              },
+              {
+                "original": "пред",
+                "translation": "before",
+                "grammar": "Prep: Inst"
+              },
+              {
+                "original": "вами",
+                "translation": "you",
+                "grammar": "Pron: Pers, Inst, 2nd, Pl"
+              },
+              {
+                "original": "слыву",
+                "translation": "I am reputed",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Speak directly to my face, as whom I am reputed before you."
+          },
+          {
+            "words": [
+              {
+                "original": "Царь",
+                "translation": "King",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "Небесный",
+                "translation": "Heavenly",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "пошлет",
+                "translation": "will send",
+                "grammar": "V: Fut, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "мне",
+                "translation": "to me",
+                "grammar": "Pron: Pers, Dat, 1st, Sg"
+              },
+              {
+                "original": "прощенье",
+                "translation": "forgiveness",
+                "grammar": "Noun: Acc, Neu, Sg"
+              },
+              {
+                "original": "за",
+                "translation": "for",
+                "grammar": "Prep: Acc"
+              },
+              {
+                "original": "прегрешенья",
+                "translation": "sins",
+                "grammar": "Noun: Acc, Pl"
+              }
+            ],
+            "idiomaticTranslation": "The Heavenly King will send me forgiveness for my sins."
+          },
+          {
+            "words": [
+              {
+                "original": "А",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "иначе",
+                "translation": "otherwise",
+                "grammar": "Adv"
+              },
+              {
+                "original": "зачем",
+                "translation": "why",
+                "grammar": "Adv"
+              },
+              {
+                "original": "на",
+                "translation": "on",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "земле",
+                "translation": "earth",
+                "grammar": "Noun: Loc, Fem, Sg"
+              },
+              {
+                "original": "этой",
+                "translation": "this",
+                "grammar": "Pron: Dem, Loc, Fem, Sg"
+              },
+              {
+                "original": "вечной",
+                "translation": "eternal",
+                "grammar": "Adj: Loc, Fem, Sg"
+              },
+              {
+                "original": "живу",
+                "translation": "I live",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Otherwise, why do I live on this eternal earth?"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "В",
+                "translation": "In",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "темно-красном",
+                "translation": "dark-red",
+                "grammar": "Adj: Loc, Neu, Sg"
+              },
+              {
+                "original": "своем",
+                "translation": "her own",
+                "grammar": "Pron: Poss, Refl, Loc, Neu, Sg"
+              },
+              {
+                "original": "будет",
+                "translation": "will be",
+                "grammar": "V: Fut, Ind, 3rd, Sg"
+              },
+              {
+                "original": "петь",
+                "translation": "to sing",
+                "grammar": "V: Inf"
+              },
+              {
+                "original": "для",
+                "translation": "for",
+                "grammar": "Prep: Gen"
+              },
+              {
+                "original": "меня",
+                "translation": "me",
+                "grammar": "Pron: Pers, Gen, 1st, Sg"
+              },
+              {
+                "original": "моя",
+                "translation": "my",
+                "grammar": "Pron: Poss, Nom, Fem, Sg"
+              },
+              {
+                "original": "Дали",
+                "translation": "Dali",
+                "grammar": "Noun: Prop, Nom, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "In her dark-red (dress), my Dali will sing for me,"
+          },
+          {
+            "words": [
+              {
+                "original": "В",
+                "translation": "In",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "черно-белом",
+                "translation": "black-and-white",
+                "grammar": "Adj: Loc, Neu, Sg"
+              },
+              {
+                "original": "своем",
+                "translation": "my own",
+                "grammar": "Pron: Poss, Refl, Loc, Neu, Sg"
+              },
+              {
+                "original": "преклоню",
+                "translation": "I will bow",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "перед",
+                "translation": "before",
+                "grammar": "Prep: Inst"
+              },
+              {
+                "original": "нею",
+                "translation": "her",
+                "grammar": "Pron: Pers, Inst, 3rd, Fem, Sg"
+              },
+              {
+                "original": "главу",
+                "translation": "head",
+                "grammar": "Noun: Acc, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "In my black-and-white (attire), I will bow my head before her."
+          },
+          {
+            "words": [
+              {
+                "original": "И",
+                "translation": "And",
+                "grammar": "Conj"
+              },
+              {
+                "original": "заслушаюсь",
+                "translation": "I will become engrossed in listening",
+                "grammar": "V: Fut, Ind, Pass/Refl, 1st, Sg"
+              },
+              {
+                "original": "я",
+                "translation": "I",
+                "grammar": "Pron: Pers, Nom, 1st, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "умру",
+                "translation": "I will die",
+                "grammar": "V: Fut, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "от",
+                "translation": "from",
+                "grammar": "Prep: Gen"
+              },
+              {
+                "original": "любви",
+                "translation": "love",
+                "grammar": "Noun: Gen, Fem, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "печали",
+                "translation": "sorrow",
+                "grammar": "Noun: Gen, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "And I will become engrossed in listening, and die from love and sorrow."
+          },
+          {
+            "words": [
+              {
+                "original": "А",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "иначе",
+                "translation": "otherwise",
+                "grammar": "Adv"
+              },
+              {
+                "original": "зачем",
+                "translation": "why",
+                "grammar": "Adv"
+              },
+              {
+                "original": "на",
+                "translation": "on",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "земле",
+                "translation": "earth",
+                "grammar": "Noun: Loc, Fem, Sg"
+              },
+              {
+                "original": "этой",
+                "translation": "this",
+                "grammar": "Pron: Dem, Loc, Fem, Sg"
+              },
+              {
+                "original": "вечной",
+                "translation": "eternal",
+                "grammar": "Adj: Loc, Fem, Sg"
+              },
+              {
+                "original": "живу",
+                "translation": "I live",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Otherwise, why do I live on this eternal earth?"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "И",
+                "translation": "And",
+                "grammar": "Conj"
+              },
+              {
+                "original": "когда",
+                "translation": "when",
+                "grammar": "Adv"
+              },
+              {
+                "original": "заклубится",
+                "translation": "swirls",
+                "grammar": "V: Fut, Ind, Pass/Refl, 3rd, Sg"
+              },
+              {
+                "original": "закат",
+                "translation": "sunset",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "по",
+                "translation": "along",
+                "grammar": "Prep: Dat"
+              },
+              {
+                "original": "углам",
+                "translation": "corners",
+                "grammar": "Noun: Dat, Pl"
+              },
+              {
+                "original": "залетая",
+                "translation": "flying in",
+                "grammar": "V: Pres, Adv Part"
+              }
+            ],
+            "idiomaticTranslation": "And when the sunset swirls, flying into the corners,"
+          },
+          {
+            "words": [
+              {
+                "original": "Пусть",
+                "translation": "Let",
+                "grammar": "Part"
+              },
+              {
+                "original": "опять",
+                "translation": "again",
+                "grammar": "Adv"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "опять",
+                "translation": "again",
+                "grammar": "Adv"
+              },
+              {
+                "original": "предо",
+                "translation": "before",
+                "grammar": "Prep: Inst"
+              },
+              {
+                "original": "мною",
+                "translation": "me",
+                "grammar": "Pron: Pers, Inst, 1st, Sg"
+              },
+              {
+                "original": "плывут",
+                "translation": "float",
+                "grammar": "V: Pres, Ind, Act, 3rd, Pl"
+              },
+              {
+                "original": "наяву",
+                "translation": "in reality",
+                "grammar": "Adv"
+              }
+            ],
+            "idiomaticTranslation": "Let again and again, before me, float in reality"
+          },
+          {
+            "words": [
+              {
+                "original": "Синий",
+                "translation": "Blue",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "буйвол",
+                "translation": "buffalo",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "белый",
+                "translation": "white",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "орел",
+                "translation": "eagle",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "форель",
+                "translation": "trout",
+                "grammar": "Noun: Nom, Fem, Sg"
+              },
+              {
+                "original": "золотая",
+                "translation": "golden",
+                "grammar": "Adj: Nom, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "A blue buffalo, and a white eagle, and a golden trout."
+          },
+          {
+            "words": [
+              {
+                "original": "А",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "иначе",
+                "translation": "otherwise",
+                "grammar": "Adv"
+              },
+              {
+                "original": "зачем",
+                "translation": "why",
+                "grammar": "Adv"
+              },
+              {
+                "original": "на",
+                "translation": "on",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "земле",
+                "translation": "earth",
+                "grammar": "Noun: Loc, Fem, Sg"
+              },
+              {
+                "original": "этой",
+                "translation": "this",
+                "grammar": "Pron: Dem, Loc, Fem, Sg"
+              },
+              {
+                "original": "вечной",
+                "translation": "eternal",
+                "grammar": "Adj: Loc, Fem, Sg"
+              },
+              {
+                "original": "живу",
+                "translation": "I live",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Otherwise, why do I live on this eternal earth?"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Синий",
+                "translation": "Blue",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "буйвол",
+                "translation": "buffalo",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "белый",
+                "translation": "white",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "орел",
+                "translation": "eagle",
+                "grammar": "Noun: Nom, Masc, Sg"
+              },
+              {
+                "original": "и",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "форель",
+                "translation": "trout",
+                "grammar": "Noun: Nom, Fem, Sg"
+              },
+              {
+                "original": "золотая",
+                "translation": "golden",
+                "grammar": "Adj: Nom, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "A blue buffalo, and a white eagle, and a golden trout."
+          },
+          {
+            "words": [
+              {
+                "original": "А",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "иначе",
+                "translation": "otherwise",
+                "grammar": "Adv"
+              },
+              {
+                "original": "зачем",
+                "translation": "why",
+                "grammar": "Adv"
+              },
+              {
+                "original": "на",
+                "translation": "on",
+                "grammar": "Prep: Loc"
+              },
+              {
+                "original": "земле",
+                "translation": "earth",
+                "grammar": "Noun: Loc, Fem, Sg"
+              },
+              {
+                "original": "этой",
+                "translation": "this",
+                "grammar": "Pron: Dem, Loc, Fem, Sg"
+              },
+              {
+                "original": "вечной",
+                "translation": "eternal",
+                "grammar": "Adj: Loc, Fem, Sg"
+              },
+              {
+                "original": "живу",
+                "translation": "I live",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Otherwise, why do I live on this eternal earth?"
+          }
+        ]
+      }
+    ],
+    "textType": "poem"
+  },
+  "sourceText": "[00:03.111] Виноградную косточку в теплую землю зарою,\n[00:09.281] и лозу поцелую, и спелые гроздья сорву,\n[00:15.531] И друзей созову, на любовь свое сердце настрою.\n[00:22.501] А иначе зачем на земле этой вечной живу?\n[00:29.351] Собирайтесь-ка, гости мои, на мое угощенье,\n[00:35.651] Говорите мне прямо в лицо, кем пред вами слыву.\n[00:42.341] Царь Небесный пошлет мне прощенье за прегрешенья.\n[00:49.291] А иначе зачем на земле этой вечной живу?\n[00:55.671] В темно-красном своем будет петь для меня моя Дали,\n[01:02.661] В черно-белом своем преклоню перед нею главу.\n[01:08.991] И заслушаюсь я, и умру от любви и печали.\n[01:15.791] А иначе зачем на земле этой вечной живу?\n[01:22.391] И когда заклубится закат, по углам залетая,\n[01:28.481] Пусть опять и опять предо мною плывут наяву\n[01:35.691] Синий буйвол, и белый орел, и форель золотая.\n[01:41.871] А иначе зачем на земле этой вечной живу?\n[01:48.431] Синий буйвол, и белый орел, и форель золотая.\n[01:55.221] А иначе зачем на земле этой вечной живу?",
+  "sourceLang": "Autodetect Language",
+  "targetLang": "English",
+  "slideshowData": {
+    "youtubeUrl": "https://www.youtube.com/watch?v=z5OeaZ4CvFU",
+    "timecodes": [
+      {
+        "itemId": "s0-l0",
+        "startTime": 3.111,
+        "endTime": 9.281
+      },
+      {
+        "itemId": "s0-l1",
+        "startTime": 9.281,
+        "endTime": 15.531
+      },
+      {
+        "itemId": "s0-l2",
+        "startTime": 15.531,
+        "endTime": 22.501
+      },
+      {
+        "itemId": "s0-l3",
+        "startTime": 22.501,
+        "endTime": 29.351
+      },
+      {
+        "itemId": "s1-l0",
+        "startTime": 29.351,
+        "endTime": 35.651
+      },
+      {
+        "itemId": "s1-l1",
+        "startTime": 35.651,
+        "endTime": 42.341
+      },
+      {
+        "itemId": "s1-l2",
+        "startTime": 42.341,
+        "endTime": 49.291
+      },
+      {
+        "itemId": "s1-l3",
+        "startTime": 49.291,
+        "endTime": 55.671
+      },
+      {
+        "itemId": "s2-l0",
+        "startTime": 55.671,
+        "endTime": 62.661
+      },
+      {
+        "itemId": "s2-l1",
+        "startTime": 62.661,
+        "endTime": 68.991
+      },
+      {
+        "itemId": "s2-l2",
+        "startTime": 68.991,
+        "endTime": 75.791
+      },
+      {
+        "itemId": "s2-l3",
+        "startTime": 75.791,
+        "endTime": 82.39099999999999
+      },
+      {
+        "itemId": "s3-l0",
+        "startTime": 82.39099999999999,
+        "endTime": 88.481
+      },
+      {
+        "itemId": "s3-l1",
+        "startTime": 88.481,
+        "endTime": 95.691
+      },
+      {
+        "itemId": "s3-l2",
+        "startTime": 95.691,
+        "endTime": 101.87100000000001
+      },
+      {
+        "itemId": "s3-l3",
+        "startTime": 101.87100000000001,
+        "endTime": 108.431
+      },
+      {
+        "itemId": "s4-l0",
+        "startTime": 108.431,
+        "endTime": 115.221
+      },
+      {
+        "itemId": "s4-l1",
+        "startTime": 115.221,
+        "endTime": null
+      }
+    ]
+  },
+  "studyHistory": []
+}

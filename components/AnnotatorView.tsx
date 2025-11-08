@@ -22,11 +22,17 @@ interface AnnotatorViewProps {
   isSlideshowVisible: boolean;
   isDeepReadVisible: boolean;
   studyModeTarget: SavedAnnotation | null;
+  annotationMode: 'text' | 'video';
+  youtubeUrl: string;
+  timecodeFormat: 'start' | 'end';
 
   // Handlers
   setText: (text: string) => void;
   setSourceLang: (lang: string) => void;
   setTargetLang: (lang: string) => void;
+  setAnnotationMode: (mode: 'text' | 'video') => void;
+  setYoutubeUrl: (url: string) => void;
+  setTimecodeFormat: (format: 'start' | 'end') => void;
   handleGenerate: () => void;
   handleClear: () => void;
   handleSave: () => SavedAnnotation | null;
@@ -45,6 +51,7 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
   annotation, text, sourceLang, targetLang, isLoading, error, currentTitle,
   isCurrentAnnotationSaved, currentSlideshowData, currentSavedAnnotation,
   currentAnnotationId, isSlideshowVisible, isDeepReadVisible, studyModeTarget,
+  annotationMode, youtubeUrl, setYoutubeUrl, setAnnotationMode, timecodeFormat, setTimecodeFormat,
   setText, setSourceLang, setTargetLang, handleGenerate, handleClear, handleSave,
   handleSaveOnExport, setIsSlideshowVisible, setIsDeepReadVisible, handleEnterStudyMode,
   handleAnnotationUpdate, onTitleChange, setStudyModeTarget, onSessionComplete, handleSaveSlideshowData
@@ -185,6 +192,12 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
           error={error}
           onGenerate={handleGenerate}
           onClear={handleClear}
+          annotationMode={annotationMode}
+          setAnnotationMode={setAnnotationMode}
+          youtubeUrl={youtubeUrl}
+          setYoutubeUrl={setYoutubeUrl}
+          timecodeFormat={timecodeFormat}
+          setTimecodeFormat={setTimecodeFormat}
         />
       ) : (
         <>

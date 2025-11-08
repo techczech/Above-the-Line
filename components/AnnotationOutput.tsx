@@ -44,6 +44,10 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
   const stanzaRefs = useRef<(HTMLDivElement | null)[]>([]);
   const titleInputRef = useRef<HTMLInputElement>(null);
 
+  const { textType } = annotation;
+  const unitName = textType === 'prose' ? 'Paragraph' : 'Stanza';
+  const unitNamePlural = textType === 'prose' ? 'Paragraphs' : 'Stanzas';
+
   // Calculate stats
   const stanzaCount = annotation.stanzas.length;
   const lineCount = annotation.stanzas.reduce((sum, s) => sum + s.lines.length, 0);
@@ -203,7 +207,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
             )}
         </div>
         <div className="flex justify-center items-center gap-6 mt-3 text-sm text-gray-500 dark:text-gray-400">
-          <span>{stanzaCount} {stanzaCount === 1 ? 'Stanza' : 'Stanzas'}</span>
+          <span>{stanzaCount} {stanzaCount === 1 ? unitName : unitNamePlural}</span>
           <span>{lineCount} {lineCount === 1 ? 'Line' : 'Lines'}</span>
           <span>{wordCount} {wordCount === 1 ? 'Word' : 'Words'}</span>
         </div>
@@ -283,16 +287,19 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
         {annotation.stanzas.map((stanza, sIndex) => (
           <div key={sIndex} ref={el => { stanzaRefs.current[sIndex] = el; }} className="relative mb-10 p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
             <button 
-              onClick={() => exportStanzaAsImage(stanzaRefs.current[sIndex], `section-${sIndex + 1}.png`)}
+              onClick={() => exportStanzaAsImage(stanzaRefs.current[sIndex], `${unitName.toLowerCase()}-${sIndex + 1}.png`)}
               className="absolute top-2 right-2 p-1.5 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
-              title="Export this section as PNG"
-              aria-label="Export this section as PNG"
+              title={`Export this ${unitName.toLowerCase()} as PNG`}
+              aria-label={`Export this ${unitName.toLowerCase()} as PNG`}
             >
               <DownloadIcon className="w-4 h-4" />
             </button>
             {stanza.lines.map((line, lIndex) => (
-              <div key={lIndex} className="mb-2">
-                <p className={`font-serif text-xl transition-all duration-200 ease-in-out ${getLineHeightClass()}`}>
+              <div key={lIndex} className={textType === 'dialogue' ? 'mb-4' : 'mb-2'}>
+                {textType === 'dialogue' && line.speaker && (
+                  <p className="font-sans font-bold text-gray-800 dark:text-gray-200">{line.speaker}</p>
+                )}
+                <p className={`font-serif text-xl transition-all duration-200 ease-in-out ${getLineHeightClass()} ${textType === 'dialogue' ? 'pl-4' : ''}`}>
                   {line.words.map((word, wIndex) => (
                     <div key={wIndex} className="inline-block text-center align-top mx-1 px-1 py-2">
                       {showTranslation && (
@@ -311,7 +318,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
                   ))}
                 </p>
                 {showLineTranslation && line.idiomaticTranslation && (
-                    <p className="font-sans text-md italic text-gray-600 dark:text-gray-400 mt-2 pl-2 border-l-2 border-blue-500">
+                    <p className={`font-sans text-md italic text-gray-600 dark:text-gray-400 mt-2 pl-2 border-l-2 border-blue-500 ${textType === 'dialogue' ? 'ml-4' : ''}`}>
                         {line.idiomaticTranslation}
                     </p>
                 )}

@@ -1,0 +1,1292 @@
+{
+  "id": "625c697b-46b4-49c9-8197-159e60243e9d",
+  "title": "Prose in French - Segment from Les Miserable",
+  "timestamp": "2025-11-08T00:31:58.984Z",
+  "annotation": {
+    "stanzas": [
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Le",
+                "translation": "The",
+                "grammar": "Def. Art: Masc, Sg"
+              },
+              {
+                "original": "palais",
+                "translation": "palace",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "épiscopal",
+                "translation": "episcopal",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "un",
+                "translation": "a",
+                "grammar": "Indef. Art: Masc, Sg"
+              },
+              {
+                "original": "vaste",
+                "translation": "vast",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "bel",
+                "translation": "beautiful",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "hôtel",
+                "translation": "hotel",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "bâti",
+                "translation": "built",
+                "grammar": "V: Past Participle, Masc, Sg"
+              },
+              {
+                "original": "en",
+                "translation": "in",
+                "grammar": "Prep"
+              },
+              {
+                "original": "pierre",
+                "translation": "stone",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "au",
+                "translation": "at the",
+                "grammar": "Prep + Def. Art: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "The episcopal palace was a vast and beautiful hotel built of stone at the"
+          },
+          {
+            "words": [
+              {
+                "original": "commencement",
+                "translation": "beginning",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "du",
+                "translation": "of the",
+                "grammar": "Prep + Def. Art: Masc, Sg"
+              },
+              {
+                "original": "siècle",
+                "translation": "century",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "dernier",
+                "translation": "last",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "par",
+                "translation": "by",
+                "grammar": "Prep"
+              },
+              {
+                "original": "monseigneur",
+                "translation": "Monseigneur",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "Henri",
+                "translation": "Henri",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Puget,",
+                "translation": "Puget,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "docteur",
+                "translation": "doctor",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "en",
+                "translation": "in",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "beginning of the last century by Monseigneur Henri Puget, doctor in"
+          },
+          {
+            "words": [
+              {
+                "original": "théologie",
+                "translation": "theology",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "la",
+                "translation": "the",
+                "grammar": "Def. Art: Fem, Sg"
+              },
+              {
+                "original": "faculté",
+                "translation": "faculty",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Paris,",
+                "translation": "Paris,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "abbé",
+                "translation": "abbot",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Simore,",
+                "translation": "Simore,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "lequel",
+                "translation": "who",
+                "grammar": "Pron: Rel, Masc, Sg"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "évêque",
+                "translation": "bishop",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "theology from the faculty of Paris, abbot of Simore, who was bishop of"
+          },
+          {
+            "words": [
+              {
+                "original": "Digne",
+                "translation": "Digne",
+                "grammar": "Noun: Proper, Fem, Sg"
+              },
+              {
+                "original": "en",
+                "translation": "in",
+                "grammar": "Prep"
+              },
+              {
+                "original": "1712.",
+                "translation": "1712.",
+                "grammar": "Num"
+              },
+              {
+                "original": "Ce",
+                "translation": "This",
+                "grammar": "Adj: Dem, Masc, Sg"
+              },
+              {
+                "original": "palais",
+                "translation": "palace",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "un",
+                "translation": "a",
+                "grammar": "Indef. Art: Masc, Sg"
+              },
+              {
+                "original": "vrai",
+                "translation": "true",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "logis",
+                "translation": "dwelling",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "seigneurial.",
+                "translation": "lordly.",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "Tout",
+                "translation": "Everything",
+                "grammar": "Pron: Indef, Masc, Sg"
+              },
+              {
+                "original": "y",
+                "translation": "there",
+                "grammar": "Pron: Adv"
+              },
+              {
+                "original": "avait",
+                "translation": "had",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Digne in 1712. This palace was a truly lordly dwelling. Everything there had a"
+          },
+          {
+            "words": [
+              {
+                "original": "grand",
+                "translation": "grand",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "air,",
+                "translation": "style,",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "les",
+                "translation": "the",
+                "grammar": "Def. Art: Masc, Pl"
+              },
+              {
+                "original": "appartements",
+                "translation": "apartments",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "l'évêque,",
+                "translation": "the bishop,",
+                "grammar": "Def. Art: Masc, Sg + Noun: Masc, Sg"
+              },
+              {
+                "original": "les",
+                "translation": "the",
+                "grammar": "Def. Art: Masc, Pl"
+              },
+              {
+                "original": "salons,",
+                "translation": "drawing-rooms,",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "les",
+                "translation": "the",
+                "grammar": "Def. Art: Fem, Pl"
+              },
+              {
+                "original": "chambres,",
+                "translation": "bedrooms,",
+                "grammar": "Noun: Fem, Pl"
+              },
+              {
+                "original": "la",
+                "translation": "the",
+                "grammar": "Def. Art: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "grand style, the bishop's apartments, the drawing-rooms, the bedrooms, the"
+          },
+          {
+            "words": [
+              {
+                "original": "cour",
+                "translation": "courtyard",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "d'honneur,",
+                "translation": "of honor,",
+                "grammar": "Prep + Noun: Masc, Sg"
+              },
+              {
+                "original": "fort",
+                "translation": "very",
+                "grammar": "Adv"
+              },
+              {
+                "original": "large,",
+                "translation": "wide,",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "avec",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "promenoirs",
+                "translation": "walkways",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "à",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "arcades,",
+                "translation": "arcades,",
+                "grammar": "Noun: Fem, Pl"
+              },
+              {
+                "original": "selon",
+                "translation": "according to",
+                "grammar": "Prep"
+              },
+              {
+                "original": "l'ancienne",
+                "translation": "the old",
+                "grammar": "Def. Art: Fem, Sg + Adj: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "courtyard of honor, very wide, with arcaded walkways, according to the old"
+          },
+          {
+            "words": [
+              {
+                "original": "mode",
+                "translation": "fashion",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "florentine,",
+                "translation": "Florentine,",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "les",
+                "translation": "the",
+                "grammar": "Def. Art: Masc, Pl"
+              },
+              {
+                "original": "jardins",
+                "translation": "gardens",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "plantés",
+                "translation": "planted",
+                "grammar": "V: Past Participle, Masc, Pl"
+              },
+              {
+                "original": "de",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "magnifiques",
+                "translation": "magnificent",
+                "grammar": "Adj: Masc, Pl"
+              },
+              {
+                "original": "arbres.",
+                "translation": "trees.",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "Dans",
+                "translation": "In",
+                "grammar": "Prep"
+              },
+              {
+                "original": "la",
+                "translation": "the",
+                "grammar": "Def. Art: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Florentine fashion, the gardens planted with magnificent trees. In the"
+          },
+          {
+            "words": [
+              {
+                "original": "salle",
+                "translation": "room",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "à",
+                "translation": "to",
+                "grammar": "Prep"
+              },
+              {
+                "original": "manger,",
+                "translation": "eat,",
+                "grammar": "V: Infinitive"
+              },
+              {
+                "original": "longue",
+                "translation": "long",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "superbe",
+                "translation": "superb",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "galerie",
+                "translation": "gallery",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "qui",
+                "translation": "which",
+                "grammar": "Pron: Rel"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "au",
+                "translation": "on the",
+                "grammar": "Prep + Def. Art: Masc, Sg"
+              },
+              {
+                "original": "rez-de-chaussée",
+                "translation": "ground floor",
+                "grammar": "Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "dining room, a long and superb gallery which was on the ground floor"
+          },
+          {
+            "words": [
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "s'ouvrait",
+                "translation": "opened",
+                "grammar": "Pron: Refl, 3rd, Sg + V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "sur",
+                "translation": "onto",
+                "grammar": "Prep"
+              },
+              {
+                "original": "les",
+                "translation": "the",
+                "grammar": "Def. Art: Masc, Pl"
+              },
+              {
+                "original": "jardins,",
+                "translation": "gardens,",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "monseigneur",
+                "translation": "Monseigneur",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "Henri",
+                "translation": "Henri",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Puget",
+                "translation": "Puget",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "avait",
+                "translation": "had",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "donné",
+                "translation": "given",
+                "grammar": "V: Past Participle, Masc, Sg"
+              },
+              {
+                "original": "à",
+                "translation": "a",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "and opened onto the gardens, Monseigneur Henri Puget had given a"
+          },
+          {
+            "words": [
+              {
+                "original": "manger",
+                "translation": "meal",
+                "grammar": "V: Infinitive"
+              },
+              {
+                "original": "en",
+                "translation": "in",
+                "grammar": "Prep"
+              },
+              {
+                "original": "cérémonie",
+                "translation": "ceremony",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "le",
+                "translation": "on the",
+                "grammar": "Def. Art: Masc, Sg"
+              },
+              {
+                "original": "29",
+                "translation": "29th",
+                "grammar": "Num"
+              },
+              {
+                "original": "juillet",
+                "translation": "July",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "1714",
+                "translation": "1714",
+                "grammar": "Num"
+              },
+              {
+                "original": "à",
+                "translation": "to",
+                "grammar": "Prep"
+              },
+              {
+                "original": "messeigneurs",
+                "translation": "their lordships",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "Charles",
+                "translation": "Charles",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Brûlart",
+                "translation": "Brûlart",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "meal in ceremony on July 29, 1714, to their lordships Charles Brûlart of"
+          },
+          {
+            "words": [
+              {
+                "original": "Genlis,",
+                "translation": "Genlis,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "archevêque-prince",
+                "translation": "archbishop-prince",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "d'Embrun,",
+                "translation": "of Embrun,",
+                "grammar": "Prep + Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Antoine",
+                "translation": "Antoine",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Mesgrigny,",
+                "translation": "Mesgrigny,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "capucin,",
+                "translation": "Capuchin,",
+                "grammar": "Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Genlis, archbishop-prince of Embrun, Antoine de Mesgrigny, Capuchin,"
+          },
+          {
+            "words": [
+              {
+                "original": "évêque",
+                "translation": "bishop",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Grasse,",
+                "translation": "Grasse,",
+                "grammar": "Noun: Proper, Fem, Sg"
+              },
+              {
+                "original": "Philippe",
+                "translation": "Philippe",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Vendôme,",
+                "translation": "Vendôme,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "grand",
+                "translation": "grand",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "prieur",
+                "translation": "prior",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "France,",
+                "translation": "France,",
+                "grammar": "Noun: Proper, Fem, Sg"
+              },
+              {
+                "original": "abbé",
+                "translation": "abbot",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "bishop of Grasse, Philippe de Vendôme, grand prior of France, abbot of"
+          },
+          {
+            "words": [
+              {
+                "original": "Saint-Honoré",
+                "translation": "Saint-Honoré",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Lérins,",
+                "translation": "Lérins,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "François",
+                "translation": "François",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Berton",
+                "translation": "Berton",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Grillon,",
+                "translation": "Grillon,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "évêque-baron",
+                "translation": "bishop-baron",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              }
+            ],
+            "idiomaticTranslation": "Saint-Honoré de Lérins, François de Berton de Grillon, bishop-baron of"
+          },
+          {
+            "words": [
+              {
+                "original": "Vence,",
+                "translation": "Vence,",
+                "grammar": "Noun: Proper, Fem, Sg"
+              },
+              {
+                "original": "César",
+                "translation": "César",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Sabran",
+                "translation": "Sabran",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "de",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Forcalquier,",
+                "translation": "Forcalquier,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "évêque-seigneur",
+                "translation": "bishop-lord",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Glandève,",
+                "translation": "Glandève,",
+                "grammar": "Noun: Proper, Fem, Sg"
+              },
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              }
+            ],
+            "idiomaticTranslation": "Vence, César de Sabran de Forcalquier, bishop-lord of Glandève, and"
+          },
+          {
+            "words": [
+              {
+                "original": "Jean",
+                "translation": "Jean",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Soanen,",
+                "translation": "Soanen,",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "prêtre",
+                "translation": "priest",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "l'oratoire,",
+                "translation": "the Oratory,",
+                "grammar": "Def. Art: Masc, Sg + Noun: Masc, Sg"
+              },
+              {
+                "original": "prédicateur",
+                "translation": "preacher",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "ordinaire",
+                "translation": "ordinary",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "du",
+                "translation": "to the",
+                "grammar": "Prep + Def. Art: Masc, Sg"
+              },
+              {
+                "original": "roi,",
+                "translation": "king,",
+                "grammar": "Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "Jean Soanen, priest of the Oratory, ordinary preacher to the king,"
+          },
+          {
+            "words": [
+              {
+                "original": "évêque-seigneur",
+                "translation": "bishop-lord",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "Senez.",
+                "translation": "Senez.",
+                "grammar": "Noun: Proper, Masc, Sg"
+              },
+              {
+                "original": "Les",
+                "translation": "The",
+                "grammar": "Def. Art: Masc, Pl"
+              },
+              {
+                "original": "portraits",
+                "translation": "portraits",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "ces",
+                "translation": "these",
+                "grammar": "Adj: Dem, Masc, Pl"
+              },
+              {
+                "original": "sept",
+                "translation": "seven",
+                "grammar": "Num"
+              },
+              {
+                "original": "révérends",
+                "translation": "reverend",
+                "grammar": "Adj: Masc, Pl"
+              }
+            ],
+            "idiomaticTranslation": "bishop-lord of Senez. The portraits of these seven reverend"
+          },
+          {
+            "words": [
+              {
+                "original": "personnages",
+                "translation": "personages",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "décoraient",
+                "translation": "decorated",
+                "grammar": "V: Impf, Ind, Act, 3rd, Pl"
+              },
+              {
+                "original": "cette",
+                "translation": "this",
+                "grammar": "Adj: Dem, Fem, Sg"
+              },
+              {
+                "original": "salle,",
+                "translation": "room,",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "cette",
+                "translation": "this",
+                "grammar": "Adj: Dem, Fem, Sg"
+              },
+              {
+                "original": "date",
+                "translation": "date",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "mémorable,",
+                "translation": "memorable,",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "29",
+                "translation": "29",
+                "grammar": "Num"
+              },
+              {
+                "original": "juillet",
+                "translation": "July",
+                "grammar": "Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "personages decorated this room, and this memorable date, July 29,"
+          },
+          {
+            "words": [
+              {
+                "original": "1714,",
+                "translation": "1714,",
+                "grammar": "Num"
+              },
+              {
+                "original": "y",
+                "translation": "there",
+                "grammar": "Pron: Adv"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "gravée",
+                "translation": "engraved",
+                "grammar": "V: Past Participle, Fem, Sg"
+              },
+              {
+                "original": "en",
+                "translation": "in",
+                "grammar": "Prep"
+              },
+              {
+                "original": "lettres",
+                "translation": "letters",
+                "grammar": "Noun: Fem, Pl"
+              },
+              {
+                "original": "d'or",
+                "translation": "of gold",
+                "grammar": "Prep + Noun: Masc, Sg"
+              },
+              {
+                "original": "sur",
+                "translation": "on",
+                "grammar": "Prep"
+              },
+              {
+                "original": "une",
+                "translation": "a",
+                "grammar": "Indef. Art: Fem, Sg"
+              },
+              {
+                "original": "table",
+                "translation": "table",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "marbre",
+                "translation": "marble",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "blanc.",
+                "translation": "white.",
+                "grammar": "Adj: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "1714, was engraved there in gold letters on a white marble table."
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "L'hôpital",
+                "translation": "The hospital",
+                "grammar": "Def. Art: Masc, Sg + Noun: Masc, Sg"
+              },
+              {
+                "original": "était",
+                "translation": "was",
+                "grammar": "V: Impf, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "une",
+                "translation": "a",
+                "grammar": "Indef. Art: Fem, Sg"
+              },
+              {
+                "original": "maison",
+                "translation": "house",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "étroite",
+                "translation": "narrow",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "et",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "basse",
+                "translation": "low",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "à",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "un",
+                "translation": "one",
+                "grammar": "Indef. Art: Masc, Sg"
+              },
+              {
+                "original": "seul",
+                "translation": "single",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "étage",
+                "translation": "floor",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "avec",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "un",
+                "translation": "a",
+                "grammar": "Indef. Art: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "The hospital was a narrow, low house with only one floor and a"
+          },
+          {
+            "words": [
+              {
+                "original": "petit",
+                "translation": "small",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "jardin.",
+                "translation": "garden.",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "Trois",
+                "translation": "Three",
+                "grammar": "Num"
+              },
+              {
+                "original": "jours",
+                "translation": "days",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "après",
+                "translation": "after",
+                "grammar": "Prep"
+              },
+              {
+                "original": "son",
+                "translation": "his",
+                "grammar": "Adj: Poss, Masc, Sg"
+              },
+              {
+                "original": "arrivée,",
+                "translation": "arrival,",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "l'évêque",
+                "translation": "the bishop",
+                "grammar": "Def. Art: Masc, Sg + Noun: Masc, Sg"
+              },
+              {
+                "original": "visita",
+                "translation": "visited",
+                "grammar": "V: Past Definite, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "l'hôpital.",
+                "translation": "the hospital.",
+                "grammar": "Def. Art: Masc, Sg + Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "small garden. Three days after his arrival, the bishop visited the hospital."
+          },
+          {
+            "words": [
+              {
+                "original": "La",
+                "translation": "The",
+                "grammar": "Def. Art: Fem, Sg"
+              },
+              {
+                "original": "visite",
+                "translation": "visit",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "terminée,",
+                "translation": "finished,",
+                "grammar": "V: Past Participle, Fem, Sg"
+              },
+              {
+                "original": "il",
+                "translation": "he",
+                "grammar": "Pron: Subj, 3rd, Masc, Sg"
+              },
+              {
+                "original": "fit",
+                "translation": "had",
+                "grammar": "V: Past Definite, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "prier",
+                "translation": "asked",
+                "grammar": "V: Infinitive"
+              },
+              {
+                "original": "le",
+                "translation": "the",
+                "grammar": "Def. Art: Masc, Sg"
+              },
+              {
+                "original": "directeur",
+                "translation": "director",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "de",
+                "translation": "to",
+                "grammar": "Prep"
+              },
+              {
+                "original": "vouloir",
+                "translation": "be willing",
+                "grammar": "V: Infinitive"
+              },
+              {
+                "original": "bien",
+                "translation": "kindly",
+                "grammar": "Adv"
+              },
+              {
+                "original": "venir",
+                "translation": "come",
+                "grammar": "V: Infinitive"
+              }
+            ],
+            "idiomaticTranslation": "The visit finished, he asked the director to kindly come"
+          },
+          {
+            "words": [
+              {
+                "original": "jusque",
+                "translation": "up to",
+                "grammar": "Adv"
+              },
+              {
+                "original": "chez",
+                "translation": "at",
+                "grammar": "Prep"
+              },
+              {
+                "original": "lui.",
+                "translation": "his place.",
+                "grammar": "Pron: Disj, 3rd, Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "to his place."
+          }
+        ]
+      }
+    ],
+    "textType": "prose"
+  },
+  "sourceText": "Le palais épiscopal était un vaste et bel hôtel bâti en pierre au\ncommencement du siècle dernier par monseigneur Henri Puget, docteur en\nthéologie de la faculté de Paris, abbé de Simore, lequel était évêque de\nDigne en 1712. Ce palais était un vrai logis seigneurial. Tout y avait\ngrand air, les appartements de l'évêque, les salons, les chambres, la\ncour d'honneur, fort large, avec promenoirs à arcades, selon l'ancienne\nmode florentine, les jardins plantés de magnifiques arbres. Dans la\nsalle à manger, longue et superbe galerie qui était au rez-de-chaussée\net s'ouvrait sur les jardins, monseigneur Henri Puget avait donné à\nmanger en cérémonie le 29 juillet 1714 à messeigneurs Charles Brûlart de\nGenlis, archevêque-prince d'Embrun, Antoine de Mesgrigny, capucin,\névêque de Grasse, Philippe de Vendôme, grand prieur de France, abbé de\nSaint-Honoré de Lérins, François de Berton de Grillon, évêque-baron de\nVence, César de Sabran de Forcalquier, évêque-seigneur de Glandève, et\nJean Soanen, prêtre de l'oratoire, prédicateur ordinaire du roi,\névêque-seigneur de Senez. Les portraits de ces sept révérends\npersonnages décoraient cette salle, et cette date mémorable, 29 juillet\n1714, y était gravée en lettres d'or sur une table de marbre blanc.\n\nL'hôpital était une maison étroite et basse à un seul étage avec un\npetit jardin. Trois jours après son arrivée, l'évêque visita l'hôpital.\nLa visite terminée, il fit prier le directeur de vouloir bien venir\njusque chez lui.",
+  "sourceLang": "Autodetect Language",
+  "targetLang": "English",
+  "studyHistory": []
+}

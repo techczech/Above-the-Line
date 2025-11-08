@@ -1,0 +1,47 @@
+{
+  "id": "sample-cicero-dialogue",
+  "title": "Cicero's De re publica (Dialogue Sample)",
+  "timestamp": "2024-01-03T12:00:00.000Z",
+  "sourceText": "Laelius: Movemur enim nescio quo pacto locis ipsis, in quibus eorum, quos diligimus aut admiramur, adsunt vestigia.\nScipio: Ego vero, Laeli, multo magis et hoc non longo, sed proxumo flumine et hac magnificentia villae, cuius tectorum me atque porticuum umbra sustentat.",
+  "sourceLang": "Latin",
+  "targetLang": "English",
+  "annotation": {
+    "textType": "dialogue",
+    "stanzas": [{
+      "lines": [
+        {
+          "speaker": "Laelius",
+          "idiomaticTranslation": "For we are moved, I know not how, by the very places in which there are traces of those whom we love or admire.",
+          "words": [
+            { "original": "Movemur", "translation": "We are moved", "grammar": "V: Pres, Ind, Pass, 1, Pl" }, { "original": "enim", "translation": "for", "grammar": "Conj" },
+            { "original": "nescio", "translation": "I know not", "grammar": "V: Pres, Ind, Act, 1, Sg" }, { "original": "quo", "translation": "how", "grammar": "Adv" },
+            { "original": "pacto", "translation": "in a way", "grammar": "N: Abl, N, Sg" }, { "original": "locis", "translation": "by places", "grammar": "N: Abl, M, Pl" },
+            { "original": "ipsis,", "translation": "themselves", "grammar": "Pron: Abl, M, Pl" }, { "original": "in", "translation": "in", "grammar": "Prep" },
+            { "original": "quibus", "translation": "which", "grammar": "Pron: Rel, Abl, M, Pl" }, { "original": "eorum,", "translation": "of those", "grammar": "Pron: Gen, M, Pl" },
+            { "original": "quos", "translation": "whom", "grammar": "Pron: Rel, Acc, M, Pl" }, { "original": "diligimus", "translation": "we love", "grammar": "V: Pres, Ind, Act, 1, Pl" },
+            { "original": "aut", "translation": "or", "grammar": "Conj" }, { "original": "admiramur,", "translation": "we admire", "grammar": "V: Pres, Ind, Dep, 1, Pl" },
+            { "original": "adsunt", "translation": "are present", "grammar": "V: Pres, Ind, Act, 3, Pl" }, { "original": "vestigia.", "translation": "traces", "grammar": "N: Nom, N, Pl" }
+          ]
+        },
+        {
+          "speaker": "Scipio",
+          "idiomaticTranslation": "Indeed, Laelius, I am much more moved both by this not-distant but nearby river and by the magnificence of this villa, whose shade of roofs and porticoes sustains me.",
+          "words": [
+            { "original": "Ego", "translation": "I", "grammar": "Pron: Nom, Sg" }, { "original": "vero,", "translation": "indeed", "grammar": "Adv" },
+            { "original": "Laeli,", "translation": "Laelius", "grammar": "N: Voc, M, Sg" }, { "original": "multo", "translation": "much", "grammar": "Adv" },
+            { "original": "magis", "translation": "more", "grammar": "Adv: Comp" }, { "original": "et", "translation": "both", "grammar": "Conj" },
+            { "original": "hoc", "translation": "this", "grammar": "Pron: Abl, N, Sg" }, { "original": "non", "translation": "not", "grammar": "Adv" },
+            { "original": "longo,", "translation": "distant", "grammar": "Adj: Abl, N, Sg" }, { "original": "sed", "translation": "but", "grammar": "Conj" },
+            { "original": "proxumo", "translation": "nearby", "grammar": "Adj: Abl, N, Sg" }, { "original": "flumine", "translation": "river", "grammar": "N: Abl, N, Sg" },
+            { "original": "et", "translation": "and", "grammar": "Conj" }, { "original": "hac", "translation": "this", "grammar": "Pron: Abl, F, Sg" },
+            { "original": "magnificentia", "translation": "magnificence", "grammar": "N: Abl, F, Sg" }, { "original": "villae,", "translation": "of the villa", "grammar": "N: Gen, F, Sg" },
+            { "original": "cuius", "translation": "whose", "grammar": "Pron: Rel, Gen, F, Sg" }, { "original": "tectorum", "translation": "of roofs", "grammar": "N: Gen, N, Pl" },
+            { "original": "me", "translation": "me", "grammar": "Pron: Acc, Sg" }, { "original": "atque", "translation": "and", "grammar": "Conj" },
+            { "original": "porticuum", "translation": "of porticoes", "grammar": "N: Gen, F, Pl" }, { "original": "umbra", "translation": "shade", "grammar": "N: Nom, F, Sg" },
+            { "original": "sustentat.", "translation": "sustains", "grammar": "V: Pres, Ind, Act, 3, Sg" }
+          ]
+        }
+      ]
+    }]
+  }
+}

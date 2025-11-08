@@ -40,8 +40,10 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
     : `The provided text is in ${sourceLang}.`;
 
   const prompt = `
-    ${langInstruction} provide a detailed grammatical annotation for the following text.
-    Analyze the text paragraph by paragraph, and line by line.
+    ${langInstruction} first analyze the text to determine its type: 'poem', 'prose', or 'dialogue'.
+    Then, provide a detailed grammatical annotation for the text. Analyze the text paragraph by paragraph, and line by line.
+
+    If the text type is 'dialogue', for each line of dialogue, identify the speaker. The speaker's name must be placed in a 'speaker' field for that line. The speaker's name itself should NOT be included in the 'words' array.
 
     For each line, provide an idiomatic, natural-sounding translation of the entire line in ${targetLang}.
 
@@ -55,7 +57,7 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
     - For verbs, specify tense, mood, voice, person, and number.
     - Keep the analysis concise and abbreviated (e.g., "Noun: Acc, Fem, Pl" or "V: Pres, Ind, Act, 3rd, Sg").
 
-    Return the output ONLY as a JSON object following the specified schema. Do not add any extra text or markdown formatting.
+    Return the output ONLY as a single JSON object following the specified schema. The JSON object must have a 'textType' field at the root level, set to 'poem', 'prose', or 'dialogue'. Do not add any extra text or markdown formatting.
 
     Original Text:
     ---
@@ -66,6 +68,11 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
   const schema = {
     type: Type.OBJECT,
     properties: {
+        textType: {
+            type: Type.STRING,
+            enum: ['poem', 'prose', 'dialogue'],
+            description: "The type of the text provided, determined by analysis."
+        },
         stanzas: {
             type: Type.ARRAY,
             description: "Each object represents a paragraph or stanza from the original text.",
@@ -78,6 +85,10 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
                         items: {
                             type: Type.OBJECT,
                             properties: {
+                                speaker: {
+                                    type: Type.STRING,
+                                    description: "If the text is a dialogue, this is the speaker of the line. Omit for non-dialogue text."
+                                },
                                 idiomaticTranslation: {
                                     type: Type.STRING,
                                     description: `An idiomatic, natural-sounding translation of the entire line in ${targetLang}.`
@@ -104,7 +115,7 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
             }
         }
     },
-    required: ["stanzas"]
+    required: ["stanzas", "textType"]
   };
 
   try {
