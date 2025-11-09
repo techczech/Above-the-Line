@@ -1,4 +1,5 @@
 
+
 export const LANGUAGES = [
     "Autodetect Language",
     "Latin",
@@ -22,7 +23,7 @@ export const LANGUAGES = [
 export const SAMPLE_TEXTS = [
     { name: "Latin (Poem): Virgil's Aeneid", lang: "Latin", text: "Arma virumque cano, Troiae qui primus ab oris\nItaliam, fato profugus, Laviniaque venit\nlitora, multum ille et terris iactatus et alto\nvi superum saevae memorem Iunonis ob iram" },
     { name: "Latin (Prose): Caesar's De Bello Gallico", lang: "Latin", text: "Gallia est omnis divisa in partes tres, quarum unam incolunt Belgae, aliam Aquitani, tertiam qui ipsorum lingua Celtae, nostra Galli appellantur. Hi omnes lingua, institutis, legibus inter se differunt." },
-    { name: "Latin (Dialogue): Cicero's De re publica", lang: "Latin", text: "Laelius: Movemur enim nescio quo pacto locis ipsis, in quibus eorum, quos diligimus aut admiramur, adsunt vestigia.\nScipio: Ego vero, Laeli, multo magis et hoc non longo, sed proxumo flumine et hac magnificentia villae, cuius tectorum me atque porticuum umbra sustentat." },
+    { name: "Czech (Dialogue): Ordering Coffee", lang: "Czech", text: "Prodavač: Dobrý den! Co si dáte?\nZákazník: Dobrý den. Chtěl bych kávu, prosím.\nProdavač: Jakou kávu? Malou, velkou? S mlékem?\nZákazník: Velkou kávu s mlékem, prosím. A trochu víc mléka, jestli to jde.\nProdavač: Samozřejmě. Ještě něco?\nZákazník: Ne, děkuji. To je vše.\nProdavač: Dobře. To bude padesát korun.\nZákazník: Tady je.\nProdavač: Děkuji. Na shledanou!\nZákazník: Na shledanou!" },
     { name: "Ancient Greek: Homer's Odyssey", lang: "Ancient Greek", text: "ἄνδρα μοι ἔννεπε, μοῦσα, πολύτροπον, ὃς μάλα πολλὰ\nπλάγχθη, ἐπεὶ τροίης ἱερὸν πτολίεθρον ἔπερσεν·\nπολλῶν δ’ ἀνθρώπων ἴδεν ἄστεα καὶ νόον ἔγνω,\nπολλὰ δ’ ὅ γ’ ἐν πόντῳ πάθεν ἄλγεα ὃν κατὰ θυμόν" },
     { name: "French: Baudelaire's L'Albatros", lang: "French", text: "Souvent, pour s'amuser, les hommes d'équipage\nPrennent des albatros, vastes oiseaux des mers,\nQui suivent, indolents compagnons de voyage,\nLe navire glissant sur les gouffres amers." },
     { name: "German: Goethe's Erlkönig", lang: "German", text: "Wer reitet so spät durch Nacht und Wind?\nEs ist der Vater mit seinem Kind;\nEr hat den Knaben wohl in dem Arm,\nEr fasst ihn sicher, er hält ihn warm." },

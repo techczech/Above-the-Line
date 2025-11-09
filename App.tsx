@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useCallback } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
 import { Annotation, SavedAnnotation, Theme, SlideshowData, StudySessionResult, Timecode } from './types';
@@ -10,12 +8,14 @@ import AnnotatorView from './components/AnnotatorView';
 import AboutPage from './components/AboutPage';
 import { parseTimecodedText } from './utils/textProcessing';
 import * as db from './utils/db';
+import SavedAnnotations from './components/SavedAnnotations';
+import SampleAnnotations from './components/SampleAnnotations';
 
 const defaultSlideshowData: SlideshowData = { youtubeUrl: '', timecodes: [] };
 
 const App: React.FC = () => {
   const [theme, setTheme] = useLocalStorage<Theme>('theme', 'light');
-  const [view, setView] = useState<'home' | 'annotator' | 'about'>('home');
+  const [view, setView] = useState<'home' | 'annotator' | 'about' | 'saved' | 'samples'>('home');
   const [savedAnnotations, setSavedAnnotations] = useLocalStorage<SavedAnnotation[]>('saved-annotations', []);
   const [sampleAnnotations, setSampleAnnotations] = useState<SavedAnnotation[]>([]);
   
@@ -65,44 +65,66 @@ const App: React.FC = () => {
   }, [hasUnsavedChanges]);
   
   useEffect(() => {
-    const sampleFiles = [
-      '/samples/o_tannenbaum.json', 
-      '/samples/cicero_de_re_publica.json',
-      '/samples/dialogue_in_spanish_about_basic_spanish_conversation.json',
-      '/samples/prose_in_french_about_an_episcopal_palace_and_a_ceremonial_dinner.json',
-      "/samples/poem_in_russian_about_life's_purpose,_love,_and_nature's_beauty.json"
-    ];
-    const fetchSamples = async () => {
-        try {
-            const samples = await Promise.all(
-                sampleFiles.map(file => fetch(file).then(res => {
-                    if (!res.ok) {
-                        throw new Error(`Failed to fetch ${file}`);
-                    }
-                    return res.json();
-                }))
-            );
-            const validSamples = samples.filter(s => s.id && s.title && s.annotation);
-            setSampleAnnotations(validSamples as SavedAnnotation[]);
-        } catch (error) {
-            console.error("Failed to load sample annotations:", error);
-        }
-    };
-    fetchSamples();
-  }, []);
+    const loadInitialData = async () => {
+      // 1. Fetch sample annotation JSON files
+      const sampleFiles = [
+        '/samples/o_tannenbaum.json',
+        '/samples/dialogue_in_czech_about_ordering_coffee.json',
+        '/samples/dialogue_in_spanish_about_basic_spanish_conversation.json',
+        '/samples/prose_in_french_about_an_episcopal_palace_and_a_ceremonial_dinner.json',
+        "/samples/poem_in_russian_about_life's_purpose,_love,_and_nature's_beauty.json",
+        '/samples/italian-poem-sample.json'
+      ];
 
-  useEffect(() => {
-    const checkAllAnnotationsForAudio = async () => {
-      if (savedAnnotations.length === 0 && sampleAnnotations.length === 0) {
-        setAnnotationsWithAudio(new Set());
-        return;
+      let loadedSamples: (SavedAnnotation & { prepackagedAudio?: boolean })[] = [];
+      try {
+        const samples = await Promise.all(
+          sampleFiles.map(file => fetch(file).then(res => {
+            if (!res.ok) throw new Error(`Failed to fetch ${file}`);
+            return res.json();
+          }))
+        );
+        loadedSamples = samples.filter(s => s.id && s.title && s.annotation);
+      } catch (error) {
+        console.error("Failed to load sample annotations:", error);
       }
-      const allAnnotations = [...savedAnnotations, ...sampleAnnotations];
-      const newAnnotationsWithAudio = new Set<string>();
 
-      const promises = allAnnotations.map(async (annotation) => {
+      // 2. Load any pre-packaged audio for samples into IndexedDB
+      const audioLoadPromises = loadedSamples
+        .filter(sample => sample.prepackagedAudio)
+        .map(sample => {
+          const itemIds: string[] = [];
+          sample.annotation.stanzas.forEach((stanza, sIndex) => {
+            stanza.lines.forEach((_, lIndex) => {
+              itemIds.push(`s${sIndex}-l${lIndex}`);
+            });
+          });
+          return Promise.all(itemIds.map(async (itemId) => {
+            try {
+              const existingAudio = await db.getAudio(sample.id, itemId);
+              if (existingAudio) return; // Don't re-fetch if already in DB
+
+              const audioUrl = `/samples/audio/${sample.id}/${itemId}.raw`;
+              const response = await fetch(audioUrl);
+              if (response.ok) {
+                const audioData = await response.arrayBuffer();
+                await db.saveAudio(sample.id, itemId, audioData);
+              }
+            } catch (e) { /* Errors are not critical, just means no audio for that item */ }
+          }));
+        });
+      
+      await Promise.all(audioLoadPromises);
+
+      // 3. Set sample annotations state
+      setSampleAnnotations(loadedSamples);
+      
+      // 4. Check audio status for ALL annotations (saved + samples) and update state
+      const allAnnotations = [...savedAnnotations, ...loadedSamples];
+      const newAnnotationsWithAudio = new Set<string>();
+      const checkPromises = allAnnotations.map(async (annotation) => {
         try {
-          if (annotation.id) { // Ensure annotation.id is not null/undefined
+          if (annotation.id) {
             const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
             if (audioFiles.length > 0) {
               newAnnotationsWithAudio.add(annotation.id);
@@ -112,13 +134,12 @@ const App: React.FC = () => {
           console.error(`Could not check audio for annotation ${annotation.id}`, e);
         }
       });
-
-      await Promise.all(promises);
+      await Promise.all(checkPromises);
       setAnnotationsWithAudio(newAnnotationsWithAudio);
     };
 
-    checkAllAnnotationsForAudio();
-  }, [savedAnnotations, sampleAnnotations]);
+    loadInitialData();
+  }, [savedAnnotations]);
 
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
@@ -160,6 +181,14 @@ const App: React.FC = () => {
   
   const handleNavigateToAbout = useCallback(() => {
     setView('about');
+  }, []);
+
+  const handleNavigateToSaved = useCallback(() => {
+    setView('saved');
+  }, []);
+  
+  const handleNavigateToSamples = useCallback(() => {
+    setView('samples');
   }, []);
 
   const handleGenerate = useCallback(async () => {
@@ -265,7 +294,8 @@ const App: React.FC = () => {
       if (existingIndex !== -1) {
         const updatedAnnotations = [...prev];
         updatedAnnotations[existingIndex] = savedOrUpdatedAnnotation;
-        return updatedAnnotations;
+        // Move updated to the top
+        return [savedOrUpdatedAnnotation, ...updatedAnnotations.filter(a => a.id !== id)];
       }
       return [savedOrUpdatedAnnotation, ...prev];
     });
@@ -528,18 +558,42 @@ const App: React.FC = () => {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-4 md:py-6">
-      <Header theme={theme} setTheme={setTheme} onNavigateHome={handleNavigateHome} onNavigateToAbout={handleNavigateToAbout} />
+      <Header 
+        theme={theme} 
+        setTheme={setTheme} 
+        onNavigateHome={handleNavigateHome} 
+        onNavigateToAbout={handleNavigateToAbout}
+        onNavigateToSaved={handleNavigateToSaved}
+        onNavigateToSamples={handleNavigateToSamples}
+      />
       
       {view === 'home' && (
         <HomePage 
           onNavigateToAnnotator={handleNavigateToAnnotator}
           onNavigateToVideoAnnotator={handleNavigateToVideoAnnotator}
-          sampleAnnotations={sampleAnnotations}
+          recentAnnotations={savedAnnotations.slice(0, 3)}
+          onLoad={handleLoad}
+          annotationsWithAudio={annotationsWithAudio}
+          onNavigateToSaved={handleNavigateToSaved}
+        />
+      )}
+      
+      {view === 'saved' && (
+        <SavedAnnotations
+          title="My Saved Texts"
           savedAnnotations={savedAnnotations}
           onLoad={handleLoad}
           onDelete={handleDelete}
           onImport={handleImport}
           onExport={handleExportAll}
+          annotationsWithAudio={annotationsWithAudio}
+        />
+      )}
+
+      {view === 'samples' && (
+        <SampleAnnotations
+          samples={sampleAnnotations}
+          onLoad={handleLoad}
           annotationsWithAudio={annotationsWithAudio}
         />
       )}
