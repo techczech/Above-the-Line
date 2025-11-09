@@ -15,6 +15,7 @@ import ForwardIcon from './icons/ForwardIcon';
 import StopCircleIcon from './icons/StopCircleIcon';
 import { generateSpeech } from '../services/geminiService';
 import { decode, decodeAudioData } from '../utils/audioUtils';
+import * as db from '../utils/db';
 
 declare global {
   interface Window {
@@ -25,9 +26,11 @@ declare global {
 
 interface SlideshowPlayerProps {
   annotation: Annotation;
+  annotationId: string | null;
   initialData: SlideshowData;
   onExit: () => void;
   onSave: (data: SlideshowData) => void;
+  onAudioGenerated: (itemId: string, data: ArrayBuffer) => void;
 }
 
 type Granularity = 'line' | 'sentence' | 'paragraph';
@@ -75,7 +78,7 @@ const getDefaultGranularity = (textType: TextType): Granularity => {
     }
 };
 
-const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialData, onExit, onSave }) => {
+const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotationId, initialData, onExit, onSave, onAudioGenerated }) => {
   const [youtubeUrl, setYoutubeUrl] = useState(initialData.youtubeUrl);
   const [timecodes, setTimecodes] = useState<Timecode[]>(initialData.timecodes);
   const [granularity, setGranularity] = useState<Granularity>(getDefaultGranularity(annotation.textType));
@@ -218,8 +221,30 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   
   useEffect(() => {
     isMountedRef.current = true;
-    if (isTtsMode && !audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    if (isTtsMode) {
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        }
+        if (annotationId) {
+            db.getAllAudioForAnnotation(annotationId).then(cachedAudios => {
+                if (!isMountedRef.current) return;
+                const newAudioCache = new Map<string, AudioBuffer>();
+                const newAudioStatus = new Map<string, AudioStatus>();
+                const decodePromises = cachedAudios.map(async (audio) => {
+                    if (audioContextRef.current) {
+                        const audioBuffer = await decodeAudioData(new Uint8Array(audio.data), audioContextRef.current, 24000, 1);
+                        newAudioCache.set(audio.audioId, audioBuffer);
+                        newAudioStatus.set(audio.audioId, 'loaded');
+                    }
+                });
+                Promise.all(decodePromises).then(() => {
+                    if (isMountedRef.current) {
+                      setAudioCache(prev => new Map([...prev, ...newAudioCache]));
+                      setAudioStatus(prev => new Map([...prev, ...newAudioStatus]));
+                    }
+                });
+            });
+        }
     }
     return () => {
         isMountedRef.current = false;
@@ -230,7 +255,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
           audioContextRef.current?.close();
         }
     };
-  }, [isTtsMode]);
+  }, [isTtsMode, annotationId]);
 
   const generateAndCacheAudio = useCallback(async (itemId: string) => {
     if (audioStatus.get(itemId) === 'loading' || audioStatus.get(itemId) === 'loaded') {
@@ -247,8 +272,16 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
 
     try {
       const b64Audio = await generateSpeech(item.text);
-      if (audioContextRef.current && isMountedRef.current) {
-        const audioBuffer = await decodeAudioData(decode(b64Audio), audioContextRef.current, 24000, 1);
+      if (!isMountedRef.current) return;
+
+      const audioBytes = decode(b64Audio);
+      const audioArrayBuffer = audioBytes.buffer;
+
+      // Notify parent of new audio data, which will handle saving if needed
+      onAudioGenerated(itemId, audioArrayBuffer);
+      
+      if (audioContextRef.current) {
+        const audioBuffer = await decodeAudioData(audioBytes, audioContextRef.current, 24000, 1);
         if (!isMountedRef.current) return;
         setAudioCache(prev => new Map(prev).set(itemId, audioBuffer));
         setAudioStatus(prev => new Map(prev).set(itemId, 'loaded'));
@@ -258,7 +291,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       if (!isMountedRef.current) return;
       setAudioStatus(prev => new Map(prev).set(itemId, 'error'));
     }
-  }, [flattenedItems, audioStatus]);
+  }, [flattenedItems, audioStatus, onAudioGenerated]);
 
   useEffect(() => {
     if (!isTtsMode || !showTtsPanel || flattenedItems.length === 0) return;
@@ -640,8 +673,11 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-2xl font-bold">Slideshow Mode</h2>
         <div className="flex items-center gap-4">
-            <button onClick={handleSaveAndExit} className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Save & Exit</button>
-            <button onClick={onExit} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"><CloseIcon/></button>
+            <button onClick={handleSaveAndExit} className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-lg">save</span>
+                Save & Exit
+            </button>
+            <button onClick={onExit} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"><CloseIcon className="text-xl"/></button>
         </div>
       </div>
       
@@ -651,13 +687,13 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
         <div className={`${showPlayerPanel ? 'md:col-span-1' : 'hidden'} bg-black rounded-lg flex flex-col`}>
             {isTtsMode ? (
                 <div className="w-full h-auto flex flex-col items-center justify-start p-6 gap-4 text-white flex-grow">
-                    <SpeakerWaveIcon className="w-12 h-12 text-gray-400" />
+                    <SpeakerWaveIcon className="text-5xl text-gray-400" />
                     <h3 className="text-lg font-semibold">Audio Player</h3>
                     
                     <div className="text-center min-h-[2rem] flex items-center justify-center text-sm text-gray-400">
                       {currentItemAudioStatus === 'loading' && (
                           <div className="flex items-center gap-2">
-                              <SpinnerIcon className="w-4 h-4" />
+                              <SpinnerIcon className="text-base" />
                               <span>Generating audio...</span>
                           </div>
                       )}
@@ -678,19 +714,19 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                                 className="p-3 rounded-full bg-blue-600 text-white disabled:opacity-50 disabled:bg-gray-500" 
                                 title={playbackStatus === 'playing' ? "Pause" : "Play"}
                             >
-                              {playbackStatus === 'playing' ? <PauseIcon className="w-7 h-7"/> : <PlayIcon className="w-7 h-7"/>}
+                              {playbackStatus === 'playing' ? <PauseIcon className="text-3xl"/> : <PlayIcon className="text-3xl"/>}
                             </button>
                             <button onClick={() => { stopCurrentAudio(); }} disabled={playbackStatus === 'stopped'} className="p-2 rounded-full bg-gray-600 text-white hover:bg-gray-500 disabled:opacity-50" title="Stop">
-                                <StopCircleIcon className="w-6 h-6"/>
+                                <StopCircleIcon className="text-2xl"/>
                             </button>
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={() => setIsLooping(p => !p)} title="Loop current slide" className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-full transition-colors ${isLooping ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'}`}>
-                                <ArrowPathIcon className="w-4 h-4"/>
+                                <ArrowPathIcon className="text-base"/>
                                 <span>Loop</span>
                             </button>
                             <button onClick={() => setIsAutoAdvance(p => !p)} title="Auto-advance to next slide" className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-full transition-colors ${isAutoAdvance ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'}`}>
-                                <ForwardIcon className="w-4 h-4"/>
+                                <ForwardIcon className="text-base"/>
                                 <span>Auto-Advance</span>
                             </button>
                         </div>
@@ -721,11 +757,11 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                 className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition flex items-center gap-2"
                 title="Generate audio for this slideshow"
               >
-                <SpeakerWaveIcon className="w-4 h-4" />
+                <SpeakerWaveIcon className="text-base" />
                 Add Audio
               </button>
             )}
-            {currentItemHasTimecode && <ClockIcon className="w-5 h-5 text-blue-500" title={`Start: ${formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.startTime)} | End: ${timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime !== null ? formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime!) : 'N/A'}`} />}
+            {currentItemHasTimecode && <ClockIcon className="text-xl text-blue-500" title={`Start: ${formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.startTime)} | End: ${timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime !== null ? formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime!) : 'N/A'}`} />}
             <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500 dark:text-gray-400">Annotation:</span>
                 <select value={annotationDisplay} onChange={e => setAnnotationDisplay(e.target.value as AnnotationDisplay)} className="bg-gray-200 dark:bg-gray-700 p-1 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500 border border-gray-300 dark:border-gray-600">
@@ -757,19 +793,19 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                 {!isTtsMode && (
                   <>
                     <button onClick={() => setShowVideo(p => !p)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" title={showVideo ? "Hide Video" : "Show Video"}>
-                        {showVideo ? <VideoOffIcon className="w-6 h-6"/> : <VideoIcon className="w-6 h-6"/>}
+                        {showVideo ? <VideoOffIcon className="text-2xl"/> : <VideoIcon className="text-2xl"/>}
                     </button>
                     {isAutoPlaying ? (
                       <button onClick={handlePausePlayback} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Pause Sync">
-                          <PauseIcon className="w-5 h-5"/> Pause Playback
+                          <PauseIcon className="text-xl"/> Pause Playback
                       </button>
                     ) : (
                       <>
                           <button onClick={handlePlayFromBeginning} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Start">
-                             <PlayIcon className="w-5 h-5"/> Play from Beginning
+                             <PlayIcon className="text-xl"/> Play from Beginning
                           </button>
                           <button onClick={handlePlayFromCurrent} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Current">
-                             <PlayIcon className="w-5 h-5"/> Play from Current
+                             <PlayIcon className="text-xl"/> Play from Current
                           </button>
                       </>
                     )}
@@ -781,18 +817,21 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
             <div className="flex items-center gap-4 justify-end">
                 {!isTtsMode && (
                   <div className="flex items-center gap-2 flex-wrap">
-                      <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={flattenedItems.length === 0}>Edit Timecodes</button>
+                      <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={flattenedItems.length === 0}>
+                        <span className="material-symbols-outlined text-lg">edit</span>
+                        Edit Timecodes
+                      </button>
                       
                       {recordingStatus === 'idle' && (
                           <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player}>
-                            <RecordIcon className="w-5 h-5" /> Record Timecodes
+                            <RecordIcon className="text-xl" /> Record Timecodes
                           </button>
                       )}
                       {recordingStatus === 'recording' && (
                           <>
                               <button onClick={stopRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 hover:bg-yellow-700 text-white">Stop</button>
                               <button onClick={handleRecordTimecode} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
-                                  <RecordIcon className="w-5 h-5" /> Next (R)
+                                  <RecordIcon className="text-xl" /> Next (R)
                               </button>
                           </>
                       )}
@@ -806,9 +845,13 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                 )}
 
                 <div className="flex items-center gap-2 font-medium border-l border-gray-300 dark:border-gray-600 pl-4">
-                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.max(0, p - 1)); }} disabled={currentIndex === 0} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Prev</button>
+                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.max(0, p - 1)); }} disabled={currentIndex === 0} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" title="Previous">
+                        <span className="material-symbols-outlined">arrow_back</span>
+                    </button>
                     <span className="text-sm text-gray-500 dark:text-gray-400 select-none w-12 text-center">{flattenedItems.length > 0 ? currentIndex + 1 : 0} / {flattenedItems.length}</span>
-                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1)); }} disabled={currentIndex >= flattenedItems.length - 1} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Next</button>
+                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1)); }} disabled={currentIndex >= flattenedItems.length - 1} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50" title="Next">
+                        <span className="material-symbols-outlined">arrow_forward</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -832,10 +875,16 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                     placeholder="MM:SS.ss"
                 />
                 <div className="flex justify-between gap-2">
-                    <button onClick={() => setStartTimeInput(formatTime(player?.getCurrentTime() || 0))} className="px-3 py-2 text-sm rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">Use Current Time</button>
+                    <button onClick={() => setStartTimeInput(formatTime(player?.getCurrentTime() || 0))} className="px-3 py-2 text-sm rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">timer</span> Use Current
+                    </button>
                     <div className="flex gap-2">
-                        <button onClick={() => setIsSettingStartTime(false)} className="px-3 py-2 text-sm rounded-md bg-gray-500 text-white hover:bg-gray-600">Cancel</button>
-                        <button onClick={startRecording} className="px-3 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700">Start Recording</button>
+                        <button onClick={() => setIsSettingStartTime(false)} className="px-3 py-2 text-sm rounded-md bg-gray-500 text-white hover:bg-gray-600 flex items-center gap-2">
+                            <span className="material-symbols-outlined text-base">close</span> Cancel
+                        </button>
+                        <button onClick={startRecording} className="px-3 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 flex items-center gap-2">
+                            <RecordIcon className="text-base" /> Start
+                        </button>
                     </div>
                 </div>
             </div>
@@ -883,8 +932,12 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
                     </div>
                 </div>
                 <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 flex justify-end gap-2">
-                    <button onClick={() => setIsEditingTimecodes(false)} className="px-4 py-2 text-sm rounded-md bg-gray-500 text-white hover:bg-gray-600">Cancel</button>
-                    <button onClick={saveTimecodeChanges} className="px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">Save Changes</button>
+                    <button onClick={() => setIsEditingTimecodes(false)} className="px-4 py-2 text-sm rounded-md bg-gray-500 text-white hover:bg-gray-600 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">close</span> Cancel
+                    </button>
+                    <button onClick={saveTimecodeChanges} className="px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-base">save</span> Save Changes
+                    </button>
                 </div>
             </div>
         </div>

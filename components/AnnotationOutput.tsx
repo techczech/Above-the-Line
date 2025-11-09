@@ -10,12 +10,6 @@ import CheckCircleIcon from './icons/CheckCircleIcon';
 import FilmIcon from './icons/FilmIcon';
 import PencilIcon from './icons/PencilIcon';
 
-// Add type declaration for jsPDF loaded from CDN
-declare global {
-    interface Window {
-        jspdf: any;
-    }
-}
 
 interface AnnotationOutputProps {
   annotation: Annotation;
@@ -32,10 +26,11 @@ interface AnnotationOutputProps {
   onAnnotationUpdate: (annotation: Annotation) => void;
   onTitleChange: (newTitle: string) => void;
   currentAnnotationId: string | null;
-  onExportJson: () => void;
+  onExport: () => void;
+  onNavigateHome: () => void;
 }
 
-const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, isSaved, slideshowData, studyHistory, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onEnterStudyMode, onAnnotationUpdate, onTitleChange, currentAnnotationId, onExportJson }) => {
+const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, isSaved, slideshowData, studyHistory, onSave, onStartNew, onSaveOnExport, onEnterSlideshow, onEnterDeepRead, onEnterStudyMode, onAnnotationUpdate, onTitleChange, currentAnnotationId, onExport, onNavigateHome }) => {
   const [showTranslation, setShowTranslation] = useState(true);
   const [showGrammar, setShowGrammar] = useState(false);
   const [showLineTranslation, setShowLineTranslation] = useState(false);
@@ -254,22 +249,33 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
         {/* Left-aligned interaction modes */}
         <div className="flex items-center space-x-2 flex-wrap gap-2">
             <button onClick={onEnterStudyMode} title="Switch to Study Mode (s)" className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition flex items-center gap-2">
-                <GraduationCapIcon className="w-4 h-4" /> Study Mode
+                <GraduationCapIcon className="text-base" /> Study Mode
             </button>
             <button onClick={onEnterDeepRead} title="Switch to Deep Read (r)" className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 transition flex items-center gap-2">
-                <BookOpenIcon className="w-4 h-4" /> Deep Read
+                <BookOpenIcon className="text-base" /> Deep Read
             </button>
             <button onClick={onEnterSlideshow} title="Switch to Slideshow (h)" className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 transition flex items-center gap-2">
-                <SlideshowIcon className="w-4 h-4" /> Slideshow
+                <SlideshowIcon className="text-base" /> Slideshow
             </button>
         </div>
 
         {/* Right-aligned file actions */}
         <div className="flex items-center space-x-2 flex-wrap gap-2">
-            <button onClick={onStartNew} title="Start a New Annotation (n)" className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition">New Annotation</button>
-            <button onClick={onSave} title="Save or Update Annotation (u)" className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition">{isSaved ? 'Update' : 'Save'}</button>
-            <button onClick={onExportJson} title="Export as JSON (e)" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition">Export JSON</button>
-            <button onClick={exportAsPdf} title="Export as PDF (p)" className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition">Export PDF</button>
+            <button onClick={onNavigateHome} title="Go to Home page" className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">home</span> Home
+            </button>
+            <button onClick={onStartNew} title="Start a New Annotation (n)" className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">add</span> New
+            </button>
+            <button onClick={onSave} title="Save or Update Annotation (u)" className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">save</span> {isSaved ? 'Update' : 'Save'}
+            </button>
+            <button onClick={onExport} title="Export as .zip (e)" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">archive</span> Export ZIP
+            </button>
+            <button onClick={exportAsPdf} title="Export as PDF (p)" className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">picture_as_pdf</span> Export PDF
+            </button>
         </div>
       </div>
       

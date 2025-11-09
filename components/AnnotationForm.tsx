@@ -189,6 +189,7 @@ const AnnotationForm: React.FC<AnnotationFormProps> = ({
               onClick={onClear}
               className="w-full flex justify-center items-center py-3 px-4 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-800 dark:text-white font-bold rounded-md shadow-lg transition duration-300 ease-in-out"
             >
+              <span className="material-symbols-outlined mr-2">delete_sweep</span>
               Clear
             </button>
             <button

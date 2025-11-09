@@ -26,11 +26,12 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavi
         </p>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <button
           onClick={onNavigateToAbout}
-          className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:underline"
+          className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition flex items-center gap-1.5"
         >
+          <span className="material-symbols-outlined text-lg">info</span>
           About
         </button>
         <button

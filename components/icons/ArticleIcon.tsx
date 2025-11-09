@@ -2,10 +2,10 @@ import React from 'react';
 
 interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {}
 
-const SunIcon: React.FC<IconProps> = ({ className, ...props }) => (
+const ArticleIcon: React.FC<IconProps> = ({ className, ...props }) => (
   <span {...props} className={`material-symbols-outlined ${className || ''}`}>
-    light_mode
+    article
   </span>
 );
 
-export default SunIcon;
+export default ArticleIcon;
