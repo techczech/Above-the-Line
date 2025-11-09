@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Annotation } from '../types';
 
 if (!process.env.API_KEY) {
@@ -47,10 +47,13 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
 
     For each line, provide an idiomatic, natural-sounding translation of the entire line in ${targetLang}.
 
-    Then, for each word within that line, provide:
-    1. A literal, word-for-word translation in ${targetLang}.
-    2. A detailed grammatical analysis.
+    Then, break down the line into individual words AND PUNCTUATION marks. It is CRITICAL that every punctuation mark (e.g., '.', ',', '?', '!') is treated as a separate item in the 'words' array. Do not group punctuation with words.
     
+    For each item (word or punctuation), provide:
+    1. 'original': The word or punctuation mark.
+    2. 'translation': A literal, word-for-word translation in ${targetLang}. For punctuation, this should be the same punctuation mark.
+    3. 'grammar': A detailed grammatical analysis. For punctuation, use 'Punct'.
+
     For the grammatical analysis:
     - Identify the part of speech (e.g., Noun, Verb, Adj).
     - For nouns, pronouns, and adjectives, specify case, gender, and number.
@@ -95,13 +98,13 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
                                 },
                                 words: {
                                     type: Type.ARRAY,
-                                    description: "Each object represents a single word with its analysis.",
+                                    description: "Each object represents a single word or punctuation mark with its analysis.",
                                     items: {
                                         type: Type.OBJECT,
                                         properties: {
                                             original: { type: Type.STRING },
                                             translation: { type: Type.STRING },
-                                            grammar: { type: Type.STRING, description: "Concise grammatical analysis." }
+                                            grammar: { type: Type.STRING, description: "Concise grammatical analysis. Use 'Punct' for punctuation." }
                                         },
                                         required: ["original", "translation", "grammar"]
                                     }
@@ -143,5 +146,33 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
         throw new Error(`Failed to generate annotation: ${error.message}`);
     }
     throw new Error("An unknown error occurred while generating the annotation.");
+  }
+};
+
+export const generateSpeech = async (text: string): Promise<string> => {
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-tts",
+      contents: [{ parts: [{ text: `Say with a neutral and clear voice: ${text}` }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: 'Kore' }, // A calm, clear voice
+          },
+        },
+      },
+    });
+    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    if (!base64Audio) {
+      throw new Error("The model did not return audio data.");
+    }
+    return base64Audio;
+  } catch (error) {
+    console.error("Gemini TTS API call failed:", error);
+    if (error instanceof Error) {
+        throw new Error(`Failed to generate speech: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while generating speech.");
   }
 };

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { Annotation, SlideshowData, StudySessionResult, SavedAnnotation } from '../types';
+import { Annotation, SlideshowData, StudySessionResult, SavedAnnotation, TextType } from '../types';
 import * as htmlToImage from 'html-to-image';
 import DownloadIcon from './icons/DownloadIcon';
 import SlideshowIcon from './icons/SlideshowIcon';
@@ -104,6 +104,13 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
     newAnnotation.stanzas[sIndex].lines[lIndex].words[wIndex].translation = newTranslation;
     onAnnotationUpdate(newAnnotation);
   }, [annotation, onAnnotationUpdate]);
+
+  const handleTextTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newTextType = e.target.value as TextType;
+    if (newTextType !== annotation.textType) {
+        onAnnotationUpdate({ ...annotation, textType: newTextType });
+    }
+  };
 
   const getLineHeightClass = () => {
     if (showTranslation && showGrammar) return 'leading-[3.5]';
@@ -210,6 +217,19 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
           <span>{stanzaCount} {stanzaCount === 1 ? unitName : unitNamePlural}</span>
           <span>{lineCount} {lineCount === 1 ? 'Line' : 'Lines'}</span>
           <span>{wordCount} {wordCount === 1 ? 'Word' : 'Words'}</span>
+           <div className="flex items-center gap-2 capitalize">
+              <label htmlFor="text-type-select" className="text-gray-500 dark:text-gray-400">Type:</label>
+              <select
+                id="text-type-select"
+                value={annotation.textType}
+                onChange={handleTextTypeChange}
+                className="bg-gray-100 dark:bg-gray-700 text-sm p-1 rounded-md border border-gray-300 dark:border-gray-600 focus:ring-1 focus:ring-blue-500 focus:outline-none capitalize"
+              >
+                <option value="prose">Prose</option>
+                <option value="poem">Poem</option>
+                <option value="dialogue">Dialogue</option>
+              </select>
+          </div>
         </div>
         <div className="flex justify-center items-center gap-4 mt-3 text-xs">
           {isSaved && (

@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Annotation, SlideshowData, Timecode, Word, Line } from '../types';
+import { Annotation, SlideshowData, Timecode, Word, Line, TextType } from '../types';
 import CloseIcon from './icons/CloseIcon';
 import PlayIcon from './icons/PlayIcon';
 import PauseIcon from './icons/PauseIcon';
@@ -7,6 +8,13 @@ import RecordIcon from './icons/RecordIcon';
 import VideoIcon from './icons/VideoIcon';
 import VideoOffIcon from './icons/VideoOffIcon';
 import ClockIcon from './icons/ClockIcon';
+import SpeakerWaveIcon from './icons/SpeakerWaveIcon';
+import SpinnerIcon from './icons/SpinnerIcon';
+import ArrowPathIcon from './icons/ArrowPathIcon';
+import ForwardIcon from './icons/ForwardIcon';
+import StopCircleIcon from './icons/StopCircleIcon';
+import { generateSpeech } from '../services/geminiService';
+import { decode, decodeAudioData } from '../utils/audioUtils';
 
 declare global {
   interface Window {
@@ -25,10 +33,12 @@ interface SlideshowPlayerProps {
 type Granularity = 'line' | 'sentence' | 'paragraph';
 type AnnotationDisplay = 'none' | 'word' | 'line';
 type RecordingStatus = 'idle' | 'recording' | 'paused';
+type AudioStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 interface SlideshowItem {
   id: string;
   content: React.ReactNode;
+  text: string;
 }
 
 const formatTime = (totalSeconds: number): string => {
@@ -52,10 +62,23 @@ const parseTime = (timeStr: string): number => {
     return minutes * 60 + seconds;
 };
 
+const getDefaultGranularity = (textType: TextType): Granularity => {
+    switch (textType) {
+        case 'poem':
+            return 'line';
+        case 'prose':
+            return 'sentence';
+        case 'dialogue':
+            return 'line'; // A 'line' in a dialogue is a speaker's turn
+        default:
+            return 'line';
+    }
+};
+
 const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialData, onExit, onSave }) => {
   const [youtubeUrl, setYoutubeUrl] = useState(initialData.youtubeUrl);
   const [timecodes, setTimecodes] = useState<Timecode[]>(initialData.timecodes);
-  const [granularity, setGranularity] = useState<Granularity>('line');
+  const [granularity, setGranularity] = useState<Granularity>(getDefaultGranularity(annotation.textType));
   const [annotationDisplay, setAnnotationDisplay] = useState<AnnotationDisplay>('word');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [player, setPlayer] = useState<any>(null);
@@ -67,8 +90,20 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   const [isEditingTimecodes, setIsEditingTimecodes] = useState(false);
   const [tempTimecodes, setTempTimecodes] = useState<Timecode[]>([]);
 
+  // TTS State
+  const [isTtsMode] = useState(!initialData.youtubeUrl);
+  const [showTtsPanel, setShowTtsPanel] = useState(false);
+  const [audioCache, setAudioCache] = useState<Map<string, AudioBuffer>>(new Map());
+  const [audioStatus, setAudioStatus] = useState<Map<string, AudioStatus>>(new Map());
+  const [playbackStatus, setPlaybackStatus] = useState<'playing' | 'paused' | 'stopped'>('stopped');
+  const [isLooping, setIsLooping] = useState(false);
+  const [isAutoAdvance, setIsAutoAdvance] = useState(true);
+  
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const currentAudioSourceRef = useRef<AudioBufferSourceNode | null>(null);
   const playerRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<number | null>(null);
+  const isMountedRef = useRef(true);
 
   const unitName = annotation.textType === 'prose' ? 'Paragraph' : 'Stanza';
 
@@ -108,40 +143,70 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
         items.push({
           id: `s${sIndex}`,
           content: <div className="space-y-4">{stanza.lines.map((line, lIndex) => renderLine(line, lIndex, annotationDisplay))}</div>,
+          text: stanza.lines.map(l => l.words.map(w => w.original).join(' ')).join('\n'),
         });
       });
     } else if (granularity === 'sentence') {
-      const sentences: { id: string; lines: Line[] }[] = [];
-      let stanzaSentenceIndex = 0;
+        const items: SlideshowItem[] = [];
+        interface WordWithMeta extends Word {
+            sIndex: number;
+            lIndex: number;
+        }
 
-      annotation.stanzas.forEach((stanza, sIndex) => {
-        stanzaSentenceIndex = 0;
-        let lineBuffer: Line[] = [];
+        const sentences: {id: string, words: WordWithMeta[]}[] = [];
+        let currentSentence: WordWithMeta[] = [];
+        let sentenceCounter = 0;
         
-        stanza.lines.forEach((line) => {
-          lineBuffer.push(line);
-          const lastWord = line.words[line.words.length - 1];
-          if (lastWord && lastWord.original.match(/[.?!]"?[']?$/)) {
-            sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, lines: lineBuffer });
-            lineBuffer = [];
-          }
+        const sentenceEndRegex = /[.?!…]['"”’]?$/;
+
+        annotation.stanzas.forEach((stanza, sIndex) => {
+            stanza.lines.forEach((line, lIndex) => {
+                line.words.forEach(word => {
+                    if (!word.original.trim()) return;
+                    currentSentence.push({ ...word, sIndex, lIndex });
+                    if (sentenceEndRegex.test(word.original.trim())) {
+                        if (currentSentence.length > 0) {
+                            sentences.push({ id: `sent-${sIndex}-${lIndex}-${sentenceCounter++}`, words: currentSentence });
+                            currentSentence = [];
+                        }
+                    }
+                });
+            });
         });
 
-        if (lineBuffer.length > 0) {
-            sentences.push({ id: `s${sIndex}-sent${stanzaSentenceIndex++}`, lines: lineBuffer });
+        if (currentSentence.length > 0) {
+            sentences.push({ id: `sent-final-${sentenceCounter++}`, words: currentSentence });
         }
-      });
-      
-      sentences.forEach(({ id, lines }) => {
-        items.push({ id, content: <div className="space-y-4">{lines.map((line, lIndex) => renderLine(line, lIndex, annotationDisplay))}</div> });
-      });
 
+        sentences.forEach(sentence => {
+            const linesMap = new Map<string, {line: Line, words: Word[]}>();
+            sentence.words.forEach(word => {
+                const lineKey = `${word.sIndex}-${word.lIndex}`;
+                if (!linesMap.has(lineKey)) {
+                    linesMap.set(lineKey, { line: annotation.stanzas[word.sIndex].lines[word.lIndex], words: [] });
+                }
+                linesMap.get(lineKey)!.words.push(word);
+            });
+
+            const content = Array.from(linesMap.values()).map(({ line, words }, idx) => {
+                const partialLine: Line = { ...line, words: words };
+                return renderLine(partialLine, `${sentence.id}-line-${idx}`, annotationDisplay);
+            });
+
+            items.push({
+                id: sentence.id,
+                content: <div className="space-y-2">{content}</div>,
+                text: sentence.words.map(w => w.original).join(' '),
+            });
+        });
+        return items;
     } else { // line
       annotation.stanzas.forEach((stanza, sIndex) => {
         stanza.lines.forEach((line, lIndex) => {
           items.push({
             id: `s${sIndex}-l${lIndex}`,
             content: renderLine(line, lIndex, annotationDisplay),
+            text: (line.speaker ? `${line.speaker}: ` : '') + line.words.map(w => w.original).join(' '),
           });
         });
       });
@@ -149,6 +214,155 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
     return items;
   }, [annotation, granularity, annotationDisplay]);
   
+  // --- TTS LOGIC START ---
+  
+  useEffect(() => {
+    isMountedRef.current = true;
+    if (isTtsMode && !audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    }
+    return () => {
+        isMountedRef.current = false;
+        if (currentAudioSourceRef.current) {
+            currentAudioSourceRef.current.stop();
+        }
+        if (isTtsMode && audioContextRef.current?.state !== 'closed') {
+          audioContextRef.current?.close();
+        }
+    };
+  }, [isTtsMode]);
+
+  const generateAndCacheAudio = useCallback(async (itemId: string) => {
+    if (audioStatus.get(itemId) === 'loading' || audioStatus.get(itemId) === 'loaded') {
+      return;
+    }
+
+    const item = flattenedItems.find(i => i.id === itemId);
+    if (!item || !item.text.trim()) {
+      setAudioStatus(prev => new Map(prev).set(itemId, 'loaded')); // Mark as loaded to skip
+      return;
+    }
+
+    setAudioStatus(prev => new Map(prev).set(itemId, 'loading'));
+
+    try {
+      const b64Audio = await generateSpeech(item.text);
+      if (audioContextRef.current && isMountedRef.current) {
+        const audioBuffer = await decodeAudioData(decode(b64Audio), audioContextRef.current, 24000, 1);
+        if (!isMountedRef.current) return;
+        setAudioCache(prev => new Map(prev).set(itemId, audioBuffer));
+        setAudioStatus(prev => new Map(prev).set(itemId, 'loaded'));
+      }
+    } catch (e) {
+      console.error(`Failed to generate audio for item ${itemId}`, e);
+      if (!isMountedRef.current) return;
+      setAudioStatus(prev => new Map(prev).set(itemId, 'error'));
+    }
+  }, [flattenedItems, audioStatus]);
+
+  useEffect(() => {
+    if (!isTtsMode || !showTtsPanel || flattenedItems.length === 0) return;
+
+    let isEffectActive = true;
+
+    const manageGeneration = async () => {
+      // 1. Prioritize current slide
+      const currentItemId = flattenedItems[currentIndex]?.id;
+      if (currentItemId && !audioStatus.has(currentItemId)) {
+        await generateAndCacheAudio(currentItemId);
+      }
+      
+      if (!isEffectActive) return;
+
+      // 2. Pre-fetch next slides
+      for (let i = 1; i <= 2; i++) {
+        const nextIndex = currentIndex + i;
+        if (nextIndex < flattenedItems.length) {
+          const nextItemId = flattenedItems[nextIndex].id;
+          if (!audioStatus.has(nextItemId)) {
+            // Fire and forget
+            generateAndCacheAudio(nextItemId);
+          }
+        }
+      }
+    };
+
+    manageGeneration();
+    
+    return () => { isEffectActive = false; };
+  }, [isTtsMode, showTtsPanel, currentIndex, flattenedItems, generateAndCacheAudio, audioStatus]);
+
+  const stopCurrentAudio = useCallback((fromOnEnded = false) => {
+    if (currentAudioSourceRef.current) {
+      currentAudioSourceRef.current.onended = null;
+      try {
+        currentAudioSourceRef.current.stop();
+      } catch (e) { /* Can throw if already stopped. Ignore. */ }
+      currentAudioSourceRef.current = null;
+    }
+    if (!fromOnEnded) { // If manually stopped, don't trigger auto-advance/loop
+      setPlaybackStatus('stopped');
+    }
+  }, []);
+
+  const playAudio = useCallback((itemId: string) => {
+    stopCurrentAudio();
+    const audioBuffer = audioCache.get(itemId);
+    if (!audioBuffer || !audioContextRef.current) {
+      setPlaybackStatus('stopped');
+      return;
+    }
+
+    const source = audioContextRef.current.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioContextRef.current.destination);
+
+    source.onended = () => {
+      if (currentAudioSourceRef.current !== source) return; // a new sound has already started
+      currentAudioSourceRef.current = null;
+      stopCurrentAudio(true); // Signal that stop is from onended
+
+      if (isLooping) {
+        playAudio(itemId);
+      } else if (isAutoAdvance) {
+        if (currentIndex < flattenedItems.length - 1) {
+          setCurrentIndex(p => p + 1);
+        } else {
+          setPlaybackStatus('stopped');
+        }
+      } else {
+        setPlaybackStatus('stopped');
+      }
+    };
+
+    source.start(0);
+    currentAudioSourceRef.current = source;
+    setPlaybackStatus('playing');
+
+  }, [audioCache, stopCurrentAudio, isLooping, isAutoAdvance, currentIndex, flattenedItems.length]);
+
+  useEffect(() => {
+    const currentItemId = flattenedItems[currentIndex]?.id;
+    if (!currentItemId || !isTtsMode) return;
+    
+    if (playbackStatus === 'playing' && audioStatus.get(currentItemId) === 'loaded') {
+      playAudio(currentItemId);
+    }
+  }, [playbackStatus, audioStatus, currentIndex, flattenedItems, playAudio, isTtsMode]);
+
+  const handlePlayPause = () => {
+    if (playbackStatus === 'playing') {
+      stopCurrentAudio();
+      setPlaybackStatus('paused');
+    } else {
+      setPlaybackStatus('playing');
+    }
+  };
+  
+  const currentItemAudioStatus = audioStatus.get(flattenedItems[currentIndex]?.id) || 'idle';
+
+  // --- TTS LOGIC END ---
+
   const handleRecordTimecode = useCallback(() => {
     if (!player || typeof player.getCurrentTime !== 'function' || recordingStatus !== 'recording') return;
     const currentTime = player.getCurrentTime();
@@ -191,20 +405,26 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       switch (e.code) {
         case 'Space':
           e.preventDefault();
-          if (player && typeof player.getPlayerState === 'function') {
+          if (isTtsMode && showTtsPanel) {
+            handlePlayPause();
+          } else if (player && typeof player.getPlayerState === 'function') {
             const playerState = player.getPlayerState();
             if (playerState === 1) player.pauseVideo();
             else player.playVideo();
           }
           break;
         case 'ArrowRight':
+          stopCurrentAudio();
+          setPlaybackStatus('paused');
           setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1));
           break;
         case 'ArrowLeft':
+          stopCurrentAudio();
+          setPlaybackStatus('paused');
           setCurrentIndex(p => Math.max(0, p - 1));
           break;
         case 'KeyR':
-          if (recordingStatus === 'recording') {
+          if (!isTtsMode && recordingStatus === 'recording') {
             handleRecordTimecode();
           }
           break;
@@ -212,7 +432,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [player, flattenedItems.length, recordingStatus, handleRecordTimecode, isSettingStartTime, isEditingTimecodes]);
+  }, [player, flattenedItems.length, recordingStatus, handleRecordTimecode, isSettingStartTime, isEditingTimecodes, isTtsMode, handlePlayPause, stopCurrentAudio, showTtsPanel]);
 
   useEffect(() => {
     if (showVideo && youtubeUrl) {
@@ -256,7 +476,9 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   useEffect(() => {
       setCurrentIndex(0);
       setRecordingStatus('idle');
-  }, [granularity, annotationDisplay]);
+      setPlaybackStatus('stopped');
+      stopCurrentAudio();
+  }, [granularity, annotationDisplay, stopCurrentAudio]);
 
   const startRecording = () => {
     setIsSettingStartTime(false);
@@ -406,12 +628,14 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
   };
 
   const currentItemHasTimecode = useMemo(() => {
-    if (!flattenedItems[currentIndex]) return false;
+    if (!flattenedItems[currentIndex] || isTtsMode) return false;
     return timecodesMap.has(flattenedItems[currentIndex].id);
-  }, [currentIndex, flattenedItems, timecodesMap]);
+  }, [currentIndex, flattenedItems, timecodesMap, isTtsMode]);
+  
+  const showPlayerPanel = showVideo || (isTtsMode && showTtsPanel);
 
   return (
-    <div className="fixed inset-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white z-40 flex flex-col p-4 md:p-8 transition-colors duration-300">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 text-gray-900 dark:text-white z-40 flex flex-col p-4 md:p-8 transition-colors duration-300 overflow-hidden">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h2 className="text-2xl font-bold">Slideshow Mode</h2>
@@ -422,24 +646,85 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       </div>
       
       {/* Main Content */}
-      <div className={`flex-grow grid grid-cols-1 ${showVideo ? 'md:grid-cols-2' : ''} gap-8 min-h-0`}>
-        {/* Video Player */}
-        <div className={`${showVideo ? 'flex' : 'hidden'} bg-black rounded-lg flex-col`}>
-            <input 
-                type="text"
-                placeholder="Paste YouTube URL here..."
-                value={youtubeUrl}
-                onChange={e => setYoutubeUrl(e.target.value)}
-                className="w-full p-2 bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 rounded-t-lg text-gray-900 dark:text-white"
-            />
-            <div id="youtube-player-container" ref={playerRef} className="flex-grow w-full h-full">
-                {!youtubeUrl && <div className="w-full h-full flex items-center justify-center text-gray-500">Enter a YouTube URL to begin</div>}
-            </div>
+      <div className={`flex-grow grid grid-cols-1 ${showPlayerPanel ? 'md:grid-cols-3' : ''} gap-8 min-h-0`}>
+        {/* Player Panel */}
+        <div className={`${showPlayerPanel ? 'md:col-span-1' : 'hidden'} bg-black rounded-lg flex flex-col`}>
+            {isTtsMode ? (
+                <div className="w-full h-auto flex flex-col items-center justify-start p-6 gap-4 text-white flex-grow">
+                    <SpeakerWaveIcon className="w-12 h-12 text-gray-400" />
+                    <h3 className="text-lg font-semibold">Audio Player</h3>
+                    
+                    <div className="text-center min-h-[2rem] flex items-center justify-center text-sm text-gray-400">
+                      {currentItemAudioStatus === 'loading' && (
+                          <div className="flex items-center gap-2">
+                              <SpinnerIcon className="w-4 h-4" />
+                              <span>Generating audio...</span>
+                          </div>
+                      )}
+                      {currentItemAudioStatus === 'error' && (
+                          <p className="text-red-400">Audio generation failed.</p>
+                      )}
+                       {currentItemAudioStatus === 'loaded' && playbackStatus === 'stopped' && (
+                          <p className="text-green-400">Audio ready.</p>
+                      )}
+                    </div>
+                    
+                    {/* Playback Controls */}
+                    <div className="w-full border-t border-gray-700 mt-auto pt-4 flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-4">
+                            <button 
+                                onClick={handlePlayPause} 
+                                disabled={currentItemAudioStatus !== 'loaded'}
+                                className="p-3 rounded-full bg-blue-600 text-white disabled:opacity-50 disabled:bg-gray-500" 
+                                title={playbackStatus === 'playing' ? "Pause" : "Play"}
+                            >
+                              {playbackStatus === 'playing' ? <PauseIcon className="w-7 h-7"/> : <PlayIcon className="w-7 h-7"/>}
+                            </button>
+                            <button onClick={() => { stopCurrentAudio(); }} disabled={playbackStatus === 'stopped'} className="p-2 rounded-full bg-gray-600 text-white hover:bg-gray-500 disabled:opacity-50" title="Stop">
+                                <StopCircleIcon className="w-6 h-6"/>
+                            </button>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => setIsLooping(p => !p)} title="Loop current slide" className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-full transition-colors ${isLooping ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'}`}>
+                                <ArrowPathIcon className="w-4 h-4"/>
+                                <span>Loop</span>
+                            </button>
+                            <button onClick={() => setIsAutoAdvance(p => !p)} title="Auto-advance to next slide" className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-full transition-colors ${isAutoAdvance ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'}`}>
+                                <ForwardIcon className="w-4 h-4"/>
+                                <span>Auto-Advance</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <>
+                  <input 
+                      type="text"
+                      placeholder="Paste YouTube URL here..."
+                      value={youtubeUrl}
+                      onChange={e => setYoutubeUrl(e.target.value)}
+                      className="w-full p-2 bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 focus:outline-none focus:border-blue-500 rounded-t-lg text-gray-900 dark:text-white"
+                  />
+                  <div id="youtube-player-container" ref={playerRef} className="flex-grow w-full h-full">
+                      {!youtubeUrl && <div className="w-full h-full flex items-center justify-center text-gray-500">Enter a YouTube URL to begin</div>}
+                  </div>
+                </>
+            )}
         </div>
 
         {/* Annotation Viewer */}
-        <div className={`bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center p-8 relative ${!showVideo ? 'col-span-1 md:col-span-2' : ''}`}>
+        <div className={`bg-gray-50 dark:bg-gray-800 rounded-lg flex flex-col items-center justify-center p-8 relative min-h-0 ${showPlayerPanel ? 'md:col-span-2' : ''}`}>
           <div className="absolute top-4 right-4 flex items-center gap-4 z-10">
+            {isTtsMode && !showPlayerPanel && (
+              <button
+                onClick={() => setShowTtsPanel(true)}
+                className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition flex items-center gap-2"
+                title="Generate audio for this slideshow"
+              >
+                <SpeakerWaveIcon className="w-4 h-4" />
+                Add Audio
+              </button>
+            )}
             {currentItemHasTimecode && <ClockIcon className="w-5 h-5 text-blue-500" title={`Start: ${formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.startTime)} | End: ${timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime !== null ? formatTime(timecodesMap.get(flattenedItems[currentIndex]?.id)!.endTime!) : 'N/A'}`} />}
             <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500 dark:text-gray-400">Annotation:</span>
@@ -468,62 +753,68 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, initialDa
       <div className="flex-shrink-0 mt-4 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm p-3 rounded-lg">
         <div className="flex justify-between items-center w-full gap-4">
             {/* Left-aligned controls */}
-            <div className="flex items-center gap-2 flex-wrap justify-start">
-                <button onClick={() => setShowVideo(p => !p)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" title={showVideo ? "Hide Video" : "Show Video"}>
-                    {showVideo ? <VideoOffIcon className="w-6 h-6"/> : <VideoIcon className="w-6 h-6"/>}
-                </button>
-                 {isAutoPlaying ? (
-                    <button onClick={handlePausePlayback} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Pause Sync">
-                        <PauseIcon className="w-5 h-5"/> Pause Playback
+            <div className="flex items-center gap-2 flex-wrap justify-start min-h-[40px]">
+                {!isTtsMode && (
+                  <>
+                    <button onClick={() => setShowVideo(p => !p)} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" title={showVideo ? "Hide Video" : "Show Video"}>
+                        {showVideo ? <VideoOffIcon className="w-6 h-6"/> : <VideoIcon className="w-6 h-6"/>}
                     </button>
-                ) : (
-                    <>
-                        <button onClick={handlePlayFromBeginning} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Start">
-                           <PlayIcon className="w-5 h-5"/> Play from Beginning
-                        </button>
-                        <button onClick={handlePlayFromCurrent} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Current">
-                           <PlayIcon className="w-5 h-5"/> Play from Current
-                        </button>
-                    </>
+                    {isAutoPlaying ? (
+                      <button onClick={handlePausePlayback} className="px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600" title="Pause Sync">
+                          <PauseIcon className="w-5 h-5"/> Pause Playback
+                      </button>
+                    ) : (
+                      <>
+                          <button onClick={handlePlayFromBeginning} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Start">
+                             <PlayIcon className="w-5 h-5"/> Play from Beginning
+                          </button>
+                          <button onClick={handlePlayFromCurrent} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player || timecodes.length === 0} title="Automatic Playback from Current">
+                             <PlayIcon className="w-5 h-5"/> Play from Current
+                          </button>
+                      </>
+                    )}
+                  </>
                 )}
             </div>
 
             {/* Right-aligned editing and navigation controls */}
             <div className="flex items-center gap-4 justify-end">
-                <div className="flex items-center gap-2 flex-wrap">
-                    <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={flattenedItems.length === 0}>Edit Timecodes</button>
-                    
-                    {recordingStatus === 'idle' && (
-                        <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player}>
-                          <RecordIcon className="w-5 h-5" /> Record Timecodes
-                        </button>
-                    )}
-                    {recordingStatus === 'recording' && (
-                        <>
-                            <button onClick={stopRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 hover:bg-yellow-700 text-white">Stop</button>
-                            <button onClick={handleRecordTimecode} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
-                                <RecordIcon className="w-5 h-5" /> Next (R)
-                            </button>
-                        </>
-                    )}
-                    {recordingStatus === 'paused' && (
-                        <>
-                            <button onClick={resumeRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-green-600 hover:bg-green-700 text-white">Resume</button>
-                            <button onClick={finishRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white">Finish</button>
-                        </>
-                    )}
-                </div>
+                {!isTtsMode && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                      <button onClick={openTimecodeEditor} className="px-3 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50" disabled={flattenedItems.length === 0}>Edit Timecodes</button>
+                      
+                      {recordingStatus === 'idle' && (
+                          <button onClick={() => setIsSettingStartTime(true)} className="px-3 py-2 text-sm font-medium rounded-md bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 flex items-center gap-2" disabled={!showVideo || !player}>
+                            <RecordIcon className="w-5 h-5" /> Record Timecodes
+                          </button>
+                      )}
+                      {recordingStatus === 'recording' && (
+                          <>
+                              <button onClick={stopRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-yellow-600 hover:bg-yellow-700 text-white">Stop</button>
+                              <button onClick={handleRecordTimecode} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2">
+                                  <RecordIcon className="w-5 h-5" /> Next (R)
+                              </button>
+                          </>
+                      )}
+                      {recordingStatus === 'paused' && (
+                          <>
+                              <button onClick={resumeRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-green-600 hover:bg-green-700 text-white">Resume</button>
+                              <button onClick={finishRecording} className="px-3 py-2 text-sm font-medium rounded-md bg-blue-600 hover:bg-blue-700 text-white">Finish</button>
+                          </>
+                      )}
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 font-medium border-l border-gray-300 dark:border-gray-600 pl-4">
-                    <button onClick={() => setCurrentIndex(p => Math.max(0, p - 1))} disabled={currentIndex === 0} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Prev</button>
+                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.max(0, p - 1)); }} disabled={currentIndex === 0} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Prev</button>
                     <span className="text-sm text-gray-500 dark:text-gray-400 select-none w-12 text-center">{flattenedItems.length > 0 ? currentIndex + 1 : 0} / {flattenedItems.length}</span>
-                    <button onClick={() => setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1))} disabled={currentIndex >= flattenedItems.length - 1} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Next</button>
+                    <button onClick={() => { stopCurrentAudio(); setPlaybackStatus('paused'); setCurrentIndex(p => Math.min(flattenedItems.length - 1, p + 1)); }} disabled={currentIndex >= flattenedItems.length - 1} className="px-3 py-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50">Next</button>
                 </div>
             </div>
         </div>
          <div className="text-center mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 w-full">
             <p className="text-xs text-gray-500 dark:text-gray-400">
-                Keyboard Shortcuts: Click video to play/pause, <b>← →</b> (Prev/Next Slide), <b>R</b> (Record Timecode)
+                Keyboard Shortcuts: Space (Play/Pause), <b>← →</b> (Prev/Next Slide), <b>R</b> (Record Timecode)
             </p>
          </div>
       </div>
