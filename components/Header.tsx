@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavi
           className="p-2 rounded-full text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           aria-label="Toggle theme"
         >
-          {theme === 'light' ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
+          {theme === 'light' ? <MoonIcon className="text-2xl" /> : <SunIcon className="text-2xl" />}
         </button>
       </div>
     </header>

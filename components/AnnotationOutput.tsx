@@ -204,7 +204,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
                 onClick={() => setIsEditingTitle(true)}
               >
                 {title}
-                <PencilIcon className="inline-block w-5 h-5 ml-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <PencilIcon className="inline-block text-xl ml-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
               </h2>
             )}
         </div>
@@ -229,17 +229,17 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
         <div className="flex justify-center items-center gap-4 mt-3 text-xs">
           {isSaved && (
             <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 font-medium">
-              <CheckCircleIcon className="w-4 h-4" /> Saved
+              <CheckCircleIcon className="text-base" /> Saved
             </span>
           )}
           {slideshowData?.youtubeUrl && (
             <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 font-medium">
-              <FilmIcon className="w-4 h-4" /> Slideshow
+              <FilmIcon className="text-base" /> Slideshow
             </span>
           )}
           {studyHistory && studyHistory.length > 0 && (
             <span className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-medium">
-              <GraduationCapIcon className="w-4 h-4" /> Study History
+              <GraduationCapIcon className="text-base" /> Study History
             </span>
           )}
         </div>
@@ -318,7 +318,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
               title={`Export this ${unitName.toLowerCase()} as PNG`}
               aria-label={`Export this ${unitName.toLowerCase()} as PNG`}
             >
-              <DownloadIcon className="w-4 h-4" />
+              <DownloadIcon className="text-lg" />
             </button>
             {stanza.lines.map((line, lIndex) => (
               <div key={lIndex} className={textType === 'dialogue' ? 'mb-4' : 'mb-2'}>

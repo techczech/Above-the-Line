@@ -23,7 +23,7 @@ const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad, 
         aria-controls="sample-annotations-content"
       >
         <span>Sample Texts</span>
-        <ChevronDownIcon className={`w-6 h-6 text-gray-500 dark:text-gray-400 transition-transform duration-300 ${isCollapsed ? '' : 'rotate-180'}`} />
+        <ChevronDownIcon className={`text-2xl text-gray-500 dark:text-gray-400 transition-transform duration-300 ${isCollapsed ? '' : 'rotate-180'}`} />
       </button>
 
       {!isCollapsed && (
@@ -37,9 +37,9 @@ const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad, 
               {samples.map((item) => (
                 <div key={item.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    {item.slideshowData && <FilmIcon className="w-5 h-5 text-gray-400" title="Video slideshow available" />}
-                    {annotationsWithAudio.has(item.id) && <SpeakerWaveIcon className="w-5 h-5 text-gray-400" title="Audio slideshow available" />}
-                    {!item.slideshowData && !annotationsWithAudio.has(item.id) && <ArticleIcon className="w-5 h-5 text-gray-400" title="Text only" />}
+                    {item.slideshowData && <FilmIcon className="text-xl text-gray-400" title="Video slideshow available" />}
+                    {annotationsWithAudio.has(item.id) && <SpeakerWaveIcon className="text-xl text-gray-400" title="Audio slideshow available" />}
+                    {!item.slideshowData && !annotationsWithAudio.has(item.id) && <ArticleIcon className="text-xl text-gray-400" title="Text only" />}
                     <div>
                       <p className="font-bold">{item.title}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">

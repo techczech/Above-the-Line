@@ -115,7 +115,7 @@ const AnnotationForm: React.FC<AnnotationFormProps> = ({
               <span>{annotationMode === 'video' ? 'Timecoded Transcript' : 'Text to Annotate'}</span>
               {annotationMode === 'video' && (
                   <button onClick={() => setIsPromptModalOpen(true)} title="How to format your transcript">
-                      <InfoIcon className="w-4 h-4 text-gray-400 hover:text-blue-500 transition-colors" />
+                      <InfoIcon className="text-base text-gray-400 hover:text-blue-500 transition-colors" />
                   </button>
               )}
             </label>
