@@ -62,7 +62,7 @@ const PromptInfoModal: React.FC<PromptInfoModalProps> = ({ isOpen, onClose }) =>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-0 w-full max-w-2xl flex flex-col h-auto max-h-[85vh]" onClick={e => e.stopPropagation()}>
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center flex-shrink-0">
               <h3 className="text-lg font-bold">Gemini Prompt for Timecoded Transcripts</h3>
-              <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><CloseIcon className="w-5 h-5"/></button>
+              <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><CloseIcon className="text-xl"/></button>
           </div>
           <div className="p-6 overflow-y-auto flex-grow prose dark:prose-invert max-w-none">
               <p>To ensure your transcript works perfectly with the slideshow feature, use the following prompt with a powerful model like Gemini 2.5 Pro. Provide it with the source media URL and the text to be transcribed.</p>
@@ -71,7 +71,7 @@ const PromptInfoModal: React.FC<PromptInfoModalProps> = ({ isOpen, onClose }) =>
                     <code>{geminiPrompt}</code>
                 </pre>
                 <button onClick={handleCopy} className="absolute top-2 right-2 flex items-center gap-1.5 px-2 py-1 text-xs rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                  {isCopied ? <CheckIcon className="w-3 h-3 text-green-500" /> : <ClipboardIcon className="w-3 h-3" />}
+                  {isCopied ? <CheckIcon className="text-xs text-green-500" /> : <ClipboardIcon className="text-xs" />}
                   {isCopied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
