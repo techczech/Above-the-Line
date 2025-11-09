@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { SavedAnnotation } from '../types';
 import FilmIcon from './icons/FilmIcon';
 import ChevronDownIcon from './icons/ChevronDownIcon';
+import SpeakerWaveIcon from './icons/SpeakerWaveIcon';
+import ArticleIcon from './icons/ArticleIcon';
 
 interface SampleAnnotationsProps {
   samples: SavedAnnotation[];
   onLoad: (annotation: SavedAnnotation) => void;
+  annotationsWithAudio: Set<string>;
 }
 
-const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad }) => {
+const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad, annotationsWithAudio }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
@@ -34,7 +37,9 @@ const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad }
               {samples.map((item) => (
                 <div key={item.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-200 dark:border-gray-700 flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    {item.slideshowData && <FilmIcon className="w-5 h-5 text-gray-400" />}
+                    {item.slideshowData && <FilmIcon className="w-5 h-5 text-gray-400" title="Video slideshow available" />}
+                    {annotationsWithAudio.has(item.id) && <SpeakerWaveIcon className="w-5 h-5 text-gray-400" title="Audio slideshow available" />}
+                    {!item.slideshowData && !annotationsWithAudio.has(item.id) && <ArticleIcon className="w-5 h-5 text-gray-400" title="Text only" />}
                     <div>
                       <p className="font-bold">{item.title}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -45,8 +50,9 @@ const SampleAnnotations: React.FC<SampleAnnotationsProps> = ({ samples, onLoad }
                   <div className="space-x-2">
                     <button
                       onClick={() => onLoad(item)}
-                      className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
+                      className="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition flex items-center gap-2"
                     >
+                      <span className="material-symbols-outlined text-base">folder_open</span>
                       Load
                     </button>
                   </div>

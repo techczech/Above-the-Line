@@ -17,6 +17,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
             <ul>
                 <li><strong>Detailed Text & Video Annotation:</strong> Paste any text or a timecoded video transcript to generate line-by-line analysis. The app provides word-for-word translations, detailed grammatical information, and natural-sounding idiomatic translations for each line.</li>
                 <li><strong>Multiple Interaction Modes:</strong> Go beyond static text with three dynamic modes designed for different learning styles: a focused <strong>Deep Read</strong> view, a multimedia <strong>Slideshow</strong> mode for syncing text with video, and an interactive <strong>Study Mode</strong> to gamify your learning.</li>
+                <li><strong>Text-to-Speech (TTS) Slideshow:</strong> For annotations without a video source, the slideshow can generate high-quality audio for each slide, turning your text into an engaging listening experience with full playback controls.</li>
                 <li><strong>Progress Tracking & Gamification:</strong> Turn your annotations into practice sessions. Study Mode tracks your score, time, and progress, helping you identify areas for improvement.</li>
                 <li><strong>Flexible Data Management:</strong> Save your work to your browser, export everything for backup, or share with others. You can export individual annotations as JSON or PDF, and even export stanzas as PNG images.</li>
             </ul>
@@ -39,11 +40,11 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
             <p>A focused, minimalist environment for close reading. The text is displayed cleanly in a single column. Click on any word to reveal a pop-up with its translation, grammar, or the full line's idiomatic translation, allowing you to get more information without losing your place.</p>
             
             <h4>Slideshow Mode</h4>
-            <p>Transform your annotation into an engaging multimedia presentation. This mode syncs your annotated text with a YouTube video, highlighting each line, sentence, or paragraph as it's spoken. It's perfect for lectures, language classes, or poetry readings. Key features include:</p>
+            <p>Transform your annotation into an engaging multimedia presentation. This mode syncs your annotated text with a YouTube video, highlighting each line, sentence, or paragraph as it's spoken. It's perfect for lectures, language classes, or poetry readings. For annotations that don't have an associated video, Slideshow Mode transforms into a powerful <strong>Text-to-Speech (TTS) player</strong>. The app automatically generates audio for each slide on-demand, allowing you to start listening almost instantly without waiting. Key features include:</p>
             <ul>
-                <li><strong>Automatic Playback:</strong> Play the video from the beginning or the current slide, and the text will automatically scroll in sync.</li>
-                <li><strong>Timecode Recording:</strong> Don't have timecodes? Create them yourself! Play the video and press a button at the start of each segment to record the timestamp.</li>
-                <li><strong>Timecode Editor:</strong> Fine-tune your timings with a detailed editor that lets you manually adjust the start and end time for every slide.</li>
+                <li><strong>Video Sync & Playback:</strong> Play the video from the beginning or the current slide, and the text will automatically scroll in sync.</li>
+                <li><strong>Text-to-Speech Audio:</strong> Listen to text-only annotations read aloud. Audio is generated on-demand for a seamless, streaming-like experience with controls for play/pause, looping, and auto-advance.</li>
+                <li><strong>Timecode Recording & Editing:</strong> Create your own timecodes by playing the video and marking timestamps. Fine-tune them with a detailed editor.</li>
                 <li><strong>Customizable View:</strong> Change the granularity (line, sentence, or paragraph) and what annotations are displayed on the fly.</li>
             </ul>
 
@@ -81,12 +82,18 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
                 <li><strong>p:</strong> Ex<strong>p</strong>ort the current annotation as a <strong>P</strong>DF file.</li>
             </ul>
 
+            <h3 className="text-2xl font-bold mt-8 mb-2">Availability & Source Code</h3>
+            <p>
+                This site is free to use for now but makes no guarantees about future availability. You can get the source code to run your own on GitHub: <a href="https://github.com/techczech/Above-the-Line" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">https://github.com/techczech/Above-the-Line</a>.
+            </p>
+
             <div className="text-center mt-8 not-prose">
                 <button 
                 onClick={onNavigateHome}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out flex items-center gap-2 mx-auto"
                 >
-                Back to Home
+                  <span className="material-symbols-outlined">home</span>
+                  Back to Home
                 </button>
             </div>
         </div>

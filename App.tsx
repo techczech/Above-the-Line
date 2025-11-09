@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useCallback } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
 import { Annotation, SavedAnnotation, Theme, SlideshowData, StudySessionResult, Timecode } from './types';
@@ -7,6 +9,7 @@ import HomePage from './components/HomePage';
 import AnnotatorView from './components/AnnotatorView';
 import AboutPage from './components/AboutPage';
 import { parseTimecodedText } from './utils/textProcessing';
+import * as db from './utils/db';
 
 const defaultSlideshowData: SlideshowData = { youtubeUrl: '', timecodes: [] };
 
@@ -27,14 +30,16 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [annotation, setAnnotation] = useState<Annotation | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isCurrentAnnotationSaved, setIsCurrentAnnotationSaved] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [currentAnnotationId, setCurrentAnnotationId] = useState<string | null>(null);
   const [currentTitle, setCurrentTitle] = useState<string>('');
+  const [unsavedAudio, setUnsavedAudio] = useState<Map<string, ArrayBuffer>>(new Map());
   
   const [isSlideshowVisible, setIsSlideshowVisible] = useState(false);
   const [isDeepReadVisible, setIsDeepReadVisible] = useState(false);
   const [studyModeTarget, setStudyModeTarget] = useState<SavedAnnotation | null>(null);
   const [currentSlideshowData, setCurrentSlideshowData] = useState<SlideshowData>(defaultSlideshowData);
+  const [annotationsWithAudio, setAnnotationsWithAudio] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -43,6 +48,21 @@ const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  // Unsaved changes prompt
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        event.preventDefault();
+        // Modern browsers show a generic message. This is for older ones.
+        event.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges]);
   
   useEffect(() => {
     const sampleFiles = [
@@ -71,6 +91,35 @@ const App: React.FC = () => {
     fetchSamples();
   }, []);
 
+  useEffect(() => {
+    const checkAllAnnotationsForAudio = async () => {
+      if (savedAnnotations.length === 0 && sampleAnnotations.length === 0) {
+        setAnnotationsWithAudio(new Set());
+        return;
+      }
+      const allAnnotations = [...savedAnnotations, ...sampleAnnotations];
+      const newAnnotationsWithAudio = new Set<string>();
+
+      const promises = allAnnotations.map(async (annotation) => {
+        try {
+          if (annotation.id) { // Ensure annotation.id is not null/undefined
+            const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
+            if (audioFiles.length > 0) {
+              newAnnotationsWithAudio.add(annotation.id);
+            }
+          }
+        } catch (e) {
+          console.error(`Could not check audio for annotation ${annotation.id}`, e);
+        }
+      });
+
+      await Promise.all(promises);
+      setAnnotationsWithAudio(newAnnotationsWithAudio);
+    };
+
+    checkAllAnnotationsForAudio();
+  }, [savedAnnotations, sampleAnnotations]);
+
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
     setTimeout(() => {
@@ -85,11 +134,12 @@ const App: React.FC = () => {
     setAnnotation(null);
     setError(null);
     setCurrentTitle('');
-    setIsCurrentAnnotationSaved(false);
+    setHasUnsavedChanges(false);
     setCurrentAnnotationId(null);
     setCurrentSlideshowData(defaultSlideshowData);
     setYoutubeUrl('');
     setAnnotationMode('text');
+    setUnsavedAudio(new Map());
   }, []);
 
   const handleNavigateToAnnotator = useCallback(() => {
@@ -183,7 +233,7 @@ const App: React.FC = () => {
       setAnnotation(result);
       setCurrentTitle(titleResult);
       setCurrentSlideshowData(newSlideshowData);
-      setIsCurrentAnnotationSaved(false);
+      setHasUnsavedChanges(true);
       setCurrentAnnotationId(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
@@ -220,18 +270,25 @@ const App: React.FC = () => {
       return [savedOrUpdatedAnnotation, ...prev];
     });
 
+    if (unsavedAudio.size > 0) {
+      unsavedAudio.forEach(async (data, itemId) => {
+          await db.saveAudio(id, itemId, data);
+      });
+      setUnsavedAudio(new Map());
+    }
+
     setCurrentAnnotationId(id);
-    setIsCurrentAnnotationSaved(true);
+    setHasUnsavedChanges(false);
     showToast(currentAnnotationId ? "Annotation updated!" : "Annotation saved!");
     return savedOrUpdatedAnnotation;
-  }, [annotation, currentAnnotationId, text, sourceLang, targetLang, currentSlideshowData, setSavedAnnotations, showToast, savedAnnotations, currentTitle]);
+  }, [annotation, currentAnnotationId, text, sourceLang, targetLang, currentSlideshowData, setSavedAnnotations, showToast, savedAnnotations, currentTitle, unsavedAudio]);
 
   const handleSaveOnExport = useCallback((): SavedAnnotation | null => {
-    if (!isCurrentAnnotationSaved) {
+    if (hasUnsavedChanges) {
         return handleSave();
     }
     return savedAnnotations.find(a => a.id === currentAnnotationId) ?? null;
-  }, [isCurrentAnnotationSaved, handleSave, savedAnnotations, currentAnnotationId]);
+  }, [hasUnsavedChanges, handleSave, savedAnnotations, currentAnnotationId]);
 
   const handleLoad = useCallback((item: SavedAnnotation) => {
     setText(item.sourceText);
@@ -242,7 +299,8 @@ const App: React.FC = () => {
     setCurrentSlideshowData(item.slideshowData || defaultSlideshowData);
     setError(null);
     setCurrentAnnotationId(item.id);
-    setIsCurrentAnnotationSaved(true);
+    setHasUnsavedChanges(false);
+    setUnsavedAudio(new Map());
     // If loaded item has slideshow data, switch to video mode
     if (item.slideshowData?.youtubeUrl) {
       setAnnotationMode('video');
@@ -256,47 +314,127 @@ const App: React.FC = () => {
     showToast("Loaded saved annotation.");
   }, [showToast]);
 
-  const handleDelete = useCallback((id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     setSavedAnnotations(prev => prev.filter(item => item.id !== id));
-    showToast("Annotation deleted.");
+    await db.deleteAudioForAnnotation(id);
+    showToast("Annotation and associated audio deleted.");
   }, [setSavedAnnotations, showToast]);
   
-  const handleExportAll = useCallback(() => {
+  const handleExportAll = useCallback(async () => {
     if (savedAnnotations.length === 0) {
       showToast("No saved texts to export.");
       return;
     }
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(savedAnnotations, null, 2)
-    )}`;
-    const link = document.createElement('a');
-    link.href = jsonString;
-    link.download = `above_the_line_export.json`;
-    link.click();
+
+    try {
+      const JSZip = window.JSZip;
+      if (!JSZip) {
+        throw new Error("JSZip library not loaded.");
+      }
+      
+      const { default: saveAs } = await import('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm');
+      
+      const zip = new JSZip();
+      showToast("Preparing export... this may take a moment.");
+
+      // Use a for...of loop to handle async operations sequentially and avoid race conditions with file naming
+      for (const annotation of savedAnnotations) {
+        // Sanitize title for filename, fallback to a portion of the ID
+        const baseName = annotation.title.toLowerCase()
+          .replace(/\s+/g, '_')
+          .replace(/[^a-z0-9_-]/g, '') || `annotation_${annotation.id.substring(0,8)}`;
+        
+        let jsonFileName = `${baseName}.json`;
+        let i = 1;
+        // Handle potential duplicate filenames
+        while(zip.file(jsonFileName)) {
+            jsonFileName = `${baseName}_${i++}.json`;
+        }
+
+        // Add the JSON file for the annotation
+        zip.file(jsonFileName, JSON.stringify(annotation, null, 2));
+
+        // Check for and add associated audio files
+        const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
+        if (audioFiles.length > 0) {
+          const audioFolderName = jsonFileName.replace(/\.json$/, '_audio');
+          const audioFolder = zip.folder(audioFolderName);
+          if (audioFolder) {
+            audioFiles.forEach(file => {
+              // Save as .raw since it's raw PCM data, which is more descriptive.
+              audioFolder.file(`${file.audioId}.raw`, file.data);
+            });
+          }
+        }
+      }
+
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, `above_the_line_export_all.zip`);
+      
+    } catch (error) {
+      console.error("Failed to export all annotations:", error);
+      showToast(error instanceof Error ? `Export failed: ${error.message}` : "Export failed.");
+    }
+
   }, [savedAnnotations, showToast]);
 
-  const handleImport = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target?.result;
-        if (typeof text !== 'string') throw new Error("File could not be read");
-        const parsedJson = JSON.parse(text);
+    const resetInput = () => { if (event.target) event.target.value = ''; };
+
+    try {
+      if (file.name.endsWith('.zip')) {
+        const JSZip = window.JSZip;
+        if (!JSZip) throw new Error("ZIP library not loaded.");
         
+        const zip = await JSZip.loadAsync(file);
+        const jsonFile = zip.file('annotation.json');
+        if (!jsonFile) throw new Error("ZIP file does not contain 'annotation.json'.");
+        
+        const jsonText = await jsonFile.async('string');
+        const importedAnnotation = JSON.parse(jsonText) as SavedAnnotation;
+        
+        if (!importedAnnotation.id || !importedAnnotation.title || !importedAnnotation.annotation) {
+          throw new Error("Invalid 'annotation.json' format inside ZIP.");
+        }
+        
+        const audioFolder = zip.folder('audio');
+        if (audioFolder) {
+            const audioPromises: Promise<void>[] = [];
+            audioFolder.forEach((relativePath, file) => {
+                const promise = file.async('arraybuffer').then(data => {
+                    return db.saveAudio(importedAnnotation.id, relativePath, data);
+                });
+                audioPromises.push(promise);
+            });
+            await Promise.all(audioPromises);
+        }
+
+        setSavedAnnotations(prev => {
+            const existingIndex = prev.findIndex(p => p.id === importedAnnotation.id);
+            if (existingIndex > -1) {
+                const updated = [...prev];
+                updated[existingIndex] = importedAnnotation;
+                return updated;
+            }
+            return [importedAnnotation, ...prev];
+        });
+        showToast(`Imported "${importedAnnotation.title}" from ZIP.`);
+
+      } else if (file.name.endsWith('.json')) {
+        const text = await file.text();
+        const parsedJson = JSON.parse(text);
         const dataToImport: SavedAnnotation[] = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
 
         if (dataToImport.some(item => !item.id || !item.title || !item.annotation)) {
           throw new Error("Invalid file format. Each item must be a valid annotation.");
         }
         
-        // Merge with existing, overwriting duplicates
         setSavedAnnotations(prev => {
           const combined = [...prev];
           const prevIds = new Set(prev.map(p => p.id));
-
           dataToImport.forEach(importedItem => {
             if (prevIds.has(importedItem.id)) {
               const index = combined.findIndex(p => p.id === importedItem.id);
@@ -307,30 +445,31 @@ const App: React.FC = () => {
           });
           return combined;
         });
-        showToast(`Imported ${dataToImport.length} text(s).`);
-      } catch (error) {
-        showToast(error instanceof Error ? `Import failed: ${error.message}` : "Import failed.");
-      } finally {
-        // Reset file input
-        if (event.target) {
-            event.target.value = '';
-        }
+        showToast(`Imported ${dataToImport.length} text(s) from JSON.`);
+      } else {
+        throw new Error("Unsupported file type. Please select a .json or .zip file.");
       }
-    };
-    reader.readAsText(file);
+    } catch (error) {
+      showToast(error instanceof Error ? `Import failed: ${error.message}` : "Import failed.");
+    } finally {
+      resetInput();
+    }
   }, [setSavedAnnotations, showToast]);
 
   const handleAnnotationUpdate = useCallback((updatedAnnotation: Annotation) => {
     setAnnotation(updatedAnnotation);
-    setIsCurrentAnnotationSaved(false);
-    showToast("Annotation updated. Save to keep changes.");
-  }, [showToast]);
+    setHasUnsavedChanges(true);
+  }, []);
 
   const handleTitleChange = useCallback((newTitle: string) => {
     setCurrentTitle(newTitle);
-    setIsCurrentAnnotationSaved(false);
-    showToast("Title updated. Save to keep changes.");
-  }, [showToast]);
+    setHasUnsavedChanges(true);
+  }, []);
+
+  const handleAudioGenerated = useCallback((itemId: string, data: ArrayBuffer) => {
+    setHasUnsavedChanges(true);
+    setUnsavedAudio(prev => new Map(prev).set(itemId, data));
+  }, []);
 
   const handleEnterStudyMode = useCallback(() => {
     if (!annotation) {
@@ -340,7 +479,7 @@ const App: React.FC = () => {
   
     let annotationToStudy: SavedAnnotation | null = null;
 
-    if (isCurrentAnnotationSaved && currentAnnotationId) {
+    if (!hasUnsavedChanges && currentAnnotationId) {
       annotationToStudy = savedAnnotations.find(a => a.id === currentAnnotationId) ?? null;
       if (!annotationToStudy) {
         annotationToStudy = sampleAnnotations.find(a => a.id === currentAnnotationId) ?? null;
@@ -356,7 +495,7 @@ const App: React.FC = () => {
   
     setStudyModeTarget(annotationToStudy);
   
-  }, [annotation, isCurrentAnnotationSaved, currentAnnotationId, savedAnnotations, sampleAnnotations, handleSave, showToast]);
+  }, [annotation, hasUnsavedChanges, currentAnnotationId, savedAnnotations, sampleAnnotations, handleSave, showToast]);
 
   const handleSessionComplete = useCallback((annotationId: string, result: StudySessionResult) => {
     setSavedAnnotations(prev => {
@@ -364,17 +503,14 @@ const App: React.FC = () => {
         const annotationIndex = userSavedAnnotations.findIndex(a => a.id === annotationId);
 
         if (annotationIndex !== -1) {
-            // Annotation is already in user's saved list. Update it.
             const targetAnnotation = { ...userSavedAnnotations[annotationIndex] };
             const newHistory = [...(targetAnnotation.studyHistory || []), result];
             targetAnnotation.studyHistory = newHistory;
             userSavedAnnotations[annotationIndex] = targetAnnotation;
             return userSavedAnnotations;
         } else {
-            // Annotation is not in user's list; assume it's a sample.
             const sampleAnnotation = sampleAnnotations.find(a => a.id === annotationId);
             if (sampleAnnotation) {
-                // Create a new saved item from the sample and add the study result.
                 const newSavedItem: SavedAnnotation = {
                     ...sampleAnnotation,
                     studyHistory: [result],
@@ -383,8 +519,6 @@ const App: React.FC = () => {
                 return [newSavedItem, ...userSavedAnnotations];
             }
         }
-
-        // If annotationId is not found anywhere, return the previous state.
         return prev;
     });
     showToast("Study session results saved!");
@@ -406,6 +540,7 @@ const App: React.FC = () => {
           onDelete={handleDelete}
           onImport={handleImport}
           onExport={handleExportAll}
+          annotationsWithAudio={annotationsWithAudio}
         />
       )}
 
@@ -418,7 +553,7 @@ const App: React.FC = () => {
           isLoading={isLoading}
           error={error}
           currentTitle={currentTitle}
-          isCurrentAnnotationSaved={isCurrentAnnotationSaved}
+          hasUnsavedChanges={hasUnsavedChanges}
           currentSlideshowData={currentSlideshowData}
           currentSavedAnnotation={currentSavedAnnotation}
           currentAnnotationId={currentAnnotationId}
@@ -444,12 +579,12 @@ const App: React.FC = () => {
           handleAnnotationUpdate={handleAnnotationUpdate}
           onTitleChange={handleTitleChange}
           setStudyModeTarget={setStudyModeTarget}
-          // FIX: Pass the `handleSessionComplete` function to the `onSessionComplete` prop.
           onSessionComplete={handleSessionComplete}
+          onAudioGenerated={handleAudioGenerated}
+          onNavigateHome={handleNavigateHome}
           handleSaveSlideshowData={(data) => {
             setCurrentSlideshowData(data);
-            setIsCurrentAnnotationSaved(false);
-            showToast("Slideshow data updated. Save the annotation to keep changes.");
+            setHasUnsavedChanges(true);
           }}
         />
       )}

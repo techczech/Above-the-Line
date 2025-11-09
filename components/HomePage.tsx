@@ -13,6 +13,7 @@ interface HomePageProps {
   onDelete: (id: string) => void;
   onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onExport: () => void;
+  annotationsWithAudio: Set<string>;
 }
 
 const HomePage: React.FC<HomePageProps> = ({
@@ -23,7 +24,8 @@ const HomePage: React.FC<HomePageProps> = ({
   onLoad,
   onDelete,
   onImport,
-  onExport
+  onExport,
+  annotationsWithAudio
 }) => {
   return (
     <main>
@@ -38,15 +40,16 @@ const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-2">
             <button 
               onClick={onNavigateToAnnotator}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out flex items-center gap-2"
             >
+              <span className="material-symbols-outlined text-xl">description</span>
               Annotate Text
             </button>
             <button 
               onClick={onNavigateToVideoAnnotator}
               className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-md shadow-lg transition-transform transform hover:scale-105 duration-300 ease-in-out flex items-center gap-2"
             >
-              <FilmIcon className="w-5 h-5" />
+              <FilmIcon className="text-xl" />
               Annotate Video Transcript
             </button>
           </div>
@@ -67,11 +70,13 @@ const HomePage: React.FC<HomePageProps> = ({
         onDelete={onDelete}
         onImport={onImport}
         onExport={onExport}
+        annotationsWithAudio={annotationsWithAudio}
       />
 
       <SampleAnnotations
         samples={sampleAnnotations}
         onLoad={onLoad}
+        annotationsWithAudio={annotationsWithAudio}
       />
     </main>
   );

@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { SavedAnnotation, Word, Line, StudySession, StudySessionResult } from '../types';
 import useLocalStorage from '../hooks/useLocalStorage';
@@ -313,8 +314,14 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
           Would you like to resume your last session or start a new one?
         </p>
         <div className="flex gap-4">
-            <button onClick={handleStartNewIgnoringProgress} className="py-3 px-6 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition">Start New</button>
-            <button onClick={handleResume} className="py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition">Resume Session</button>
+            <button onClick={handleStartNewIgnoringProgress} className="py-3 px-6 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition flex items-center gap-2">
+                <span className="material-symbols-outlined">add</span>
+                Start New
+            </button>
+            <button onClick={handleResume} className="py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition flex items-center gap-2">
+                <span className="material-symbols-outlined">play_arrow</span>
+                Resume Session
+            </button>
         </div>
       </div>
     );
@@ -367,8 +374,14 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
             </select>
           </div>
           <div className="flex gap-4 pt-4">
-            <button onClick={onExit} className="w-full py-3 px-4 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition">Back</button>
-            <button onClick={createAndStartNewSession} disabled={selectedStanzaIndices.length === 0} className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed">Start Studying</button>
+            <button onClick={onExit} className="w-full py-3 px-4 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined">arrow_back</span>
+                Back
+            </button>
+            <button onClick={createAndStartNewSession} disabled={selectedStanzaIndices.length === 0} className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined">play_arrow</span>
+                Start Studying
+            </button>
           </div>
         </div>
       </div>
@@ -391,8 +404,14 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
             </div>
         )}
         <div className="flex gap-4">
-            <button onClick={onExit} className="py-3 px-6 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition">Exit</button>
-            <button onClick={() => setGameState('setup')} className="py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition">Play Again</button>
+            <button onClick={onExit} className="py-3 px-6 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-bold rounded-md transition flex items-center gap-2">
+                <span className="material-symbols-outlined">exit_to_app</span>
+                Exit
+            </button>
+            <button onClick={() => setGameState('setup')} className="py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-md transition flex items-center gap-2">
+                <span className="material-symbols-outlined">replay</span>
+                Play Again
+            </button>
         </div>
       </div>
     );
@@ -446,7 +465,9 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
         <div className="flex items-center gap-4 text-lg font-semibold">
           {activeSession?.playMode === 'timed' && <span>Time: {Math.floor(timeLeft / 60)}:{(Math.floor(timeLeft % 60)).toString().padStart(2, '0')}</span>}
           <span>Score: {activeSession?.currentScore ?? 0}</span>
-          <button onClick={handleSaveAndExit} className="px-3 py-1.5 text-sm rounded-md bg-yellow-500 hover:bg-yellow-600 text-white">Save & Exit</button>
+          <button onClick={handleSaveAndExit} className="px-3 py-1.5 text-sm rounded-md bg-yellow-500 hover:bg-yellow-600 text-white flex items-center gap-2">
+            <span className="material-symbols-outlined text-base">save</span> Save & Exit
+          </button>
           <button onClick={onExit} className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"><CloseIcon /></button>
         </div>
       </header>
@@ -492,13 +513,19 @@ const StudyModeView: React.FC<StudyModeViewProps> = ({ savedAnnotation, onExit, 
       </main>
 
       <footer className="flex-shrink-0 mt-4 flex justify-end items-center gap-4">
-        <button onClick={() => setupItem()} disabled={isChecked} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50">Reset</button>
+        <button onClick={() => setupItem()} disabled={isChecked} className="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 disabled:opacity-50 flex items-center gap-2">
+            <span className="material-symbols-outlined text-lg">restart_alt</span> Reset
+        </button>
         {isChecked ? (
-          <button onClick={nextItem} className="px-6 py-2 font-bold rounded-md bg-blue-600 text-white hover:bg-blue-700">
+          <button onClick={nextItem} className="px-6 py-2 font-bold rounded-md bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2">
             {activeSession && activeSession.currentItemIndex < studyItems.length - 1 ? `Next ${activeSession.studyUnit === 'stanza' ? unitName : 'Line'}` : 'Finish'}
+            <span className="material-symbols-outlined">skip_next</span>
           </button>
         ) : (
-          <button onClick={checkAnswers} className="px-6 py-2 font-bold rounded-md bg-green-600 text-white hover:bg-green-700">Check Answers</button>
+          <button onClick={checkAnswers} className="px-6 py-2 font-bold rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center gap-2">
+            <span className="material-symbols-outlined">check</span>
+            Check Answers
+          </button>
         )}
       </footer>
     </div>
