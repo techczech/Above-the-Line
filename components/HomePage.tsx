@@ -1,31 +1,24 @@
 import React from 'react';
-import SavedAnnotations from './SavedAnnotations';
 import { SavedAnnotation } from '../types';
 import FilmIcon from './icons/FilmIcon';
-import SampleAnnotations from './SampleAnnotations';
+import RecentAnnotations from './RecentAnnotations';
 
 interface HomePageProps {
   onNavigateToAnnotator: () => void;
   onNavigateToVideoAnnotator: () => void;
-  sampleAnnotations: SavedAnnotation[];
-  savedAnnotations: SavedAnnotation[];
+  recentAnnotations: SavedAnnotation[];
   onLoad: (annotation: SavedAnnotation) => void;
-  onDelete: (id: string) => void;
-  onImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onExport: () => void;
   annotationsWithAudio: Set<string>;
+  onNavigateToSaved: () => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({
   onNavigateToAnnotator,
   onNavigateToVideoAnnotator,
-  sampleAnnotations,
-  savedAnnotations,
+  recentAnnotations,
   onLoad,
-  onDelete,
-  onImport,
-  onExport,
-  annotationsWithAudio
+  annotationsWithAudio,
+  onNavigateToSaved
 }) => {
   return (
     <main>
@@ -63,20 +56,11 @@ const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      <SavedAnnotations
-        title="My Saved Texts"
-        savedAnnotations={savedAnnotations}
-        onLoad={onLoad}
-        onDelete={onDelete}
-        onImport={onImport}
-        onExport={onExport}
-        annotationsWithAudio={annotationsWithAudio}
-      />
-
-      <SampleAnnotations
-        samples={sampleAnnotations}
+      <RecentAnnotations
+        annotations={recentAnnotations}
         onLoad={onLoad}
         annotationsWithAudio={annotationsWithAudio}
+        onNavigateToSaved={onNavigateToSaved}
       />
     </main>
   );

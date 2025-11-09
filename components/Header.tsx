@@ -8,12 +8,16 @@ interface HeaderProps {
   setTheme: (theme: Theme) => void;
   onNavigateHome: () => void;
   onNavigateToAbout: () => void;
+  onNavigateToSaved: () => void;
+  onNavigateToSamples: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavigateToAbout }) => {
+const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavigateToAbout, onNavigateToSaved, onNavigateToSamples }) => {
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
+
+  const navButtonClasses = "px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition flex items-center gap-1.5";
 
   return (
     <header className="flex justify-between items-center mb-4 md:mb-6">
@@ -26,11 +30,16 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavi
         </p>
       </div>
       
-      <div className="flex items-center gap-2">
-        <button
-          onClick={onNavigateToAbout}
-          className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition flex items-center gap-1.5"
-        >
+      <div className="flex items-center gap-1">
+        <button onClick={onNavigateToSaved} className={navButtonClasses}>
+          <span className="material-symbols-outlined text-lg">folder_managed</span>
+          My Texts
+        </button>
+        <button onClick={onNavigateToSamples} className={navButtonClasses}>
+          <span className="material-symbols-outlined text-lg">auto_stories</span>
+          Samples
+        </button>
+        <button onClick={onNavigateToAbout} className={navButtonClasses}>
           <span className="material-symbols-outlined text-lg">info</span>
           About
         </button>

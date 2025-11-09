@@ -1,0 +1,689 @@
+{
+  "id": "a8e2f8d1-fe13-4bc3-accd-c03c83b50262",
+  "title": "Poem in Italian about Contemplation of Infinity - sample with audio",
+  "timestamp": "2025-11-09T20:28:01.823Z",
+  "prepackagedAudio": true,
+  "annotation": {
+    "stanzas": [
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Sempre",
+                "translation": "Always",
+                "grammar": "Adv"
+              },
+              {
+                "original": "caro",
+                "translation": "dear",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "mi",
+                "translation": "to me",
+                "grammar": "Pron: Dat, 1st, Sg"
+              },
+              {
+                "original": "fu",
+                "translation": "was",
+                "grammar": "V: Past, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "quest'",
+                "translation": "this",
+                "grammar": "Det: Dem, Masc, Sg"
+              },
+              {
+                "original": "ermo",
+                "translation": "solitary",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "colle",
+                "translation": "hill",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "This solitary hill was always dear to me,"
+          },
+          {
+            "words": [
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "questa",
+                "translation": "this",
+                "grammar": "Det: Dem, Fem, Sg"
+              },
+              {
+                "original": "siepe",
+                "translation": "hedge",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "che",
+                "translation": "which",
+                "grammar": "Pron: Rel"
+              },
+              {
+                "original": "da",
+                "translation": "from",
+                "grammar": "Prep"
+              },
+              {
+                "original": "tanta",
+                "translation": "so much",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": "parte",
+                "translation": "part",
+                "grammar": "Noun: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "and this hedge, which from so much of the view"
+          },
+          {
+            "words": [
+              {
+                "original": "dell'",
+                "translation": "of the",
+                "grammar": "Prep + Art"
+              },
+              {
+                "original": "ultimo",
+                "translation": "last",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "orizzonte",
+                "translation": "horizon",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "guardo",
+                "translation": "gaze",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "esclude",
+                "translation": "excludes",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "excludes the gaze from the ultimate horizon."
+          },
+          {
+            "words": [
+              {
+                "original": "Ma",
+                "translation": "But",
+                "grammar": "Conj"
+              },
+              {
+                "original": "sedendo",
+                "translation": "sitting",
+                "grammar": "V: Gerund"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "mirando",
+                "translation": "gazing",
+                "grammar": "V: Gerund"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "interminati",
+                "translation": "endless",
+                "grammar": "Adj: Masc, Pl"
+              }
+            ],
+            "idiomaticTranslation": "But as I sit and gaze, unending"
+          },
+          {
+            "words": [
+              {
+                "original": "spazi",
+                "translation": "spaces",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": "di",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "là",
+                "translation": "there",
+                "grammar": "Adv"
+              },
+              {
+                "original": "da",
+                "translation": "from",
+                "grammar": "Prep"
+              },
+              {
+                "original": "quella",
+                "translation": "that (hedge)",
+                "grammar": "Pron: Dem, Fem, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "sovrumani",
+                "translation": "superhuman",
+                "grammar": "Adj: Masc, Pl"
+              }
+            ],
+            "idiomaticTranslation": "spaces beyond it, and superhuman"
+          },
+          {
+            "words": [
+              {
+                "original": "silenzi",
+                "translation": "silences",
+                "grammar": "Noun: Masc, Pl"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "profondissima",
+                "translation": "most profound",
+                "grammar": "Adj: Superl, Fem, Sg"
+              },
+              {
+                "original": "quiete",
+                "translation": "stillness",
+                "grammar": "Noun: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "silences, and most profound stillness"
+          },
+          {
+            "words": [
+              {
+                "original": "io",
+                "translation": "I",
+                "grammar": "Pron: Nom, 1st, Sg"
+              },
+              {
+                "original": "nel",
+                "translation": "in the",
+                "grammar": "Prep + Art"
+              },
+              {
+                "original": "pensier",
+                "translation": "thought",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "mi",
+                "translation": "myself",
+                "grammar": "Pron: Refl, Acc, 1st, Sg"
+              },
+              {
+                "original": "fingo",
+                "translation": "I imagine",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "ove",
+                "translation": "where",
+                "grammar": "Adv"
+              },
+              {
+                "original": "per",
+                "translation": "for",
+                "grammar": "Prep"
+              },
+              {
+                "original": "poco",
+                "translation": "little",
+                "grammar": "Adv"
+              }
+            ],
+            "idiomaticTranslation": "I imagine in my mind, where for a moment"
+          },
+          {
+            "words": [
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "cor",
+                "translation": "heart",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "non",
+                "translation": "not",
+                "grammar": "Adv: Neg"
+              },
+              {
+                "original": "si",
+                "translation": "itself",
+                "grammar": "Pron: Refl, 3rd, Sg"
+              },
+              {
+                "original": "spaura",
+                "translation": "is frightened",
+                "grammar": "V: Pres, Ind, Refl, 3rd, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "E",
+                "translation": "And",
+                "grammar": "Conj"
+              },
+              {
+                "original": "come",
+                "translation": "as",
+                "grammar": "Conj"
+              },
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "vento",
+                "translation": "wind",
+                "grammar": "Noun: Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "my heart is almost not afraid. And as the wind"
+          },
+          {
+            "words": [
+              {
+                "original": "odo",
+                "translation": "I hear",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "stormir",
+                "translation": "rustling",
+                "grammar": "V: Inf"
+              },
+              {
+                "original": "tra",
+                "translation": "among",
+                "grammar": "Prep"
+              },
+              {
+                "original": "queste",
+                "translation": "these",
+                "grammar": "Det: Dem, Fem, Pl"
+              },
+              {
+                "original": "piante",
+                "translation": "plants",
+                "grammar": "Noun: Fem, Pl"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "io",
+                "translation": "I",
+                "grammar": "Pron: Nom, 1st, Sg"
+              },
+              {
+                "original": "quello",
+                "translation": "that",
+                "grammar": "Pron: Dem, Masc, Sg"
+              }
+            ],
+            "idiomaticTranslation": "I hear rustling through these plants, I compare that"
+          },
+          {
+            "words": [
+              {
+                "original": "infinito",
+                "translation": "infinite",
+                "grammar": "Adj: Masc, Sg"
+              },
+              {
+                "original": "silenzio",
+                "translation": "silence",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "a",
+                "translation": "to",
+                "grammar": "Prep"
+              },
+              {
+                "original": "questa",
+                "translation": "this",
+                "grammar": "Det: Dem, Fem, Sg"
+              },
+              {
+                "original": "voce",
+                "translation": "voice",
+                "grammar": "Noun: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "infinite silence to this voice."
+          },
+          {
+            "words": [
+              {
+                "original": "vo",
+                "translation": "I go (am)",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": "comparando",
+                "translation": "comparing",
+                "grammar": "V: Gerund"
+              },
+              {
+                "original": ":",
+                "translation": ":",
+                "grammar": "Punct"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "mi",
+                "translation": "to me",
+                "grammar": "Pron: Dat, 1st, Sg"
+              },
+              {
+                "original": "sovvien",
+                "translation": "comes to mind",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "l'eterno",
+                "translation": "the eternal",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "I am comparing: and the eternal comes to my mind,"
+          },
+          {
+            "words": [
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "le",
+                "translation": "the",
+                "grammar": "Art: Def, Fem, Pl"
+              },
+              {
+                "original": "morte",
+                "translation": "dead",
+                "grammar": "Adj: Fem, Pl"
+              },
+              {
+                "original": "stagioni",
+                "translation": "seasons",
+                "grammar": "Noun: Fem, Pl"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "la",
+                "translation": "the",
+                "grammar": "Art: Def, Fem, Sg"
+              },
+              {
+                "original": "presente",
+                "translation": "present",
+                "grammar": "Adj: Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "and the dead seasons, and the present"
+          },
+          {
+            "words": [
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "viva",
+                "translation": "living",
+                "grammar": "Adj: Fem, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "suon",
+                "translation": "sound",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "di",
+                "translation": "of",
+                "grammar": "Prep"
+              },
+              {
+                "original": "lei",
+                "translation": "it",
+                "grammar": "Pron: Pers, Fem, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Così",
+                "translation": "Thus",
+                "grammar": "Adv"
+              },
+              {
+                "original": "tra",
+                "translation": "among",
+                "grammar": "Prep"
+              },
+              {
+                "original": "questa",
+                "translation": "this",
+                "grammar": "Det: Dem, Fem, Sg"
+              }
+            ],
+            "idiomaticTranslation": "and living one, and its sound. Thus, amidst this"
+          },
+          {
+            "words": [
+              {
+                "original": "immensità",
+                "translation": "immensity",
+                "grammar": "Noun: Fem, Sg"
+              },
+              {
+                "original": "s'",
+                "translation": "itself",
+                "grammar": "Pron: Refl"
+              },
+              {
+                "original": "annega",
+                "translation": "drowns",
+                "grammar": "V: Pres, Ind, Refl, 3rd, Sg"
+              },
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "pensier",
+                "translation": "thought",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": "mio",
+                "translation": "my",
+                "grammar": "Det: Poss, Masc, Sg"
+              },
+              {
+                "original": ":",
+                "translation": ":",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "immensity my thought drowns:"
+          },
+          {
+            "words": [
+              {
+                "original": "e",
+                "translation": "and",
+                "grammar": "Conj"
+              },
+              {
+                "original": "il",
+                "translation": "the",
+                "grammar": "Art: Def, Masc, Sg"
+              },
+              {
+                "original": "naufragar",
+                "translation": "shipwrecking",
+                "grammar": "V: Inf (as Noun)"
+              },
+              {
+                "original": "m'",
+                "translation": "to me",
+                "grammar": "Pron: Dat, 1st, Sg"
+              },
+              {
+                "original": "è",
+                "translation": "is",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "dolce",
+                "translation": "sweet",
+                "grammar": "Adj: Sg"
+              },
+              {
+                "original": "in",
+                "translation": "in",
+                "grammar": "Prep"
+              },
+              {
+                "original": "questo",
+                "translation": "this",
+                "grammar": "Det: Dem, Masc, Sg"
+              },
+              {
+                "original": "mare",
+                "translation": "sea",
+                "grammar": "Noun: Masc, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "and shipwrecking is sweet to me in this sea."
+          }
+        ]
+      }
+    ],
+    "textType": "poem"
+  },
+  "sourceText": "Sempre caro mi fu quest'ermo colle,\ne questa siepe, che da tanta parte\ndell'ultimo orizzonte il guardo esclude.\nMa sedendo e mirando, interminati\nspazi di là da quella, e sovrumani\nsilenzi, e profondissima quiete\nio nel pensier mi fingo, ove per poco\nil cor non si spaura. E come il vento\nodo stormir tra queste piante, io quello\ninfinito silenzio a questa voce\nvo comparando: e mi sovvien l'eterno,\ne le morte stagioni, e la presente\ne viva, e il suon di lei. Così tra questa\nimmensità s'annega il pensier mio:\ne il naufragar m'è dolce in questo mare",
+  "sourceLang": "Autodetect Language",
+  "targetLang": "English",
+  "studyHistory": []
+}

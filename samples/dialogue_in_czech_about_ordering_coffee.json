@@ -1,0 +1,464 @@
+{
+  "id": "707e4317-0935-4fdf-b11f-8eecbdbc16a9",
+  "title": "Dialogue in Czech about ordering coffee",
+  "timestamp": "2025-11-09T20:38:29.282Z",
+  "annotation": {
+    "stanzas": [
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Dobrý",
+                "translation": "Good",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "den",
+                "translation": "day",
+                "grammar": "Noun: Acc, Masc, Sg"
+              },
+              {
+                "original": "!",
+                "translation": "!",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Co",
+                "translation": "What",
+                "grammar": "Pron: Interrog, Nom"
+              },
+              {
+                "original": "si",
+                "translation": "yourself",
+                "grammar": "Pron: Reflexive, Dat"
+              },
+              {
+                "original": "dáte",
+                "translation": "you will have",
+                "grammar": "V: Pres, Ind, Act, 2nd, Pl"
+              }
+            ],
+            "idiomaticTranslation": "Good day! What will you have?",
+            "speaker": "Prodavač"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Dobrý",
+                "translation": "Good",
+                "grammar": "Adj: Nom, Masc, Sg"
+              },
+              {
+                "original": "den",
+                "translation": "day",
+                "grammar": "Noun: Acc, Masc, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Chtěl",
+                "translation": "wanted",
+                "grammar": "V: Past, Act, Masc, Sg"
+              },
+              {
+                "original": "bych",
+                "translation": "would",
+                "grammar": "Aux V: Conditional, 1st, Sg"
+              },
+              {
+                "original": "kávu",
+                "translation": "coffee",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "prosím",
+                "translation": "please",
+                "grammar": "Adv"
+              }
+            ],
+            "idiomaticTranslation": "Good day. I would like coffee, please.",
+            "speaker": "Zákazník"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Jakou",
+                "translation": "Which/What kind of",
+                "grammar": "Pron: Interrog, Acc, Fem, Sg"
+              },
+              {
+                "original": "kávu",
+                "translation": "coffee",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "?",
+                "translation": "?",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Malou",
+                "translation": "Small",
+                "grammar": "Adj: Acc, Fem, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "velkou",
+                "translation": "large",
+                "grammar": "Adj: Acc, Fem, Sg"
+              },
+              {
+                "original": "?",
+                "translation": "?",
+                "grammar": "Punct"
+              },
+              {
+                "original": "S",
+                "translation": "With",
+                "grammar": "Prep"
+              },
+              {
+                "original": "mlékem",
+                "translation": "milk",
+                "grammar": "Noun: Inst, Neut, Sg"
+              },
+              {
+                "original": "?",
+                "translation": "?",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "What kind of coffee? Small, large? With milk?",
+            "speaker": "Prodavač"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Velkou",
+                "translation": "Large",
+                "grammar": "Adj: Acc, Fem, Sg"
+              },
+              {
+                "original": "kávu",
+                "translation": "coffee",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "s",
+                "translation": "with",
+                "grammar": "Prep"
+              },
+              {
+                "original": "mlékem",
+                "translation": "milk",
+                "grammar": "Noun: Inst, Neut, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "prosím",
+                "translation": "please",
+                "grammar": "Adv"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "A",
+                "translation": "And",
+                "grammar": "Conj"
+              },
+              {
+                "original": "trochu",
+                "translation": "a little bit",
+                "grammar": "Noun: Acc, Neut, Sg"
+              },
+              {
+                "original": "víc",
+                "translation": "more",
+                "grammar": "Adv"
+              },
+              {
+                "original": "mléka",
+                "translation": "milk",
+                "grammar": "Noun: Gen, Neut, Sg"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "jestli",
+                "translation": "if",
+                "grammar": "Conj"
+              },
+              {
+                "original": "to",
+                "translation": "it",
+                "grammar": "Pron: Dem, Nom, Neut, Sg"
+              },
+              {
+                "original": "jde",
+                "translation": "goes/is possible",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "A large coffee with milk, please. And a little more milk, if possible.",
+            "speaker": "Zákazník"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Samozřejmě",
+                "translation": "Of course",
+                "grammar": "Adv"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Ještě",
+                "translation": "Still/Else",
+                "grammar": "Adv"
+              },
+              {
+                "original": "něco",
+                "translation": "something/anything",
+                "grammar": "Pron: Indef, Acc"
+              },
+              {
+                "original": "?",
+                "translation": "?",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "Of course. Anything else?",
+            "speaker": "Prodavač"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Ne",
+                "translation": "No",
+                "grammar": "Adv"
+              },
+              {
+                "original": ",",
+                "translation": ",",
+                "grammar": "Punct"
+              },
+              {
+                "original": "děkuji",
+                "translation": "I thank/Thank you",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "To",
+                "translation": "That",
+                "grammar": "Pron: Dem, Nom, Neut, Sg"
+              },
+              {
+                "original": "je",
+                "translation": "is",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "vše",
+                "translation": "all",
+                "grammar": "Noun: Nom, Neut, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "No, thank you. That's all.",
+            "speaker": "Zákazník"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Dobře",
+                "translation": "Well/Okay",
+                "grammar": "Adv"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "To",
+                "translation": "That",
+                "grammar": "Pron: Dem, Nom, Neut, Sg"
+              },
+              {
+                "original": "bude",
+                "translation": "will be",
+                "grammar": "V: Fut, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": "padesát",
+                "translation": "fifty",
+                "grammar": "Num: Card"
+              },
+              {
+                "original": "korun",
+                "translation": "crowns",
+                "grammar": "Noun: Gen, Fem, Pl"
+              }
+            ],
+            "idiomaticTranslation": "Okay. That will be fifty crowns.",
+            "speaker": "Prodavač"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Tady",
+                "translation": "Here",
+                "grammar": "Adv"
+              },
+              {
+                "original": "je",
+                "translation": "is",
+                "grammar": "V: Pres, Ind, Act, 3rd, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "Here it is.",
+            "speaker": "Zákazník"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Děkuji",
+                "translation": "I thank/Thank you",
+                "grammar": "V: Pres, Ind, Act, 1st, Sg"
+              },
+              {
+                "original": ".",
+                "translation": ".",
+                "grammar": "Punct"
+              },
+              {
+                "original": "Na",
+                "translation": "On/To",
+                "grammar": "Prep"
+              },
+              {
+                "original": "shledanou",
+                "translation": "seeing",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "!",
+                "translation": "!",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "Thank you. Goodbye!",
+            "speaker": "Prodavač"
+          }
+        ]
+      },
+      {
+        "lines": [
+          {
+            "words": [
+              {
+                "original": "Na",
+                "translation": "On/To",
+                "grammar": "Prep"
+              },
+              {
+                "original": "shledanou",
+                "translation": "seeing",
+                "grammar": "Noun: Acc, Fem, Sg"
+              },
+              {
+                "original": "!",
+                "translation": "!",
+                "grammar": "Punct"
+              }
+            ],
+            "idiomaticTranslation": "Goodbye!",
+            "speaker": "Zákazník"
+          }
+        ]
+      }
+    ],
+    "textType": "dialogue"
+  },
+  "sourceText": "- **Prodavač:** Dobrý den! Co si dáte?\n- **Zákazník:** Dobrý den. Chtěl bych kávu, prosím.\n- **Prodavač:** Jakou kávu? Malou, velkou? S mlékem?\n- **Zákazník:** Velkou kávu s mlékem, prosím. A trochu víc mléka, jestli to jde.\n- **Prodavač:** Samozřejmě. Ještě něco?\n- **Zákazník:** Ne, děkuji. To je vše.\n- **Prodavač:** Dobře. To bude padesát korun.\n- **Zákazník:** Tady je.\n- **Prodavač:** Děkuji. Na shledanou!\n- **Zákazník:** Na shledanou!",
+  "sourceLang": "Autodetect Language",
+  "targetLang": "English",
+  "studyHistory": []
+}
