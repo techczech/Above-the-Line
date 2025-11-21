@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
 import { Annotation, SavedAnnotation, Theme, SlideshowData, StudySessionResult, Timecode } from './types';
 import Header from './components/Header';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
   const [studyModeTarget, setStudyModeTarget] = useState<SavedAnnotation | null>(null);
   const [currentSlideshowData, setCurrentSlideshowData] = useState<SlideshowData>(defaultSlideshowData);
   const [annotationsWithAudio, setAnnotationsWithAudio] = useState<Set<string>>(new Set());
+  const samplesLoaded = useRef(false);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -64,82 +66,96 @@ const App: React.FC = () => {
     };
   }, [hasUnsavedChanges]);
   
+  // Load sample data and check audio status for all annotations.
   useEffect(() => {
-    const loadInitialData = async () => {
-      // 1. Fetch sample annotation JSON files
-      const sampleFiles = [
-        '/samples/o_tannenbaum.json',
-        '/samples/dialogue_in_czech_about_ordering_coffee.json',
-        '/samples/dialogue_in_spanish_about_basic_spanish_conversation.json',
-        '/samples/prose_in_french_about_an_episcopal_palace_and_a_ceremonial_dinner.json',
-        "/samples/poem_in_russian_about_life's_purpose,_love,_and_nature's_beauty.json",
-        '/samples/italian-poem-sample.json'
-      ];
+    const processAnnotations = async () => {
+      let currentSamples = sampleAnnotations;
 
-      let loadedSamples: (SavedAnnotation & { prepackagedAudio?: boolean })[] = [];
-      try {
-        const samples = await Promise.all(
-          sampleFiles.map(file => fetch(file).then(res => {
-            if (!res.ok) throw new Error(`Failed to fetch ${file}`);
-            return res.json();
-          }))
+      // Step 1: Fetch sample data and pre-packaged audio, but only on the first run.
+      if (!samplesLoaded.current) {
+        samplesLoaded.current = true;
+        const sampleFiles = [
+          '/samples/o_tannenbaum.json',
+          '/samples/dialogue_in_czech_about_ordering_coffee.json',
+          '/samples/dialogue_in_spanish_about_basic_spanish_conversation.json',
+          '/samples/prose_in_french_about_an_episcopal_palace_and_a_ceremonial_dinner.json',
+          "/samples/poem_in_russian_about_life's_purpose,_love,_and_nature's_beauty.json",
+          '/samples/italian-poem-sample.json'
+        ];
+        
+        const sampleResponses = await Promise.all(
+          sampleFiles.map(async file => {
+            try {
+              const res = await fetch(file);
+              if (!res.ok) throw new Error(`Failed to fetch ${file}`);
+              const data = await res.json() as (SavedAnnotation & { prepackagedAudio?: boolean });
+              const fileName = file.substring(file.lastIndexOf('/') + 1);
+              const fileBase = fileName.replace('.json', '');
+              return { fileBase, data };
+            } catch (e) {
+              console.error(e);
+              return null;
+            }
+          })
         );
-        loadedSamples = samples.filter(s => s.id && s.title && s.annotation);
-      } catch (error) {
-        console.error("Failed to load sample annotations:", error);
-      }
+        
+        const validSamples = sampleResponses.filter(Boolean) as { fileBase: string; data: SavedAnnotation & { prepackagedAudio?: boolean } }[];
+        currentSamples = validSamples.map(s => s.data);
+        setSampleAnnotations(currentSamples);
 
-      // 2. Load any pre-packaged audio for samples into IndexedDB
-      const audioLoadPromises = loadedSamples
-        .filter(sample => sample.prepackagedAudio)
-        .map(sample => {
-          const itemIds: string[] = [];
-          sample.annotation.stanzas.forEach((stanza, sIndex) => {
-            stanza.lines.forEach((_, lIndex) => {
-              itemIds.push(`s${sIndex}-l${lIndex}`);
+        // Load audio in the background
+        const audioLoadPromises = validSamples
+          .filter(({ data }) => data.prepackagedAudio)
+          .map(({ fileBase, data: sample }) => {
+            const itemIds: string[] = [];
+            sample.annotation.stanzas.forEach((stanza, sIndex) => {
+              stanza.lines.forEach((_, lIndex) => {
+                itemIds.push(`s${sIndex}-l${lIndex}`);
+              });
+            });
+            return itemIds.map(async (itemId) => {
+              try {
+                const existingAudio = await db.getAudio(sample.id, itemId);
+                if (existingAudio) return;
+
+                const audioUrl = `/samples/audio/${fileBase}/${itemId}.raw`;
+                const response = await fetch(audioUrl);
+                if (response.ok) {
+                  const audioData = await response.arrayBuffer();
+                  await db.saveAudio(sample.id, itemId, audioData);
+                } else {
+                  console.warn(`Could not fetch prepackaged audio: ${audioUrl}`);
+                }
+              } catch (e) { /* Non-critical error */ }
             });
           });
-          return Promise.all(itemIds.map(async (itemId) => {
-            try {
-              const existingAudio = await db.getAudio(sample.id, itemId);
-              if (existingAudio) return; // Don't re-fetch if already in DB
+          
+        await Promise.all(audioLoadPromises.flat());
+      }
 
-              const audioUrl = `/samples/audio/${sample.id}/${itemId}.raw`;
-              const response = await fetch(audioUrl);
-              if (response.ok) {
-                const audioData = await response.arrayBuffer();
-                await db.saveAudio(sample.id, itemId, audioData);
-              }
-            } catch (e) { /* Errors are not critical, just means no audio for that item */ }
-          }));
-        });
-      
-      await Promise.all(audioLoadPromises);
-
-      // 3. Set sample annotations state
-      setSampleAnnotations(loadedSamples);
-      
-      // 4. Check audio status for ALL annotations (saved + samples) and update state
-      const allAnnotations = [...savedAnnotations, ...loadedSamples];
+      // Step 2: Check audio status for ALL annotations (runs every time annotation data changes).
+      const allAnnotations = [...savedAnnotations, ...currentSamples];
       const newAnnotationsWithAudio = new Set<string>();
+      
       const checkPromises = allAnnotations.map(async (annotation) => {
-        try {
-          if (annotation.id) {
+        if (annotation?.id) {
+          try {
             const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
             if (audioFiles.length > 0) {
               newAnnotationsWithAudio.add(annotation.id);
             }
+          } catch (e) {
+            console.error(`Could not check audio for annotation ${annotation.id}`, e);
           }
-        } catch (e) {
-          console.error(`Could not check audio for annotation ${annotation.id}`, e);
         }
       });
       await Promise.all(checkPromises);
       setAnnotationsWithAudio(newAnnotationsWithAudio);
     };
 
-    loadInitialData();
-  }, [savedAnnotations]);
+    processAnnotations();
+  }, [savedAnnotations, sampleAnnotations]);
+
 
   const showToast = useCallback((message: string) => {
     setToastMessage(message);
@@ -631,6 +647,7 @@ const App: React.FC = () => {
           setIsDeepReadVisible={setIsDeepReadVisible}
           handleEnterStudyMode={handleEnterStudyMode}
           handleAnnotationUpdate={handleAnnotationUpdate}
+          // FIX: Pass the correct handler function `handleTitleChange` for the `onTitleChange` prop.
           onTitleChange={handleTitleChange}
           setStudyModeTarget={setStudyModeTarget}
           onSessionComplete={handleSessionComplete}

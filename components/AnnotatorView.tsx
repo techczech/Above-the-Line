@@ -204,6 +204,7 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
       annotation={annotation}
       annotationId={currentAnnotationId}
       initialData={currentSlideshowData}
+      sourceLang={sourceLang}
       onExit={() => setIsSlideshowVisible(false)}
       onSave={handleSaveSlideshowData}
       onAudioGenerated={onAudioGenerated}
