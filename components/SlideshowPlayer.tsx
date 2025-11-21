@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Annotation, SlideshowData, Timecode, Word, Line, TextType } from '../types';
 import CloseIcon from './icons/CloseIcon';
@@ -13,7 +12,7 @@ import SpinnerIcon from './icons/SpinnerIcon';
 import ArrowPathIcon from './icons/ArrowPathIcon';
 import ForwardIcon from './icons/ForwardIcon';
 import StopCircleIcon from './icons/StopCircleIcon';
-import { generateSpeech } from '../services/geminiService';
+import { generateSpeech, SpeakerProfile, determineSpeakerGender, MALE_VOICES, FEMALE_VOICES, ALL_VOICES } from '../services/geminiService';
 import { decode, decodeAudioData } from '../utils/audioUtils';
 import * as db from '../utils/db';
 
@@ -28,6 +27,7 @@ interface SlideshowPlayerProps {
   annotation: Annotation;
   annotationId: string | null;
   initialData: SlideshowData;
+  sourceLang: string;
   onExit: () => void;
   onSave: (data: SlideshowData) => void;
   onAudioGenerated: (itemId: string, data: ArrayBuffer) => void;
@@ -41,7 +41,8 @@ type AudioStatus = 'idle' | 'loading' | 'loaded' | 'error';
 interface SlideshowItem {
   id: string;
   content: React.ReactNode;
-  text: string;
+  text: string; // The text to be spoken
+  speaker?: string | null;
 }
 
 const formatTime = (totalSeconds: number): string => {
@@ -78,7 +79,7 @@ const getDefaultGranularity = (textType: TextType): Granularity => {
     }
 };
 
-const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotationId, initialData, onExit, onSave, onAudioGenerated }) => {
+const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotationId, initialData, sourceLang, onExit, onSave, onAudioGenerated }) => {
   const [youtubeUrl, setYoutubeUrl] = useState(initialData.youtubeUrl);
   const [timecodes, setTimecodes] = useState<Timecode[]>(initialData.timecodes);
   const [granularity, setGranularity] = useState<Granularity>(getDefaultGranularity(annotation.textType));
@@ -101,6 +102,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
   const [playbackStatus, setPlaybackStatus] = useState<'playing' | 'paused' | 'stopped'>('stopped');
   const [isLooping, setIsLooping] = useState(false);
   const [isAutoAdvance, setIsAutoAdvance] = useState(true);
+  const [speakerProfileMap, setSpeakerProfileMap] = useState<Map<string, SpeakerProfile>>(new Map());
   
   const audioContextRef = useRef<AudioContext | null>(null);
   const currentAudioSourceRef = useRef<AudioBufferSourceNode | null>(null);
@@ -143,10 +145,13 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
     const items: SlideshowItem[] = [];
     if (granularity === 'paragraph') {
       annotation.stanzas.forEach((stanza, sIndex) => {
+        const speakersInStanza = new Set(stanza.lines.map(l => l.speaker).filter((s): s is string => !!s));
+        const speaker = speakersInStanza.size === 1 ? (Array.from(speakersInStanza)[0] as string) : null;
         items.push({
           id: `s${sIndex}`,
           content: <div className="space-y-4">{stanza.lines.map((line, lIndex) => renderLine(line, lIndex, annotationDisplay))}</div>,
-          text: stanza.lines.map(l => l.words.map(w => w.original).join(' ')).join('\n'),
+          text: stanza.lines.map(l => (l.speaker ? '' : '') + l.words.map(w => w.original).join(' ')).join(' '),
+          speaker,
         });
       });
     } else if (granularity === 'sentence') {
@@ -196,10 +201,14 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
                 return renderLine(partialLine, `${sentence.id}-line-${idx}`, annotationDisplay);
             });
 
+            const speakersInSentence = new Set(sentence.words.map(word => annotation.stanzas[word.sIndex].lines[word.lIndex].speaker).filter((s): s is string => !!s));
+            const speaker = speakersInSentence.size === 1 ? (Array.from(speakersInSentence)[0] as string) : null;
+
             items.push({
                 id: sentence.id,
                 content: <div className="space-y-2">{content}</div>,
                 text: sentence.words.map(w => w.original).join(' '),
+                speaker,
             });
         });
         return items;
@@ -209,7 +218,8 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
           items.push({
             id: `s${sIndex}-l${lIndex}`,
             content: renderLine(line, lIndex, annotationDisplay),
-            text: (line.speaker ? `${line.speaker}: ` : '') + line.words.map(w => w.original).join(' '),
+            text: line.words.map(w => w.original).join(' '),
+            speaker: line.speaker,
           });
         });
       });
@@ -271,10 +281,12 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
     setAudioStatus(prev => new Map(prev).set(itemId, 'loading'));
 
     try {
-      const b64Audio = await generateSpeech(item.text);
+      const { base64Audio, profileMap } = await generateSpeech(item.text, item.speaker, sourceLang, speakerProfileMap);
       if (!isMountedRef.current) return;
 
-      const audioBytes = decode(b64Audio);
+      setSpeakerProfileMap(profileMap);
+
+      const audioBytes = decode(base64Audio);
       const audioArrayBuffer = audioBytes.buffer;
 
       // Notify parent of new audio data, which will handle saving if needed
@@ -291,7 +303,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
       if (!isMountedRef.current) return;
       setAudioStatus(prev => new Map(prev).set(itemId, 'error'));
     }
-  }, [flattenedItems, audioStatus, onAudioGenerated]);
+  }, [flattenedItems, audioStatus, onAudioGenerated, sourceLang, speakerProfileMap]);
 
   useEffect(() => {
     if (!isTtsMode || !showTtsPanel || flattenedItems.length === 0) return;
@@ -393,6 +405,59 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
   };
   
   const currentItemAudioStatus = audioStatus.get(flattenedItems[currentIndex]?.id) || 'idle';
+  
+  const allSpeakers = useMemo(() => Array.from(new Set(flattenedItems.map(item => item.speaker).filter((s): s is string => !!s))), [flattenedItems]);
+
+  const handleGenderOverrideChange = useCallback(async (speaker: string, override: 'auto' | 'male' | 'female') => {
+      let finalGender: 'male' | 'female' | 'unknown';
+
+      if (override === 'auto') {
+          const sampleItem = flattenedItems.find(item => item.speaker === speaker);
+          finalGender = await determineSpeakerGender(speaker, sampleItem?.text || '', sourceLang);
+      } else {
+          finalGender = override;
+      }
+
+      setSpeakerProfileMap((prevMap: Map<string, SpeakerProfile>) => {
+          const newMap = new Map(prevMap);
+          const profile = newMap.get(speaker) ?? { voice: '', gender: 'unknown', userOverride: 'auto' };
+
+          let voiceChanged = false;
+          if (profile.gender !== finalGender) {
+              const usedVoices = new Set(Array.from(newMap.values()).map(p => p.voice));
+              const voicePool = finalGender === 'male' ? MALE_VOICES : finalGender === 'female' ? FEMALE_VOICES : ALL_VOICES;
+              
+              let assignedVoice = voicePool.find(v => !usedVoices.has(v));
+              if (!assignedVoice) {
+                  const voicesInUseForThisGender = Array.from(newMap.values()).filter(p => p.gender === finalGender).length;
+                  assignedVoice = voicePool[voicesInUseForThisGender % voicePool.length];
+              }
+              profile.voice = assignedVoice;
+              voiceChanged = true;
+          }
+
+          profile.gender = finalGender;
+          profile.userOverride = override;
+          newMap.set(speaker, profile);
+
+          if (voiceChanged) {
+              const itemsToClear = flattenedItems.filter(item => item.speaker === speaker).map(item => item.id);
+              
+              setAudioCache(currentCache => {
+                  const newCache = new Map(currentCache);
+                  itemsToClear.forEach(id => newCache.delete(id));
+                  return newCache;
+              });
+              setAudioStatus(currentStatus => {
+                  const newStatus = new Map(currentStatus);
+                  itemsToClear.forEach(id => newStatus.delete(id));
+                  return newStatus;
+              });
+          }
+          return newMap;
+      });
+  }, [flattenedItems, sourceLang]);
+
 
   // --- TTS LOGIC END ---
 
@@ -705,6 +770,28 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
                       )}
                     </div>
                     
+                    {isTtsMode && annotation.textType === 'dialogue' && allSpeakers.length > 0 && (
+                      <div className="w-full border-t border-b border-gray-700 py-4 px-2 my-auto">
+                        <h4 className="text-sm font-semibold text-gray-300 mb-2 text-center">Speaker Voices</h4>
+                        <div className="space-y-2 max-h-24 overflow-y-auto">
+                          {allSpeakers.map(speaker => (
+                            <div key={speaker} className="flex justify-between items-center text-xs">
+                              <span className="text-gray-400 font-medium truncate pr-2">{speaker}</span>
+                              <select
+                                value={speakerProfileMap.get(speaker)?.userOverride || 'auto'}
+                                onChange={(e) => handleGenderOverrideChange(speaker, e.target.value as 'auto' | 'male' | 'female')}
+                                className="bg-gray-600 text-white rounded p-1 text-xs border border-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                              >
+                                <option value="auto">Auto-Detect</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                              </select>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Playback Controls */}
                     <div className="w-full border-t border-gray-700 mt-auto pt-4 flex flex-col items-center gap-4">
                         <div className="flex items-center gap-4">
