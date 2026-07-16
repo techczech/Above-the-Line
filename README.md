@@ -1,3 +1,13 @@
+---
+name: Above the Line
+description: Turns any text or transcript into a deep, explorable language-learning environment rather than a single AI answer.
+categories: [interactive-learning-objects, web-app, built-by-ai, powered-by-ai]
+updated: 2026-07-16
+deployments:
+  Appsite:
+    Above the Line: https://abovetheline.edutools.fyi/
+---
+
 # Above The Line: Translanguager's Companion
 
 An advanced tool for exploring texts. Generate detailed grammatical annotations for any text using the Gemini API. This app was created by Dominik Lukeš in Google AI Studio and is powered by the Gemini API. It is designed as a comprehensive suite of tools for students, educators, and language enthusiasts to explore texts and video transcripts in depth.
