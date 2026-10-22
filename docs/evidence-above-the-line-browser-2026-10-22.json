@@ -1,5 +1,7 @@
 {
   "checks": [
+    "all 15 bundled audio URLs return 200 and preload byte-identical recordings into a fresh cache; slideshow audio decodes and starts playback keylessly",
+    "existing recording cache remains byte-identical after reload",
     "keyless sample load and validated JSON download",
     "Deep Read opens without a key",
     "memory-only key absent after reload",
@@ -42,6 +44,145 @@
     {
       "host": "generativelanguage.googleapis.com",
       "path": "/v1beta/models/gemini-2.5-pro-preview-tts:generateContent"
+    }
+  ],
+  "bundledAudioResponses": [
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l0.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l1.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l2.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l4.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l3.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l5.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l6.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l7.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l8.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l9.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l10.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l11.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l13.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l12.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l14.raw",
+      "status": 200
+    }
+  ],
+  "bundledAudioHashes": [
+    {
+      "id": "s0-l0",
+      "bytes": 334274,
+      "hash": "fc6915596fa669fd436fa03863478421de71b6b723670bd95fbe16ac0c3da5da"
+    },
+    {
+      "id": "s0-l1",
+      "bytes": 331614,
+      "hash": "d491f4e29de2be64033d11a40e0f5b6b7884df373ab8911f367cf3ca03f4d0f2"
+    },
+    {
+      "id": "s0-l10",
+      "bytes": 409005,
+      "hash": "80a25b34a9debe7b47a63bb00eea7b7c9455de7bb24f5eb41b8c49fdc1196843"
+    },
+    {
+      "id": "s0-l11",
+      "bytes": 393148,
+      "hash": "2f3e531daa194013107c6cf428f601017d93713e67be499a663ec9c847a7b9d4"
+    },
+    {
+      "id": "s0-l12",
+      "bytes": 436471,
+      "hash": "704ab52edaa95af85ccac3037aa7f20f0aab732aa7a1a00b97da7eaff556df61"
+    },
+    {
+      "id": "s0-l13",
+      "bytes": 371545,
+      "hash": "0493ada6c226a429791f0b4feae67d41268950aa2b2bcf148a7852d210a3ce18"
+    },
+    {
+      "id": "s0-l14",
+      "bytes": 394731,
+      "hash": "8ff1d14c7f5033c6194fc47008b04b5dc3bec2036032f4cdbc7325fc74361abd"
+    },
+    {
+      "id": "s0-l2",
+      "bytes": 395252,
+      "hash": "7e5d2c92fa2894381123d864e3eb76ee39c775ba85ee19d09803ad79046cd672"
+    },
+    {
+      "id": "s0-l3",
+      "bytes": 445893,
+      "hash": "0adda0fe90a19792228c668ea68cecec10ab0b777da5aeb550fc1a18a3b78043"
+    },
+    {
+      "id": "s0-l4",
+      "bytes": 397208,
+      "hash": "e2e2da657349be68c9138a1b9ce3cccad15f83d0ae6fca981dae4f039c4e48fb"
+    },
+    {
+      "id": "s0-l5",
+      "bytes": 337668,
+      "hash": "c2ba4f5d9c66b955bec1bd572534f770595825bd0e41a5b1e0c8bbd88bdc28a4"
+    },
+    {
+      "id": "s0-l6",
+      "bytes": 402883,
+      "hash": "779692f9ab48e3179d0b46023a7e15fe831c745928450c57429f0a3e367040c3"
+    },
+    {
+      "id": "s0-l7",
+      "bytes": 406026,
+      "hash": "c2c898ebd61fdc6ec45f6ff1d2773d9be7c52d6565e47f98a50e0f6b536fb9d6"
+    },
+    {
+      "id": "s0-l8",
+      "bytes": 394721,
+      "hash": "f4b538bd223380539f542501a17ab9af1f06894d8434e4c76ed5e6dec5db612d"
+    },
+    {
+      "id": "s0-l9",
+      "bytes": 324886,
+      "hash": "6b52cfc5bb394a572d5270092a6d3b8dcda063182a000adbf3671f46ee0422dd"
     }
   ],
   "externalAssetsBlocked": [

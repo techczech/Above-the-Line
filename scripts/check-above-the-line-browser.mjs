@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 const { chromium } = await import(process.argv[2] || 'playwright');
 const base = process.argv[3] || 'http://127.0.0.1:4307';
 const example = JSON.parse(readFileSync('portable/example-above-the-line-result.json', 'utf8'));
@@ -14,6 +15,8 @@ page.setDefaultTimeout(10000);
 // Existing Tailwind CDN is blocked in this functional test; provide only its config namespace.
 await page.addInitScript(() => { window.tailwind = {}; });
 const errors = []; const apiCalls = []; const external = new Set();
+const audioResponses = [];
+page.on('response',response => { if (/\/samples\/audio\/.+\.raw$/.test(response.url())) audioResponses.push({path:new URL(response.url()).pathname,status:response.status()}); });
 page.on('pageerror', error => errors.push(error.message));
 // Prevent all external network access: UI tests must never spend quota or depend on a CDN.
 await page.route('**/*', async route => {
@@ -37,6 +40,33 @@ try {
   await page.getByText('AI settings ·', {exact:false}).waitFor();
   await page.getByRole('button', {name:/Samples$/}).click();
   await page.getByRole('heading', {name:'Sample Texts'}).waitFor();
+  const italian = JSON.parse(readFileSync('samples/italian-poem-sample.json','utf8'));
+  const cachedClips = async annotationId => page.evaluate(async annotationId => {
+    const database = await new Promise((resolve,reject) => { const request = indexedDB.open('AnnotationAudioDB',1); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const clips = await new Promise((resolve,reject) => { const request = database.transaction('audioClips').objectStore('audioClips').index('annotationId').getAll(annotationId); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+    const result = await Promise.all(clips.map(async clip => ({id:clip.audioId,bytes:clip.data.byteLength,hash:[...new Uint8Array(await crypto.subtle.digest('SHA-256',clip.data))].map(byte => byte.toString(16).padStart(2,'0')).join('')})));
+    database.close(); return result;
+  },annotationId);
+  let cached = [];
+  for (let attempt=0;attempt<100;attempt++) { cached = await cachedClips(italian.id); if (cached.length === 15) break; await page.waitForTimeout(50); }
+  assert.equal(cached.length,15,'fresh keyless context must preload all bundled recordings');
+  for (const clip of cached) { const original=readFileSync(`samples/italian-poem-sample/${clip.id}`); assert.equal(clip.bytes,original.length); assert.equal(clip.hash,createHash('sha256').update(original).digest('hex')); }
+  assert.equal(audioResponses.length,15); assert.ok(audioResponses.every(response => response.status === 200));
+  await page.getByText(italian.title,{exact:true}).locator('..').locator('..').locator('..').getByRole('button',{name:/Load$/}).click();
+  await page.getByRole('button',{name:/Slideshow$/}).click();
+  await page.getByText('Audio ready.',{exact:true}).waitFor({state:'attached'});
+  await page.getByRole('button',{name:/Add Audio$/}).click();
+  await page.getByText('Audio ready.',{exact:true}).waitFor();
+  await page.evaluate(() => { const start = AudioBufferSourceNode.prototype.start; window.__aboveAudioStarts = 0; AudioBufferSourceNode.prototype.start = function(...args) { window.__aboveAudioStarts++; return start.apply(this,args); }; });
+  await page.getByTitle('Play',{exact:true}).click();
+  await page.waitForFunction(() => window.__aboveAudioStarts > 0);
+  await page.getByTitle('Stop',{exact:true}).click();
+  assert.equal(apiCalls.length,0,'bundled playback must require no model request');
+  checks.push('all 15 bundled audio URLs return 200 and preload byte-identical recordings into a fresh cache; slideshow audio decodes and starts playback keylessly');
+  await page.reload({waitUntil:'domcontentloaded'});
+  assert.deepEqual((await cachedClips(italian.id)).sort((a,b)=>a.id.localeCompare(b.id)),cached.sort((a,b)=>a.id.localeCompare(b.id)));
+  checks.push('existing recording cache remains byte-identical after reload');
+  await page.getByRole('button',{name:/Samples$/}).click();
   const load = page.getByRole('button', {name:/Load|View|Read/}).first();
   if (await load.count()) await load.click();
   else await page.getByText('Dialogue in Czech about ordering coffee', {exact:true}).click();
@@ -143,6 +173,6 @@ try {
   await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)); checks.push('portable viewer fits 390px viewport');
   assert.deepEqual(errors,[]);
-  const receipt = {checks,apiCalls,externalAssetsBlocked:[...external],pageErrors:errors,limitations:['Existing full-app CDN assets blocked deliberately; styling and PDF/ZIP CDN integrations were not verified.','No paid requests; provider credentials and live CORS were not tested.','Browser speech output depends on installed voices; sound was not auditioned.']};
+  const receipt = {checks,apiCalls,bundledAudioResponses:audioResponses,bundledAudioHashes:cached,externalAssetsBlocked:[...external],pageErrors:errors,limitations:['Existing full-app CDN assets blocked deliberately; styling and PDF/ZIP CDN integrations were not verified.','No paid requests; provider credentials and live CORS were not tested.','Browser speech output depends on installed voices; sound was not auditioned.']};
   writeFileSync('docs/evidence-above-the-line-browser-2026-10-22.json',JSON.stringify(receipt,null,2)+'\n'); console.log(JSON.stringify(receipt,null,2));
 } finally { await context.close(); await browser.close(); }

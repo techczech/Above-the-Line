@@ -88,3 +88,23 @@ Verification at the fix head, Node v26.12.0:
 Remaining limits: no live provider/CORS calls or YouTube playback; no audible speech audition; full-app CDN styling and PDF/ZIP integrations remain outside these mocked browser checks. Browser abort prevents follow-up requests and signals cancellation to requests already sent; it cannot guarantee that a provider discards already-accepted work or reverses billing. No deployment, account operations, licence changes or edits outside this app repository.
 
 Parent skill action: refresh the copied `portable/validate-above-the-line.mjs`, `portable/schema-above-the-line-result.json` and `portable/README.md` from this checked fix. CLI/module/copy-asset paths are unchanged.
+
+
+# Independent standards packaging fix — 2026-10-22
+
+Review source: `/Users/dominiklukes/gitrepos/_COORDINATION/webapps-websites/_TASK-LOG/review-above-the-line-migration-standards-2026-10-22.md`. Baseline `b9861ea99ced0391fa894c0dccfb8c464e4e2768`; branch clean and pulled before writing. Earlier specification fixes independently closed; this change addresses the bundled-recording acceptance gap only. No portable files changed.
+
+- Reproduced P2 with the new integrity check: requested `dist/samples/audio/italian-poem-sample/s0-l0.raw` was absent (`ENOENT`). The build now publishes byte-for-byte copies of all flagged sample line recordings at the exact `/samples/audio/<sample>/<itemId>.raw` paths already requested by the app. Original recordings, existing copied paths, cache identifiers and cache-preload skip behaviour remain unchanged. No recording was regenerated, transcoded, trimmed or replaced.
+- Added `scripts/check-above-the-line-assets.mjs` to every production build. It independently enumerates all sample records flagged for packaged audio, checks every referenced built file exists and is nonempty, and compares its complete bytes with the original recording. A missing or changed clip fails the build. Current coverage: 15 of 15 referenced clips.
+- Playback verification exposed seven original files with an incomplete final 16-bit PCM sample. The previous decoder threw RangeError when it tried to construct Int16Array over an odd-length buffer, preventing the cached sample collection from loading. Two regressions failed before the decoder change. The decoder now reads complete interleaved little-endian PCM frames through DataView, respecting the supplied byte offset and leaving the original bytes/cache untouched. Only the incomplete final frame is excluded from playback interpretation, without changing the recording.
+
+Verification at the packaging-fix head, Node v26.12.0:
+
+- `npm test`: 27 passed, 0 failed, including the prior 25 regressions plus all-original-recording decode integrity and offset/partial-frame PCM tests. The copied portable-folder CLI test remains included and passes.
+- `npm run typecheck`: exit 0.
+- `npm run build`: exit 0; Vite produced `dist/assets/index-YpiN6hbg.js`; the new asset verifier confirmed 15 nonempty byte-identical built recordings.
+- Approved headless browser command documented above: 19 checks passed, 0 page errors. Fresh context requested all 15 bundled URLs and received HTTP 200 for each. IndexedDB contained all 15 clips with exact original lengths and SHA-256 hashes. The Italian slideshow decoded the cached collection and a representative Play click invoked native AudioBufferSourceNode.start with zero provider requests. Reload retained the same cached bytes/hashes.
+- Updated browser receipt: `docs/evidence-above-the-line-browser-2026-10-22.json`, now including every audio resource path/status and all 15 recording hashes/lengths. Every external provider request in the remainder of the full browser suite was intercepted with synthetic credentials.
+- `git diff --check`: exit 0. All modifications belong to Above the Line; no recorded audio files or portable distribution assets changed.
+
+Limits: headless playback scheduling and decoding were verified, not human listening or recording quality. Existing live-provider/CORS, full-app CDN styling/PDF/ZIP and YouTube-playback limits remain. No paid calls, deployments, account operations, licence changes or other-repository edits.

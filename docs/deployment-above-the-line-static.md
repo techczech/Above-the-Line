@@ -6,7 +6,7 @@ status: prepared-not-deployed
 
 # Static hosting preparation
 
-Run `npm ci` with Node 22.18 or later, then `npm run build`. Publish the generated `dist/` folder with a static host. For Cloudflare Pages, use build command `npm run build` and output directory `dist`. No build secrets, Worker, Cloud Run service or AI Studio proxy is required. The build copies the existing samples and cached sample audio into `dist/samples/`.
+Run `npm ci` with Node 22.18 or later, then `npm run build`. Publish the generated `dist/` folder with a static host. For Cloudflare Pages, use build command `npm run build` and output directory `dist`. No build secrets, Worker, Cloud Run service or AI Studio proxy is required. The build copies the existing samples into `dist/samples/` and publishes bundled recordings at `dist/samples/audio/<sample>/<itemId>.raw`, matching the app's preload URLs. Every build verifies that all referenced recordings are nonempty and byte-identical to their originals.
 
 Visitors open AI settings, choose OpenAI or Gemini and enter their own key. Keys stay in memory by default. Remember on this device explicitly enables browser storage; Apply settings commits the choice. Clear key and reset settings removes both the in-memory and stored configuration. Existing annotation and audio stores are preserved. Reloading after a memory-only setup requires entering the key again. Provider model IDs are editable to accommodate account access and model retirement.
 

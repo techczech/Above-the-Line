@@ -16,15 +16,15 @@ export async function decodeAudioData(
   sampleRate: number,
   numChannels: number,
 ): Promise<AudioBuffer> {
-  // The raw audio data is 16-bit PCM.
-  const dataInt16 = new Int16Array(data.buffer);
-  const frameCount = dataInt16.length / numChannels;
+  // Keep original/cache bytes intact, including any incomplete final sample in legacy clips.
+  const frameCount = Math.floor(data.byteLength / (2 * numChannels));
+  const samples = new DataView(data.buffer, data.byteOffset, frameCount * numChannels * 2);
   const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
 
   for (let channel = 0; channel < numChannels; channel++) {
     const channelData = buffer.getChannelData(channel);
     for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
+      channelData[i] = samples.getInt16((i * numChannels + channel) * 2, true) / 32768.0;
     }
   }
   return buffer;

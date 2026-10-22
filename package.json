@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/copy-above-the-line-samples.mjs",
+    "build": "vite build && node scripts/copy-above-the-line-samples.mjs && node scripts/check-above-the-line-assets.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs"
