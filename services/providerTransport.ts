@@ -1,6 +1,7 @@
-import { requireProviderConfig, type ProviderConfig } from './providerConfig.ts';
+import { requireProviderConfig, activeProviderSignal, type ProviderConfig } from './providerConfig.ts';
 
 async function post(config: ProviderConfig, path: string, body: unknown): Promise<Response> {
+  const generationSignal = activeProviderSignal(config);
   const origin = config.provider === 'openai' ? 'https://api.openai.com/v1/' : 'https://generativelanguage.googleapis.com/v1beta/';
   let response: Response;
   try {
@@ -8,11 +9,13 @@ async function post(config: ProviderConfig, path: string, body: unknown): Promis
       method: 'POST', headers: {
         'Content-Type': 'application/json',
         ...(config.provider === 'openai' ? { Authorization: `Bearer ${config.apiKey}` } : { 'x-goog-api-key': config.apiKey }),
-      }, body: JSON.stringify(body), signal: AbortSignal.timeout(120_000), credentials: 'omit', referrerPolicy: 'no-referrer',
+      }, body: JSON.stringify(body), signal: AbortSignal.any([generationSignal, AbortSignal.timeout(120_000)]), credentials: 'omit', referrerPolicy: 'no-referrer',
     });
   } catch {
+    activeProviderSignal(config);
     throw new Error('Could not reach the selected AI provider. Check your connection, browser restrictions and model settings, then retry.');
   }
+  activeProviderSignal(config);
   if (!response.ok) {
     // Provider bodies can echo request data. Never surface them or log keys.
     const label = config.provider === 'openai' ? 'OpenAI' : 'Gemini';

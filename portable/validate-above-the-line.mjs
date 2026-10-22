@@ -43,12 +43,12 @@ export function validateResult(raw) {
       try { url = new URL(youtubeUrl); } catch { fail(); }
       if (url.protocol !== 'https:' || url.username || url.password ||
           !['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'].includes(url.hostname) ||
-          [...url.searchParams.keys()].some(key => !['v', 't', 'start', 'end', 'si', 'list', 'index', 'feature'].includes(key))) fail();
+          [...url.searchParams.keys()].some(key => !['v', 't', 'start', 'end', 'si', 'list', 'index', 'feature', 'ab_channel', 'pp'].includes(key))) fail();
     }
     result.slideshowData = { youtubeUrl, timecodes: array(data.timecodes).map(rawTimecode => {
       const tc = object(rawTimecode);
       const itemId = string(tc.itemId, true);
-      if (!/^s\d+(?:-l\d+)?$/.test(itemId)) fail();
+      if (!/^(?:s\d+(?:-l\d+)?|sent-\d+-\d+-\d+|sent-final-\d+)$/.test(itemId)) fail();
       const startTime = number(tc.startTime);
       const endTime = tc.endTime === null ? null : number(tc.endTime);
       if (endTime !== null && endTime < startTime) fail();

@@ -125,3 +125,61 @@ test('annotation service validates model output and speaker TTS reuses selected 
   const speech = await generateSpeech('Dobrý den!','Anna','Czech',profiles);
   assert.equal(speech.base64Audio,'AQACAA=='); assert.deepEqual(speech.profileMap,profiles);
 });
+
+test('sentence slideshow IDs survive saved-record load, JSON save and portable export', () => {
+  const saved = structuredClone(example);
+  saved.annotation.textType = 'prose';
+  saved.slideshowData = {youtubeUrl:'https://www.youtube.com/watch?v=example',timecodes:[
+    {itemId:'s0',startTime:0,endTime:1}, {itemId:'s0-l0',startTime:1,endTime:2},
+    {itemId:'sent-0-0-0',startTime:2,endTime:3}, {itemId:'sent-final-1',startTime:3,endTime:null},
+  ]};
+  assert.deepEqual(validateResults([saved]),[saved]);
+  assert.deepEqual(validateResult(JSON.parse(JSON.stringify(validateResult(saved)))),saved);
+  const html = renderResultHTML(saved);
+  const embedded = html.match(/id="above-the-line-result">([^<]+)<\/script>/)[1];
+  assert.deepEqual(JSON.parse(embedded),saved);
+  const schema = JSON.parse(readFileSync(new URL('../portable/schema-above-the-line-result.json',import.meta.url)));
+  const pattern = new RegExp(schema.properties.slideshowData.properties.timecodes.items.properties.itemId.pattern);
+  for (const timing of saved.slideshowData.timecodes) assert.ok(pattern.test(timing.itemId),timing.itemId);
+  for (const itemId of ['sent-final-','sent-0-0','sent-0-0-0-extra','s-1']) {
+    assert.ok(!pattern.test(itemId));
+    assert.throws(() => validateResult({...saved,slideshowData:{...saved.slideshowData,timecodes:[{itemId,startTime:0,endTime:null}]}}));
+  }
+});
+test('ordinary YouTube ab_channel and pp parameters survive without allowing credentials', () => {
+  for (const suffix of ['&ab_channel=Example','&pp=Example','&ab_channel=Example&pp=Example']) {
+    const saved = {...example,slideshowData:{youtubeUrl:'https://www.youtube.com/watch?v=example'+suffix,timecodes:[]}};
+    assert.deepEqual(validateResult(saved).slideshowData,saved.slideshowData);
+    assert.ok(renderResultHTML(saved).includes('ab_channel') || suffix === '&pp=Example');
+  }
+  for (const youtubeUrl of ['https://user:password@www.youtube.com/watch?v=example','https://www.youtube.com/watch?v=example&key=synthetic','https://www.youtube.com/watch?v=example&api_key=synthetic']) {
+    assert.throws(() => validateResult({...example,slideshowData:{youtubeUrl,timecodes:[]}}));
+  }
+});
+for (const provider of ['openai','gemini']) for (const action of ['clear','replace','clear-and-reapply','switch-provider']) {
+  test(`${provider} ${action} invalidates stale speaker analysis before any speech request`, async () => {
+    configureProvider(config(provider),false);
+    let releaseAnalysis, analysisStarted;
+    const started = new Promise(resolve => {analysisStarted = resolve;});
+    const response = new Promise(resolve => {releaseAnalysis = resolve;});
+    const calls = [];
+    globalThis.fetch = async (url,init) => {
+      calls.push({url,signal:init.signal});
+      if (calls.length === 1) {analysisStarted();return response;}
+      return provider === 'openai' ? new Response(new Uint8Array([1,0,2,0])) : Response.json({candidates:[{content:{parts:[{inlineData:{data:'AQACAA=='}}]}}]});
+    };
+    const operation = generateSpeech('Dobrý den!','New speaker','Czech',new Map());
+    // Attach before releasing the deferred HTTP response, including when abort works immediately.
+    const rejected = assert.rejects(operation,/settings changed|cancelled/i);
+    await started;
+    if (action.startsWith('clear')) clearProvider();
+    if (action === 'replace') configureProvider({...config(provider),apiKey:'replacement-synthetic-key'},false);
+    if (action === 'clear-and-reapply') configureProvider(config(provider),false);
+    if (action === 'switch-provider') configureProvider(config(provider === 'openai' ? 'gemini' : 'openai'),false);
+    const wasAborted = calls[0].signal.aborted;
+    releaseAnalysis(Response.json(provider === 'openai' ? {choices:[{message:{content:'female'}}]} : {candidates:[{content:{parts:[{text:'female'}]}}]}));
+    await rejected;
+    assert.equal(calls.length,1,'no subsequent speech request may start');
+    assert.equal(wasAborted,true,'settings changes abort the outstanding request signal');
+  });
+}

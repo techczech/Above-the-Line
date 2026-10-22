@@ -66,6 +66,18 @@ try {
   await page.getByRole('button', {name:/My Texts$/}).click();
   await page.locator('input[type=file]').setInputFiles(resolve('portable/example-above-the-line-result.json'));
   await page.getByText(example.title,{exact:true}).waitFor(); checks.push('keyless JSON import into library');
+  const videoRecord = structuredClone(example); videoRecord.id = 'saved-sentence-video'; videoRecord.title = 'Saved sentence video'; videoRecord.annotation.textType = 'prose';
+  videoRecord.slideshowData = {youtubeUrl:'https://www.youtube.com/watch?v=example&ab_channel=Example&pp=Example',timecodes:[
+    {itemId:'sent-0-0-0',startTime:0,endTime:1},{itemId:'sent-final-1',startTime:1,endTime:null},
+  ]};
+  await page.locator('input[type=file]').setInputFiles({name:'saved-video.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(videoRecord))});
+  await page.getByText(videoRecord.title,{exact:true}).locator('..').locator('..').locator('..').getByRole('button',{name:/Load$/}).click();
+  const videoDownloadPromise = page.waitForEvent('download');
+  await page.getByRole('button',{name:'Save JSON',exact:true}).click();
+  const videoDownload = await videoDownloadPromise;
+  assert.deepEqual(JSON.parse(readFileSync(await videoDownload.path(),'utf8')),videoRecord);
+  checks.push('saved sentence video imports, loads and exports with ab_channel/pp and exact timings');
+  await page.getByRole('button',{name:/My Texts$/}).click();
   await page.getByRole('button',{name:/Load$/}).first().click();
   await page.getByRole('button',{name:'Save offline HTML',exact:true}).waitFor();
   const htmlPromise = page.waitForEvent('download'); await page.getByRole('button',{name:'Save offline HTML',exact:true}).click();

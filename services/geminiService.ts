@@ -1,5 +1,5 @@
 import { generateText, generateAudio } from './providerTransport.ts';
-import { requireProviderConfig } from './providerConfig.ts';
+import { requireProviderConfig, activeProviderSignal } from './providerConfig.ts';
 import { validateAnnotation } from '../portable/validate-above-the-line.mjs';
 import type { Annotation } from '../types';
 const Type = { OBJECT: 'OBJECT', ARRAY: 'ARRAY', STRING: 'STRING' };
@@ -196,6 +196,7 @@ export const generateSpeech = async (
     voiceName = profile.voice;
   }
 
+  activeProviderSignal(config);
   const base64Audio = await generateAudio(text, voiceName, config);
   return { base64Audio, profileMap };
 };

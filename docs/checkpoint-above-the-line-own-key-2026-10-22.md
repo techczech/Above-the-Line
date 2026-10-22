@@ -24,7 +24,7 @@ register: FOR AGENTS
 - Existing app imports samples by absolute URLs but Vite does not copy root samples into production; retain paths and explicitly copy samples during build.
 - Existing external PDF/ZIP/font/style dependencies remain in web UI; portable viewer must have zero external asset requirements.
 
-# Checks
+# Initial implementation checks (4ee5abf)
 
 - `npm run typecheck`: exit 0.
 - `npm test`: 15 passed, 0 failed. Includes memory-only/persistent/reset keys, malformed/blocked storage, missing-key no-network path, both provider origins and header-only keys, errors/truncation, both PCM speech routes, generated-result validation, all six shipped records, unknown-field/key stripping, HTML escaping, Markdown-copy propagation and standalone copied-folder CLI.
@@ -65,3 +65,26 @@ Module: `import { renderResultHTML } from './portable/render-above-the-line.mjs'
 Accepted input: exactly one legacy-compatible SavedAnnotation record. Required fields: `id`, `title`, `timestamp` (ISO date), `sourceText`, `sourceLang`, `targetLang`, `annotation: {textType: 'poem'|'prose'|'dialogue', stanzas: [{lines: [{words: [{original, translation, grammar}], idiomaticTranslation?, speaker?}]}]}`. Nonempty stanzas/lines/words, string word fields. Optional `slideshowData: {youtubeUrl, timecodes: [{itemId, startTime, endTime}]}` and `studyHistory` retain existing app format. Exact schema: `portable/schema-above-the-line-result.json`; complete example: `portable/example-above-the-line-result.json`.
 
 The renderer validates and projects allowed fields. Provider settings/credentials and unknown properties are never serialised. Output renders original words, literal translation, grammar, idiomatic translation, speakers and source text; toggles and browser read-aloud require no network or key. Video, provider TTS and study-game UI remain in full app; viewer shows saved results independently. HTML is generated from adjacent Markdown/YAML copy, CSS and JS assets. Parent may copy this folder unchanged into the canonical skill.
+
+
+# Independent specification review fixes — 2026-10-22
+
+Review source: `/Users/dominiklukes/gitrepos/_COORDINATION/webapps-websites/_TASK-LOG/review-above-the-line-migration-spec-2026-10-22.md`. Baseline `4ee5abf`; clean branch inspected and pulled before writing. All three concrete findings reproduced using synthetic data and intercepted fetch only. Eight initial regression cases failed before the fixes; all pass after them.
+
+- P1 saved sentence timing IDs: runtime validator and JSON Schema now accept `sent-<stanza>-<line>-<counter>` and `sent-final-<counter>` alongside existing stanza/line IDs. Regression retains complete slideshow records through validation, JSON serialisation and embedded portable-result export. Invalid identifiers remain rejected.
+- P2 YouTube compatibility: permit the existing player's `ab_channel` and `pp` parameters, retaining HTTPS/host constraints, URL credential exclusion and rejection of key/api_key query fields. Browser regression imports, loads and downloads a record with both parameters and both sentence-ID forms, checking exact record equality.
+- P2 stale credentials: each authorised provider configuration snapshot belongs to one abortable request generation, tracked outside serialised settings. Clear, successful settings apply and restore invalidate the old generation, including clearing then reapplying the identical key. Both provider transports check generation identity before every HTTP request and after the response; transport signals combine generation cancellation and the existing timeout. Speech explicitly rechecks its original generation after awaited speaker analysis before requesting audio.
+- Cancellation regressions cover clear, key replacement, provider switch and clear/reapply for both Gemini and OpenAI. A deferred mocked speaker response deliberately ignores abort, then completes after settings change: no subsequent TTS request starts, and the original request signal is aborted.
+
+Verification at the fix head, Node v26.12.0:
+
+- `npm test`: 25 passed, 0 failed, including all original tests and 10 added review regressions.
+- `node --test --test-name-pattern='portable folder' tests/above-the-line-boundaries.test.mjs`: 1 passed. The temporary copied distribution was created inside this app repository's `tests/` directory, executed from its own folder with no app build/dependencies, and removed in the test's finally block. The test used the authorised write escalation for this app repository, resolving the independent reviewer's sandbox EPERM limitation; no outside-repo scratch path was used.
+- `npm run typecheck`: exit 0.
+- `npm run build`: exit 0; `dist/assets/index-DTN68ZYA.js` generated.
+- Approved headless browser command documented above: 17 checks passed, 0 page errors; updated receipt remains `docs/evidence-above-the-line-browser-2026-10-22.json`. New check covers keyless saved-video import/load/export and exact sentence timing/URL retention.
+- `git diff --check`: exit 0.
+
+Remaining limits: no live provider/CORS calls or YouTube playback; no audible speech audition; full-app CDN styling and PDF/ZIP integrations remain outside these mocked browser checks. Browser abort prevents follow-up requests and signals cancellation to requests already sent; it cannot guarantee that a provider discards already-accepted work or reverses billing. No deployment, account operations, licence changes or edits outside this app repository.
+
+Parent skill action: refresh the copied `portable/validate-above-the-line.mjs`, `portable/schema-above-the-line-result.json` and `portable/README.md` from this checked fix. CLI/module/copy-asset paths are unchanged.

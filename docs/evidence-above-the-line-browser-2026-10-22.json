@@ -5,6 +5,7 @@
     "memory-only key absent after reload",
     "explicit persistence and clear",
     "keyless JSON import into library",
+    "saved sentence video imports, loads and exports with ab_channel/pp and exact timings",
     "keyless HTML export excludes settings",
     "existing Study Mode setup remains available",
     "missing-key generation fails clearly without a request",
