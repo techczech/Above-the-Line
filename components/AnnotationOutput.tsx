@@ -1,3 +1,4 @@
+import { downloadResult } from '../utils/resultExport';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Annotation, SlideshowData, StudySessionResult, SavedAnnotation, TextType } from '../types';
 import * as htmlToImage from 'html-to-image';
@@ -273,6 +274,8 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
             <button onClick={onExport} title="Export as .zip (e)" className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">archive</span> Export ZIP
             </button>
+            <button onClick={() => { const result = onSaveOnExport(); if (result) downloadResult(result, 'json'); }} className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-md">Save JSON</button>
+            <button onClick={() => { const result = onSaveOnExport(); if (result) downloadResult(result, 'html'); }} className="px-4 py-2 text-sm text-white bg-teal-600 rounded-md">Save offline HTML</button>
             <button onClick={exportAsPdf} title="Export as PDF (p)" className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">picture_as_pdf</span> Export PDF
             </button>

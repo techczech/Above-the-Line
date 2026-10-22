@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Above the Line portable result",
+  "type": "object",
+  "required": ["id", "title", "timestamp", "sourceText", "sourceLang", "targetLang", "annotation"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "sourceText": {"type": "string"},
+    "sourceLang": {"type": "string", "minLength": 1},
+    "targetLang": {"type": "string", "minLength": 1},
+    "annotation": {"$ref": "#/$defs/annotation"},
+    "slideshowData": {
+      "type": "object", "required": ["youtubeUrl", "timecodes"],
+      "properties": {
+        "youtubeUrl": {"type": "string"},
+        "timecodes": {"type": "array", "items": {
+          "type": "object", "required": ["itemId", "startTime", "endTime"],
+          "properties": {
+            "itemId": {"type": "string", "pattern": "^s[0-9]+(-l[0-9]+)?$"},
+            "startTime": {"type": "number", "minimum": 0},
+            "endTime": {"type": ["number", "null"], "minimum": 0}
+          }
+        }}
+      }
+    },
+    "studyHistory": {"type": "array", "items": {
+      "type": "object", "required": ["score", "totalWords", "durationSeconds", "completedAt", "gameMode", "studyUnit"],
+      "properties": {
+        "score": {"type": "number", "minimum": 0}, "totalWords": {"type": "number", "minimum": 0},
+        "durationSeconds": {"type": "number", "minimum": 0}, "completedAt": {"type": "string", "format": "date-time"},
+        "gameMode": {"enum": ["translation", "grammar"]}, "studyUnit": {"enum": ["stanza", "line"]}
+      }
+    }}
+  },
+  "$defs": {
+    "annotation": {
+      "type": "object", "required": ["textType", "stanzas"],
+      "properties": {
+        "textType": {"enum": ["poem", "prose", "dialogue"]},
+        "stanzas": {"type": "array", "minItems": 1, "items": {
+          "type": "object", "required": ["lines"],
+          "properties": {"lines": {"type": "array", "minItems": 1, "items": {
+            "type": "object", "required": ["words"],
+            "properties": {
+              "speaker": {"type": "string"}, "idiomaticTranslation": {"type": "string"},
+              "words": {"type": "array", "minItems": 1, "items": {
+                "type": "object", "required": ["original", "translation", "grammar"],
+                "properties": {"original": {"type": "string", "minLength": 1}, "translation": {"type": "string"}, "grammar": {"type": "string"}}
+              }}
+            }
+          }}}
+        }}
+      }
+    }
+  }
+}

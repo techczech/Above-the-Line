@@ -10,7 +10,7 @@ deployments:
 
 # Above The Line: Translanguager's Companion
 
-An advanced tool for exploring texts. Generate detailed grammatical annotations for any text using the Gemini API. This app was created by Dominik Lukeš in Google AI Studio and is powered by the Gemini API. It is designed as a comprehensive suite of tools for students, educators, and language enthusiasts to explore texts and video transcripts in depth.
+An advanced tool for exploring texts. Generate detailed grammatical annotations for any text using your own OpenAI or Gemini API key. This app was created by Dominik Lukeš in Google AI Studio and now supports browser-direct OpenAI and Gemini calls. It is designed as a comprehensive suite of tools for students, educators, and language enthusiasts to explore texts and video transcripts in depth.
 
 ## Core Features
 
@@ -22,7 +22,7 @@ An advanced tool for exploring texts. Generate detailed grammatical annotations 
 
 ## Architecture
 
-This application is built as a client-side Single Page Application (SPA) using **React** and **TypeScript**. It leverages a serverless architecture where the "backend" logic is primarily handled by the **Google Gemini API**.
+This application is built as a client-side Single Page Application (SPA) using **React** and **TypeScript**. It leverages a serverless architecture where the "backend" logic is primarily handled by the selected **OpenAI or Gemini API**.
 
 ### Tech Stack
 
@@ -30,7 +30,7 @@ This application is built as a client-side Single Page Application (SPA) using *
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS with `@tailwindcss/typography`
 - **State Management:** React Hooks (`useState`, `useReducer`) + Custom Hooks (`useLocalStorage`)
-- **AI Integration:** Google GenAI SDK (`@google/genai`)
+- **AI Integration:** Browser-direct requests to OpenAI or Gemini with visitor-owned keys
 
 ### Data Persistence Strategy
 
@@ -41,12 +41,12 @@ The application uses a hybrid local-first storage approach to ensure data privac
 
 ### AI Implementation
 
-The application interacts with the Google Gemini API for several distinct tasks:
+The application uses the selected provider for annotation, titles, speaker analysis and speech. Defaults are editable in AI settings. The original Gemini prompts are preserved. The Gemini route uses these models:
 
 -   **Annotation Generation:** Uses `gemini-2.5-flash` with Structured Output (JSON Schema) to parse texts into stanzas, lines, words, and grammatical data.
 -   **Title Generation:** Analyzes text content to generate concise, descriptive titles automatically.
 -   **Gender Detection:** Analyzes character names and dialogue context to infer gender, allowing for appropriate voice selection in TTS.
--   **Text-to-Speech:** Uses `gemini-2.5-flash-preview-tts` to generate natural-sounding audio for individual text segments.
+-   **Text-to-Speech:** Uses `gemini-2.5-pro-preview-tts` to generate natural-sounding audio for individual text segments.
 
 ## Deployment
 
@@ -54,9 +54,8 @@ Since the application is a static site, it can be deployed to any static hosting
 
 ### Prerequisites
 
--   Node.js (v18 or higher)
--   npm or yarn
--   A Google Cloud Project with the Gemini API enabled.
+-   Node.js 22.18 or later and npm.
+-   An OpenAI or Gemini API key for generating new text or speech. Viewing and loading results requires no key.
 
 ### Setup
 
@@ -68,14 +67,13 @@ Since the application is a static site, it can be deployed to any static hosting
 
 2.  **Install dependencies:**
     ```bash
-    npm install
+    npm ci
     ```
 
-3.  **Environment Configuration:**
-    Create a `.env` file in the root directory. You must provide your Google Gemini API key here.
-    ```env
-    API_KEY=your_google_gemini_api_key_here
-    ```
+3.  **Visitor API settings:**
+    Open AI settings in the app, select a provider, enter your own API key and apply the settings. Keys stay in memory by default, with an explicit Remember on this device option and a clear/reset action. Do not put API keys in build environment variables. A static production build requires no credentials.
+
+    OpenAI defaults: `gpt-4.1-mini` for text and `gpt-4o-mini-tts` for speech. Gemini defaults: `gemini-2.5-flash` for text and `gemini-2.5-pro-preview-tts` for speech. Account access and model availability vary; model IDs are editable.
 
 ### Development
 
@@ -98,3 +96,15 @@ The output will be generated in the `dist` directory, which can then be served b
 ## Availability & Source Code
 
 This site is free to use for now but makes no guarantees about future availability. You can get the source code to run your own on GitHub: [https://github.com/techczech/Above-the-Line](https://github.com/techczech/Above-the-Line).
+
+## Portable results and checks
+
+Save JSON and Save offline HTML work without a key. My Texts imports validate nested result records before merging them into the browser library. See [the portable renderer](portable/README.md) for the dependency-free CLI, module contract, schema, example and editable Markdown interface copy. See [static hosting preparation](docs/deployment-above-the-line-static.md) for Cloudflare Pages settings; no deployment has been performed.
+
+```sh
+npm run typecheck
+npm test
+npm run build
+```
+
+Provider details follow the official [OpenAI text-to-speech guide](https://developers.openai.com/api/docs/guides/text-to-speech), [GPT-4.1 mini reference](https://developers.openai.com/api/docs/models/gpt-4.1-mini), [Gemini speech guide](https://ai.google.dev/gemini-api/docs/speech-generation) and [Gemini API-key guide](https://ai.google.dev/gemini-api/docs/api-key). No paid provider calls are part of the automated checks.

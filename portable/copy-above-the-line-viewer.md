@@ -1,0 +1,18 @@
+---
+title: "Above the Line — portable result"
+brand: "Above the Line"
+subtitle: "Your companion for exploring texts."
+translation: "Word translation"
+grammar: "Grammar"
+idiomatic: "Idiomatic translation"
+source: "Source text"
+voice: "Voice"
+defaultVoice: "Browser default"
+read: "Read aloud"
+stop: "Stop reading"
+download: "Save JSON"
+print: "Print / save PDF"
+unsupported: "Read-aloud is unavailable in this browser."
+speechError: "Read-aloud could not start. Check the browser's installed voices."
+local: "This result works offline. Read-aloud uses voices installed in your browser; some voices may require a connection."
+---

@@ -11,6 +11,9 @@ import { parseTimecodedText } from './utils/textProcessing';
 import * as db from './utils/db';
 import SavedAnnotations from './components/SavedAnnotations';
 import SampleAnnotations from './components/SampleAnnotations';
+import ProviderSettings from './components/ProviderSettings';
+import { requireProviderConfig } from './services/providerConfig';
+import { validateResult, validateResults } from './portable/validate-above-the-line.mjs';
 
 const defaultSlideshowData: SlideshowData = { youtubeUrl: '', timecodes: [] };
 
@@ -88,7 +91,8 @@ const App: React.FC = () => {
             try {
               const res = await fetch(file);
               if (!res.ok) throw new Error(`Failed to fetch ${file}`);
-              const data = await res.json() as (SavedAnnotation & { prepackagedAudio?: boolean });
+              const rawData = await res.json();
+              const data = { ...validateResult(rawData), prepackagedAudio: rawData.prepackagedAudio === true } as (SavedAnnotation & { prepackagedAudio?: boolean });
               const fileName = file.substring(file.lastIndexOf('/') + 1);
               const fileBase = fileName.replace('.json', '');
               return { fileBase, data };
@@ -220,6 +224,7 @@ const App: React.FC = () => {
     setError(null);
 
     try {
+      requireProviderConfig();
       let textToAnnotate = text;
       let timecodesFromText: Array<number | null> = [];
 
@@ -333,10 +338,12 @@ const App: React.FC = () => {
     if (hasUnsavedChanges) {
         return handleSave();
     }
-    return savedAnnotations.find(a => a.id === currentAnnotationId) ?? null;
-  }, [hasUnsavedChanges, handleSave, savedAnnotations, currentAnnotationId]);
+    return savedAnnotations.find(a => a.id === currentAnnotationId) ?? sampleAnnotations.find(a => a.id === currentAnnotationId) ?? null;
+  }, [hasUnsavedChanges, handleSave, savedAnnotations, sampleAnnotations, currentAnnotationId]);
 
-  const handleLoad = useCallback((item: SavedAnnotation) => {
+  const handleLoad = useCallback((rawItem: SavedAnnotation) => {
+    let item: SavedAnnotation;
+    try { item = validateResult(rawItem) as SavedAnnotation; } catch { showToast('This saved text has an invalid format. Your stored record has been preserved.'); return; }
     setText(item.sourceText);
     setSourceLang(item.sourceLang);
     setTargetLang(item.targetLang);
@@ -398,7 +405,7 @@ const App: React.FC = () => {
         }
 
         // Add the JSON file for the annotation
-        zip.file(jsonFileName, JSON.stringify(annotation, null, 2));
+        zip.file(jsonFileName, JSON.stringify(validateResult(annotation), null, 2));
 
         // Check for and add associated audio files
         const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
@@ -440,7 +447,7 @@ const App: React.FC = () => {
         if (!jsonFile) throw new Error("ZIP file does not contain 'annotation.json'.");
         
         const jsonText = await jsonFile.async('string');
-        const importedAnnotation = JSON.parse(jsonText) as SavedAnnotation;
+        const importedAnnotation = validateResult(JSON.parse(jsonText)) as SavedAnnotation;
         
         if (!importedAnnotation.id || !importedAnnotation.title || !importedAnnotation.annotation) {
           throw new Error("Invalid 'annotation.json' format inside ZIP.");
@@ -472,7 +479,7 @@ const App: React.FC = () => {
       } else if (file.name.endsWith('.json')) {
         const text = await file.text();
         const parsedJson = JSON.parse(text);
-        const dataToImport: SavedAnnotation[] = Array.isArray(parsedJson) ? parsedJson : [parsedJson];
+        const dataToImport = validateResults(parsedJson) as SavedAnnotation[];
 
         if (dataToImport.some(item => !item.id || !item.title || !item.annotation)) {
           throw new Error("Invalid file format. Each item must be a valid annotation.");
@@ -583,6 +590,7 @@ const App: React.FC = () => {
         onNavigateToSamples={handleNavigateToSamples}
       />
       
+      <ProviderSettings />
       {view === 'home' && (
         <HomePage 
           onNavigateToAnnotator={handleNavigateToAnnotator}

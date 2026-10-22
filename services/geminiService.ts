@@ -1,46 +1,8 @@
-
-import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { Annotation } from '../types';
-
-if (!process.env.API_KEY) {
-    console.warn("API_KEY environment variable not set. Please provide a valid key for the Gemini API.");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
-
-// --- Retry Logic Helper ---
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-/**
- * Executes an async operation with exponential backoff for rate limit errors (429).
- */
-async function runWithRetry<T>(
-  operation: () => Promise<T>,
-  retries = 5,
-  initialDelay = 3000
-): Promise<T> {
-  try {
-    return await operation();
-  } catch (error: any) {
-    // Check for various forms of Rate Limit / Quota errors
-    const isQuotaError =
-      error?.status === 429 ||
-      error?.code === 429 ||
-      (error?.message && (error.message.includes('429') || error.message.includes('RESOURCE_EXHAUSTED') || error.message.includes('quota')));
-
-    if (isQuotaError && retries > 0) {
-      console.warn(`Quota hit (429). Retrying in ${initialDelay}ms... (${retries} attempts left)`);
-      await delay(initialDelay);
-      // Exponential backoff: double the delay for the next attempt
-      return runWithRetry(operation, retries - 1, initialDelay * 2);
-    }
-
-    throw error;
-  }
-}
-
-// --- API Functions ---
+import { generateText, generateAudio } from './providerTransport.ts';
+import { requireProviderConfig } from './providerConfig.ts';
+import { validateAnnotation } from '../portable/validate-above-the-line.mjs';
+import type { Annotation } from '../types';
+const Type = { OBJECT: 'OBJECT', ARRAY: 'ARRAY', STRING: 'STRING' };
 
 export const generateTitle = async (text: string): Promise<string> => {
   const prompt = `Analyze the following text. First, identify its language. Second, identify its type (e.g., Poem, Prose, Article, Dialogue). Third, briefly summarize its content in a few words.
@@ -57,18 +19,9 @@ ${text.substring(0, 1000)}
 ---
 `;
   try {
-    return await runWithRetry(async () => {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
-      // The model might return the title in quotes, so let's remove them.
-      return response.text.trim().replace(/^"|"$/g, '');
-    });
-  } catch (error) {
-    console.error("Failed to generate title:", error);
-    return "Untitled Text"; // Fallback title
-  }
+    return (await generateText(prompt)).replace(/^"|"$/g, '');
+  } catch { return "Untitled Text"; }
+
 };
 
 export const generateAnnotation = async (text: string, sourceLang: string, targetLang: string): Promise<Annotation> => {
@@ -158,37 +111,10 @@ export const generateAnnotation = async (text: string, sourceLang: string, targe
     required: ["stanzas", "textType"]
   };
 
-  try {
-    const response = await runWithRetry(async () => {
-        return await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                responseMimeType: 'application/json',
-                responseSchema: schema,
-            },
-        });
-    });
+  const jsonText = await generateText(prompt, schema);
+  try { return validateAnnotation(JSON.parse(jsonText)) as Annotation; }
+  catch { throw new Error('The provider returned an invalid annotation. Try a shorter text or another model.'); }
 
-    const jsonText = response.text.trim();
-    if (!jsonText) {
-        throw new Error("The model returned an empty response.");
-    }
-
-    const parsedJson = JSON.parse(jsonText);
-    return parsedJson as Annotation;
-
-  } catch (error)
- {
-    console.error("Gemini API call failed:", error);
-    if (error instanceof Error) {
-        if (error.message.includes('429') || error.message.includes('RESOURCE_EXHAUSTED')) {
-             throw new Error("Service is currently busy (Quota exceeded). Please wait a minute or consider upgrading your API plan.");
-        }
-        throw new Error(`Failed to generate annotation: ${error.message}`);
-    }
-    throw new Error("An unknown error occurred while generating the annotation.");
-  }
 };
 
 export const MALE_VOICES = ['Puck', 'Charon', 'Fenrir'];
@@ -221,22 +147,10 @@ export const determineSpeakerGender = async (
   `;
 
   try {
-    const response = await runWithRetry(async () => {
-        return await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-        });
-    });
-    
-    const result = response.text.trim().toLowerCase();
-    if (result === 'male' || result === 'female') {
-      return result;
-    }
-    return 'unknown';
-  } catch (error) {
-    console.error("Failed to determine speaker gender:", error);
-    return 'unknown'; // Default on error
-  }
+    const result = (await generateText(prompt)).toLowerCase();
+    return result === 'male' || result === 'female' ? result : 'unknown';
+  } catch { return 'unknown'; }
+
 };
 
 export const generateSpeech = async (
@@ -245,6 +159,7 @@ export const generateSpeech = async (
   language: string,
   currentProfileMap: Map<string, SpeakerProfile>
 ): Promise<{ base64Audio: string, profileMap: Map<string, SpeakerProfile> }> => {
+  const config = requireProviderConfig();
   const profileMap = new Map(currentProfileMap);
   let voiceName = 'Kore'; // A neutral default voice
 
@@ -281,37 +196,6 @@ export const generateSpeech = async (
     voiceName = profile.voice;
   }
 
-  const prompt = `Read the following text aloud exactly as it is written. Do not add any extra words, sounds, or introductory phrases. The text is: "${text}"`;
-
-  try {
-    const response = await runWithRetry(async () => {
-        return await ai.models.generateContent({
-            model: "gemini-2.5-flash-preview-tts",
-            contents: [{ parts: [{ text: prompt }] }],
-            config: {
-                responseModalities: [Modality.AUDIO],
-                speechConfig: {
-                voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName },
-                },
-                },
-            },
-        });
-    });
-
-    const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!base64Audio) {
-      throw new Error("The model did not return audio data.");
-    }
-    return { base64Audio, profileMap };
-  } catch (error) {
-    console.error(`Gemini TTS API call failed for voice ${voiceName}:`, error);
-    if (error instanceof Error) {
-        if (error.message.includes('429') || error.message.includes('RESOURCE_EXHAUSTED')) {
-             throw new Error("Audio generation quota exceeded. Please wait a minute or upgrade your plan.");
-        }
-        throw new Error(`Failed to generate speech: ${error.message}`);
-    }
-    throw new Error("An unknown error occurred while generating speech.");
-  }
+  const base64Audio = await generateAudio(text, voiceName, config);
+  return { base64Audio, profileMap };
 };

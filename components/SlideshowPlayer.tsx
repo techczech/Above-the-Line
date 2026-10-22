@@ -98,6 +98,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
   const [isTtsMode] = useState(!initialData.youtubeUrl);
   const [showTtsPanel, setShowTtsPanel] = useState(false);
   const [audioCache, setAudioCache] = useState<Map<string, AudioBuffer>>(new Map());
+  const [audioError, setAudioError] = useState<string | null>(null);
   const [audioStatus, setAudioStatus] = useState<Map<string, AudioStatus>>(new Map());
   const [playbackStatus, setPlaybackStatus] = useState<'playing' | 'paused' | 'stopped'>('stopped');
   const [isLooping, setIsLooping] = useState(false);
@@ -278,6 +279,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
       return;
     }
 
+    setAudioError(null);
     setAudioStatus(prev => new Map(prev).set(itemId, 'loading'));
 
     try {
@@ -299,8 +301,8 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
         setAudioStatus(prev => new Map(prev).set(itemId, 'loaded'));
       }
     } catch (e) {
-      console.error(`Failed to generate audio for item ${itemId}`, e);
       if (!isMountedRef.current) return;
+      setAudioError(e instanceof Error ? e.message : 'Audio generation failed. Check AI settings.');
       setAudioStatus(prev => new Map(prev).set(itemId, 'error'));
     }
   }, [flattenedItems, audioStatus, onAudioGenerated, sourceLang, speakerProfileMap]);
@@ -762,6 +764,7 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
                               <span>Generating audio...</span>
                           </div>
                       )}
+                      {audioError && <p role="alert" className="text-sm text-red-600">{audioError}</p>}
                       {currentItemAudioStatus === 'error' && (
                           <p className="text-red-400">Audio generation failed.</p>
                       )}

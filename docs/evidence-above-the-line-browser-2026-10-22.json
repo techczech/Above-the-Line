@@ -1,0 +1,58 @@
+{
+  "checks": [
+    "keyless sample load and validated JSON download",
+    "Deep Read opens without a key",
+    "memory-only key absent after reload",
+    "explicit persistence and clear",
+    "keyless JSON import into library",
+    "keyless HTML export excludes settings",
+    "existing Study Mode setup remains available",
+    "missing-key generation fails clearly without a request",
+    "openai mocked slideshow TTS decoding",
+    "openai mocked UI annotation generation",
+    "gemini mocked slideshow TTS decoding",
+    "gemini mocked UI annotation generation",
+    "hostile imported HTML remains text in annotation, Deep Read/popover, slideshow and active study views",
+    "offline file opens from disk and annotation toggles work",
+    "offline JSON round-trip",
+    "portable viewer fits 390px viewport"
+  ],
+  "apiCalls": [
+    {
+      "host": "api.openai.com",
+      "path": "/v1/chat/completions"
+    },
+    {
+      "host": "api.openai.com",
+      "path": "/v1/chat/completions"
+    },
+    {
+      "host": "api.openai.com",
+      "path": "/v1/audio/speech"
+    },
+    {
+      "host": "generativelanguage.googleapis.com",
+      "path": "/v1beta/models/gemini-2.5-flash:generateContent"
+    },
+    {
+      "host": "generativelanguage.googleapis.com",
+      "path": "/v1beta/models/gemini-2.5-flash:generateContent"
+    },
+    {
+      "host": "generativelanguage.googleapis.com",
+      "path": "/v1beta/models/gemini-2.5-pro-preview-tts:generateContent"
+    }
+  ],
+  "externalAssetsBlocked": [
+    "cdn.tailwindcss.com",
+    "fonts.googleapis.com",
+    "cdnjs.cloudflare.com",
+    "www.youtube.com"
+  ],
+  "pageErrors": [],
+  "limitations": [
+    "Existing full-app CDN assets blocked deliberately; styling and PDF/ZIP CDN integrations were not verified.",
+    "No paid requests; provider credentials and live CORS were not tested.",
+    "Browser speech output depends on installed voices; sound was not auditioned."
+  ]
+}

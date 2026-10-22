@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'"><title>Dialogue in Czech about a greeting · Above the Line — portable result</title><style>:root{color-scheme:light dark;font-family:Inter,system-ui,sans-serif;background:#f9fafb;color:#111827}*{box-sizing:border-box}body{margin:0}main{max-width:70rem;margin:auto;padding:2rem 1rem}header{border-bottom:1px solid #d1d5db;padding-bottom:1rem}.brand{font-weight:700;margin:0}.subtitle,.meta,.local{color:#6b7280;font-size:.875rem}h1{font-size:1.7rem}nav{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;padding:1rem 0}button{border:0;border-radius:.4rem;padding:.65rem .9rem;background:#4f46e5;color:white;cursor:pointer;font:inherit;font-size:.875rem}label{font-size:.875rem}article{background:white;border:1px solid #e5e7eb;border-radius:.6rem;padding:1.3rem;margin:1rem 0}.line{margin:1rem 0}.speaker{font-weight:700;font-size:.875rem;color:#4f46e5}.words{display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:flex-start}.word{display:flex;flex-direction:column;text-align:center;gap:.25rem;padding:.2rem 0;max-width:100%;overflow-wrap:anywhere}.original{font-family:Cardo,Georgia,serif;font-size:1.35rem}.translation{color:#4338ca;font-size:.9rem}.grammar{color:#059669;font-size:.75rem;max-width:12rem}.idiomatic{font-style:italic;color:#4b5563;margin:.6rem 0}.hide-translation .translation,.hide-grammar .grammar,.hide-idiomatic .idiomatic{display:none}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;line-height:1.6}details{margin-top:2rem}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}[role=alert]{color:#b91c1c}@media(prefers-color-scheme:dark){:root{background:#111827;color:#f3f4f6}article{background:#1f2937;border-color:#374151}.translation,.speaker{color:#a5b4fc}.grammar,.idiomatic,.meta,.local,.subtitle{color:#cbd5e1}}@media print{nav,.local,[role=alert]{display:none}article{break-inside:avoid;border:0}body{background:white;color:black}}
+
+select{font:inherit;max-width:16rem;padding:.3rem;border:1px solid #9ca3af;border-radius:.3rem;background:transparent;color:inherit}
+</style></head><body><main><header><p class="brand">Above the Line</p><p class="subtitle">Your companion for exploring texts.</p></header><h1>Dialogue in Czech about a greeting</h1><p class="meta">Czech → English · dialogue</p><nav><label><input id="show-translation" type="checkbox" checked> Word translation</label><label><input id="show-grammar" type="checkbox" checked> Grammar</label><label><input id="show-idiomatic" type="checkbox" checked> Idiomatic translation</label><label>Voice <select id="voice"><option value="">Browser default</option></select></label><button id="read">Read aloud</button><button id="stop">Stop reading</button><button id="download">Save JSON</button><button id="print">Print / save PDF</button></nav><p id="speech-error" role="alert"></p><section id="annotation"><article><div class="line"><p class="speaker">Anna</p><div class="words"><span class="word"><span class="translation">Good</span><span class="original">Dobrý</span><span class="grammar">Adj: Nom, Masc, Sg</span></span><span class="word"><span class="translation">day</span><span class="original">den</span><span class="grammar">Noun: Nom, Masc, Sg</span></span><span class="word"><span class="translation">!</span><span class="original">!</span><span class="grammar">Punct</span></span></div><p class="idiomatic">Hello!</p></div></article></section><details><summary>Source text</summary><pre>Anna: Dobrý den!</pre></details><p class="local">This result works offline. Read-aloud uses voices installed in your browser; some voices may require a connection.</p></main><script type="application/json" id="above-the-line-result">{"id":"example-czech-greeting","title":"Dialogue in Czech about a greeting","timestamp":"2026-10-22T19:00:00.000Z","sourceText":"Anna: Dobrý den!","sourceLang":"Czech","targetLang":"English","annotation":{"textType":"dialogue","stanzas":[{"lines":[{"speaker":"Anna","idiomaticTranslation":"Hello!","words":[{"original":"Dobrý","translation":"Good","grammar":"Adj: Nom, Masc, Sg"},{"original":"den","translation":"day","grammar":"Noun: Nom, Masc, Sg"},{"original":"!","translation":"!","grammar":"Punct"}]}]}]}}</script><script type="application/json" id="above-the-line-copy">{"title":"Above the Line — portable result","brand":"Above the Line","subtitle":"Your companion for exploring texts.","translation":"Word translation","grammar":"Grammar","idiomatic":"Idiomatic translation","source":"Source text","voice":"Voice","defaultVoice":"Browser default","read":"Read aloud","stop":"Stop reading","download":"Save JSON","print":"Print / save PDF","unsupported":"Read-aloud is unavailable in this browser.","speechError":"Read-aloud could not start. Check the browser's installed voices.","local":"This result works offline. Read-aloud uses voices installed in your browser; some voices may require a connection."}</script><script>(() => {
+  const result = JSON.parse(document.getElementById('above-the-line-result').textContent);
+  const copy = JSON.parse(document.getElementById('above-the-line-copy').textContent);
+  const root = document.getElementById('annotation');
+  const error = document.getElementById('speech-error');
+  const voiceSelect = document.getElementById('voice');
+  const populateVoices = () => {
+    const previous = voiceSelect.value;
+    voiceSelect.replaceChildren(new Option(copy.defaultVoice, ''));
+    const names = typeof Intl.DisplayNames === 'function' ? new Intl.DisplayNames(['en'], {type:'language'}) : null;
+    for (const voice of speechSynthesis.getVoices()) {
+      const option = new Option(`${voice.name} (${voice.lang})`, voice.voiceURI);
+      let languageName = '';
+      try { languageName = names?.of(voice.lang.split('-')[0]) || ''; } catch {}
+      option.selected = previous ? previous === voice.voiceURI : voice.lang.toLowerCase() === result.sourceLang.toLowerCase() || languageName.toLowerCase() === result.sourceLang.toLowerCase();
+      voiceSelect.add(option);
+    }
+  };
+  if ('speechSynthesis' in window) { populateVoices(); speechSynthesis.addEventListener('voiceschanged', populateVoices); }
+  for (const name of ['translation', 'grammar', 'idiomatic']) {
+    document.getElementById(`show-${name}`).addEventListener('change', event => root.classList.toggle(`hide-${name}`, !event.target.checked));
+  }
+  document.getElementById('read').addEventListener('click', () => {
+    error.textContent = '';
+    if (!('speechSynthesis' in window)) { error.textContent = copy.unsupported; return; }
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(result.annotation.stanzas.flatMap(stanza => stanza.lines.map(line => line.words.map(word => word.original).join(' '))).join('\n'));
+    const voice = speechSynthesis.getVoices().find(item => item.voiceURI === voiceSelect.value);
+    if (voice) { utterance.voice = voice; utterance.lang = voice.lang; }
+    utterance.onerror = () => { error.textContent = copy.speechError; };
+    speechSynthesis.speak(utterance);
+  });
+  document.getElementById('stop').addEventListener('click', () => window.speechSynthesis?.cancel());
+  document.getElementById('print').addEventListener('click', () => window.print());
+  document.getElementById('download').addEventListener('click', () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a'); link.href = url; link.download = 'above-the-line-result.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+})();
+</script></body></html>

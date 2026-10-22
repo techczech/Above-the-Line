@@ -5,6 +5,7 @@ import AnnotationOutput from './AnnotationOutput';
 import SlideshowPlayer from './SlideshowPlayer';
 import DeepReadView from './DeepReadView';
 import StudyModeView from './StudyModeView';
+import { validateResult } from '../portable/validate-above-the-line.mjs';
 import { getAllAudioForAnnotation } from '../utils/db';
 
 interface AnnotatorViewProps {
@@ -78,7 +79,7 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
     const { default: saveAs } = await import('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm');
   
     const zip = new JSZip();
-    zip.file("annotation.json", JSON.stringify(exportData, null, 2));
+    zip.file("annotation.json", JSON.stringify(validateResult(exportData), null, 2));
   
     const audioFiles = await getAllAudioForAnnotation(exportData.id);
     if (audioFiles.length > 0) {
