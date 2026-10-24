@@ -61,6 +61,16 @@ try{
   checks.push('text-only ZIP downloads within 1500ms while unrelated sample audio remains blocked');
  }finally{releaseTextAudio();await textContext.close();}
 
+ const bulkContext=await browser.newContext({acceptDownloads:true});let releaseBulk;const bulkGate=new Promise(resolve=>{releaseBulk=resolve;});
+ try{
+  await bulkContext.route('**/*',async route=>{const url=new URL(route.request().url());if(url.origin===origin&&url.pathname.includes('/samples/audio/'))await bulkGate;return url.origin===origin||['blob:','data:'].includes(url.protocol)?route.continue():route.abort();});
+  const bulkPage=await bulkContext.newPage();await bulkPage.goto(base);await loadItalian(bulkPage);await bulkPage.getByTitle('Save or Update Annotation (u)').click();await bulkPage.getByRole('button',{name:/My Texts$/}).click();await bulkPage.getByText(sample.title,{exact:true}).first().waitFor();
+  let bulkFinished=false;const pendingBulk=download(bulkPage.getByRole('button',{name:/Export All$/}),bulkPage).then(value=>{bulkFinished=true;return value;});pendingBulk.catch(()=>{});await new Promise(resolve=>setTimeout(resolve,400));assert.equal(bulkFinished,false,'Export All must wait for pending sample audio');releaseBulk();
+  const bulkArchive=await JSZip.loadAsync((await pendingBulk).bytes);const bulkAudio=Object.values(bulkArchive.files).filter(file=>!file.dir&&/_audio\/[^/]+\.raw$/.test(file.name));
+  assert.deepEqual(bulkAudio.map(file=>file.name.split('/').pop().replace(/\.raw$/,'')).sort(),originalIds);for(const file of bulkAudio)assert.deepEqual(await file.async('nodebuffer'),readFileSync(`samples/italian-poem-sample/${file.name.split('/').pop().replace(/\.raw$/,'')}`),`bulk original bytes: ${file.name}`);
+  checks.push('Export All of a just-saved sample waits for pending recordings and nests all 15 byte-identical originals');
+ }finally{releaseBulk();await bulkContext.close();}
+
  assert.deepEqual(external,[]);assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);checks.push('normal export context has zero external requests, failing resources or page errors; desktop/mobile screenshots captured');
  const receipt={checkedAt:new Date().toISOString(),base,checks,downloads:{zipBytes:zip.bytes.length,pdfBytes:pdf.bytes.length,pngBytes:png.bytes.length},externalRequests:external,pageErrors:errors,failedResources:failed,faultInjection:{missingRecording:'s0-l2',httpStatus:404,requests:missingRequests,remainingOriginalRecordings:14},limits:['No live model call or audible speech check. YouTube media playback remains an external optional feature.']};writeFileSync('docs/evidence-above-the-line-exports-release.json',JSON.stringify(receipt,null,2)+'\n');console.log(JSON.stringify(receipt,null,2));
 }finally{releaseAudio();await browser.close();}

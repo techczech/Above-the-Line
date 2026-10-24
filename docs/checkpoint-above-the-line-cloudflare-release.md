@@ -62,3 +62,15 @@ Added `LICENSE.txt` at the app root, app `portable/`, canonical skill root and s
 - Interpreted immediate text-only export as completing within 1500 ms despite indefinitely blocked unrelated audio; no exact user-interface latency requirement was specified.
 
 Spec conflicts: none encountered. No pre-existing application bug was established. Independent review remains with the parent; the builder has not reviewed its own build. Live provider/CORS behaviour, audible quality and YouTube playback remain unverified. No paid provider request, commit, deployment, public push, skill staging or publisher run occurred.
+
+
+## Hosted preview verification — build 6c6e336 (2026-10-24)
+
+Tester: Claude `claude-sonnet-5-5` (test sub-agent; no application code, Git, deploy or paid call). Target: immutable https://80524e4f.above-the-line-228.pages.dev, alias https://release-preview.above-the-line-228.pages.dev. Bundled headless Chromium via `/opt/homebrew/lib/node_modules/playwright/index.mjs`; no real Chrome. The earlier T3 preview snapshot twice failed with "Preview automation snapshot timed out after 15000ms."; the documented headless fallback was used.
+
+- Both URLs return HTTP/2 200 with `x-robots-tag: noindex`; the served page has `<link rel="canonical" href="https://abovetheline.edutools.fyi/" />`.
+- `node scripts/check-above-the-line-exports-browser.mjs <playwright> <immutable URL>` passed all 9 checks (8 existing plus new bulk check), with zero external requests, failed resources and page errors. Receipt `docs/evidence-above-the-line-exports-release.json` and the desktop/mobile screenshots were replaced by this run.
+- Gap 1 (bulk Export All waits per annotation): new check in the existing script. Sample audio held at the network; Italian sample loaded and saved to My Texts without waiting for loads (cache held 0 clips); Export All held for 400 ms, did not download; after release the ZIP contained `<title>.json` plus `<title>_audio/` with all 15 `.raw` clips, each byte-identical to `samples/italian-poem-sample/`.
+- Gap 2 (generated-audio save registers before the ZIP wait): new `scripts/check-above-the-line-generated-save-browser.mjs`. Mocked OpenAI routes only (synthetic key, no real call); the test instrumentation holds the IndexedDB readwrite so the save is genuinely pending. Held write count 1, cache empty while held, ZIP export did not finish within 500 ms, and after release the ZIP held the generated clip bytes `[1,0,2,0]`. Passed.
+- Limits: the generated probe covers one generated clip (the mock example annotation has one line); only the single-annotation ZIP path was probed for generated audio, not Export All. Neither probe was run against the pre-fix build 000f0c2, so neither is shown to fail without the fix. No live provider, audible speech or YouTube check. This records the hosted preview only; no public-domain cutover or GCP retirement is claimed.
+- Scratch probe folder removed; no application source changed.

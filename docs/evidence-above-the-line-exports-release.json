@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-24T20:32:01.446Z",
-  "base": "http://127.0.0.1:4412",
+  "checkedAt": "2026-10-24T20:42:04.567Z",
+  "base": "https://80524e4f.above-the-line-228.pages.dev",
   "checks": [
     "sample renders with locally bundled styles and multilingual fonts; JSON export preserves annotation",
     "delayed ZIP export waits for pending recordings and includes all 15 byte-identical originals",
@@ -9,6 +9,7 @@
     "ZIP imports all 15 byte-identical recordings into a fresh keyless context with sample audio requests blocked",
     "failed s0-l2 load produces a visible missing-recording warning and ZIP with 14 byte-identical originals",
     "text-only ZIP downloads within 1500ms while unrelated sample audio remains blocked",
+    "Export All of a just-saved sample waits for pending recordings and nests all 15 byte-identical originals",
     "normal export context has zero external requests, failing resources or page errors; desktop/mobile screenshots captured"
   ],
   "downloads": {
