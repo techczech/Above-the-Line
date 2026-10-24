@@ -9,6 +9,7 @@ import DeepReadView from './DeepReadView';
 import StudyModeView from './StudyModeView';
 import { validateResult } from '../portable/validate-above-the-line.mjs';
 import { getAllAudioForAnnotation } from '../utils/db';
+import { whenAudioReady, describeMissingAudio } from '../utils/audioReadiness';
 
 interface AnnotatorViewProps {
   // State
@@ -50,6 +51,7 @@ interface AnnotatorViewProps {
   onSessionComplete: (annotationId: string, result: StudySessionResult) => void;
   handleSaveSlideshowData: (data: SlideshowData) => void;
   onAudioGenerated: (itemId: string, data: ArrayBuffer) => void;
+  onNotice: (message: string) => void;
   onNavigateHome: () => void;
 }
 
@@ -61,7 +63,7 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
   setText, setSourceLang, setTargetLang, handleGenerate, handleClear, handleSave,
   handleSaveOnExport, setIsSlideshowVisible, setIsDeepReadVisible, handleEnterStudyMode,
   handleAnnotationUpdate, onTitleChange, setStudyModeTarget, onSessionComplete, handleSaveSlideshowData,
-  onAudioGenerated, onNavigateHome
+  onAudioGenerated, onNotice, onNavigateHome
 }) => {
 
   const handleExport = useCallback(async () => {
@@ -74,6 +76,8 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
     const zip = new JSZip();
     zip.file("annotation.json", JSON.stringify(validateResult(exportData), null, 2));
   
+    // Bundled-sample preloads and just-saved recordings may still be writing to the cache.
+    const missingAudio = await whenAudioReady(exportData.id);
     const audioFiles = await getAllAudioForAnnotation(exportData.id);
     if (audioFiles.length > 0) {
       const audioFolder = zip.folder("audio");
@@ -86,7 +90,8 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
   
     const content = await zip.generateAsync({ type: "blob" });
     downloadBlob(content, `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.zip`);
-  }, [handleSaveOnExport]);
+    if (missingAudio.length > 0) onNotice(describeMissingAudio(missingAudio.length));
+  }, [handleSaveOnExport, onNotice]);
   
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const target = e.target as HTMLElement;

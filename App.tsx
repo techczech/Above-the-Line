@@ -11,6 +11,7 @@ import AnnotatorView from './components/AnnotatorView';
 import AboutPage from './components/AboutPage';
 import { parseTimecodedText } from './utils/textProcessing';
 import * as db from './utils/db';
+import { trackAudioWork, whenAudioReady, describeMissingAudio } from './utils/audioReadiness';
 import SavedAnnotations from './components/SavedAnnotations';
 import SampleAnnotations from './components/SampleAnnotations';
 import ProviderSettings from './components/ProviderSettings';
@@ -107,9 +108,9 @@ const App: React.FC = () => {
         
         const validSamples = sampleResponses.filter(Boolean) as { fileBase: string; data: SavedAnnotation & { prepackagedAudio?: boolean } }[];
         currentSamples = validSamples.map(s => s.data);
-        setSampleAnnotations(currentSamples);
 
-        // Load audio in the background
+        // Load audio in the background; each clip is tracked so ZIP export can wait for it.
+        // Registered before the samples are published, so no export can start untracked.
         const audioLoadPromises = validSamples
           .filter(({ data }) => data.prepackagedAudio)
           .map(({ fileBase, data: sample }) => {
@@ -119,23 +120,19 @@ const App: React.FC = () => {
                 itemIds.push(`s${sIndex}-l${lIndex}`);
               });
             });
-            return itemIds.map(async (itemId) => {
-              try {
-                const existingAudio = await db.getAudio(sample.id, itemId);
-                if (existingAudio) return;
+            return itemIds.map((itemId) => trackAudioWork(sample.id, itemId, (async () => {
+              const existingAudio = await db.getAudio(sample.id, itemId);
+              if (existingAudio) return;
 
-                const audioUrl = `/samples/audio/${fileBase}/${itemId}.raw`;
-                const response = await fetch(audioUrl);
-                if (response.ok) {
-                  const audioData = await response.arrayBuffer();
-                  await db.saveAudio(sample.id, itemId, audioData);
-                } else {
-                  console.warn(`Could not fetch prepackaged audio: ${audioUrl}`);
-                }
-              } catch (e) { /* Non-critical error */ }
-            });
+              const audioUrl = `/samples/audio/${fileBase}/${itemId}.raw`;
+              const response = await fetch(audioUrl);
+              if (!response.ok) throw new Error(`Could not fetch prepackaged audio: ${audioUrl}`);
+              const audioData = await response.arrayBuffer();
+              await db.saveAudio(sample.id, itemId, audioData);
+            })()));
           });
-          
+        setSampleAnnotations(currentSamples);
+
         await Promise.all(audioLoadPromises.flat());
       }
 
@@ -324,8 +321,8 @@ const App: React.FC = () => {
     });
 
     if (unsavedAudio.size > 0) {
-      unsavedAudio.forEach(async (data, itemId) => {
-          await db.saveAudio(id, itemId, data);
+      unsavedAudio.forEach((data, itemId) => {
+          trackAudioWork(id, itemId, db.saveAudio(id, itemId, data));
       });
       setUnsavedAudio(new Map());
     }
@@ -386,6 +383,7 @@ const App: React.FC = () => {
       const zip = new JSZip();
       showToast("Preparing export... this may take a moment.");
 
+      let missingAudio = 0;
       // Use a for...of loop to handle async operations sequentially and avoid race conditions with file naming
       for (const annotation of savedAnnotations) {
         // Sanitize title for filename, fallback to a portion of the ID
@@ -403,7 +401,8 @@ const App: React.FC = () => {
         // Add the JSON file for the annotation
         zip.file(jsonFileName, JSON.stringify(validateResult(annotation), null, 2));
 
-        // Check for and add associated audio files
+        // Wait for pending cache writes, then add associated audio files
+        missingAudio += (await whenAudioReady(annotation.id)).length;
         const audioFiles = await db.getAllAudioForAnnotation(annotation.id);
         if (audioFiles.length > 0) {
           const audioFolderName = jsonFileName.replace(/\.json$/, '_audio');
@@ -419,7 +418,8 @@ const App: React.FC = () => {
 
       const content = await zip.generateAsync({ type: "blob" });
       downloadBlob(content, `above_the_line_export_all.zip`);
-      
+      if (missingAudio > 0) showToast(describeMissingAudio(missingAudio));
+
     } catch (error) {
       console.error("Failed to export all annotations:", error);
       showToast(error instanceof Error ? `Export failed: ${error.message}` : "Export failed.");
@@ -654,6 +654,7 @@ const App: React.FC = () => {
           setStudyModeTarget={setStudyModeTarget}
           onSessionComplete={handleSessionComplete}
           onAudioGenerated={handleAudioGenerated}
+          onNotice={showToast}
           onNavigateHome={handleNavigateHome}
           handleSaveSlideshowData={(data) => {
             setCurrentSlideshowData(data);

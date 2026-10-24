@@ -19,3 +19,10 @@ Retain the checked visitor-key app, recordings, portable viewer and original lan
 - Licence is unchanged. Public skill publication waits on the concrete user licence/diff decision; local staging is permitted preparation.
 
 - Screenshot inspection found mobile overflow in the existing header and long annotation title. Header, action groups and annotation toggles now wrap; titles wrap within the page. The export browser test asserts a 390-pixel document stays within its viewport. No controls, data or language logic changed.
+
+
+## Audio export readiness repair — interrupted, local evidence recovered
+
+Opus5.5 implemented per-annotation pending/failure tracking in utils/audioReadiness.ts; sample preload and generated-recording saves register before exporting, and single/bulk ZIP export waits. Missing recordings produce a visible notice. Four focused tests passed; typecheck/build and the delayed-audio export browser regression passed locally. Hosted preview remains000f0c2 and still has the old race. Full unit suite and final cross-review are outstanding.
+
+The builder hit a Claude provider rate limit after a scratch failed-load check. That check used the wrong clip ID (`s1-l2` rather than Italian sample `s0-l2`), so its timeout does not establish an application warning failure. Correct the fixture and verify failed-load feedback and original bytes before acceptance. Parent requested a route choice (Muse Wonder Full or wait for Claude) and will not change the implementation while waiting. No licence was selected or applied.
