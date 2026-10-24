@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 2090" width="1700" height="2090" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d"><title id="t">AI settings storyboard: guided setup versus compact inline panel</title><desc id="d">Two lo-fi journey shapes for choosing OpenAI or Gemini, entering a key and picking a low-cost model. Left column A is a three-step guided setup. Right column B is one compact panel with a status chip. Model IDs are provisional.</desc>
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect x="0" y="0" width="1700" height="2090" rx="0" fill="#f4f4f4" stroke="#f4f4f4" stroke-width="0"/>
+<text x="40" y="50" font-size="32" font-weight="bold" fill="#111" text-anchor="start">AI settings: candidate journeys for Above the Line and Metaphornik</text>
+<text x="40" y="86" font-size="22" font-weight="normal" fill="#111" text-anchor="start">Wireframe only. Model IDs are PROVISIONAL (compatibility unchecked). No real key is ever asked for here.</text>
+<text x="40" y="118" font-size="22" font-weight="normal" fill="#111" text-anchor="start">Second model slot: Above = Speech model; Metaphornik = Image model. Text model is common.</text>
+<rect x="40" y="140" width="780" height="96" rx="8" fill="#111" stroke="#111" stroke-width="0"/>
+<text x="64" y="205" font-size="60" font-weight="bold" fill="#fff" text-anchor="start">A</text>
+<text x="130" y="193" font-size="30" font-weight="bold" fill="#fff" text-anchor="start">Provider-first guided setup</text>
+<text x="130" y="224" font-size="20" font-weight="normal" fill="#fff" text-anchor="start"></text>
+<rect x="880" y="140" width="780" height="96" rx="8" fill="#111" stroke="#111" stroke-width="0"/>
+<text x="904" y="205" font-size="60" font-weight="bold" fill="#fff" text-anchor="start">B</text>
+<text x="970" y="193" font-size="30" font-weight="bold" fill="#fff" text-anchor="start">Compact inline panel</text>
+<text x="970" y="224" font-size="20" font-weight="normal" fill="#fff" text-anchor="start"></text>
+<text x="40" y="262" font-size="21" font-weight="normal" fill="#111" text-anchor="start">Geometry: one question per screen, left to right in steps, then a summary line.</text>
+<text x="880" y="262" font-size="21" font-weight="normal" fill="#111" text-anchor="start">Geometry: one panel, all fields at once; status chip changes in place.</text>
+<rect x="40" y="290" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="40" y="290" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="56" y="323" font-size="22" font-weight="bold" fill="#111" text-anchor="start">A1  Step 1 of 3 · Choose provider</text>
+<text x="64" y="386" font-size="24" font-weight="bold" fill="#111" text-anchor="start">Which AI service will you use?</text>
+<rect x="64" y="410" width="350" height="150" rx="8" fill="#eee" stroke="#111" stroke-width="4"/>
+<text x="239" y="495" font-size="34" font-weight="bold" fill="#111" text-anchor="middle">OpenAI</text>
+<rect x="446" y="410" width="350" height="150" rx="8" fill="#fff" stroke="#111" stroke-width="2"/>
+<text x="621" y="495" font-size="34" font-weight="bold" fill="#111" text-anchor="middle">Gemini</text>
+<text x="64" y="602" font-size="20" font-weight="normal" fill="#111" text-anchor="start">You pay your provider directly. Saved results need no key.</text>
+<text x="64" y="636" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Skip: view saved results</text>
+<line x1="64" y1="642" x2="310" y2="642" stroke="#111" stroke-width="2"/>
+<rect x="600" y="666" width="196" height="48" rx="6" fill="#333" stroke="#333" stroke-width="2"/>
+<text x="698.0" y="698" font-size="20" font-weight="bold" fill="#fff" text-anchor="middle">Next</text>
+<text x="48" y="758" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: two big provider cards</text>
+<text x="48" y="784" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: you use your own account and pay</text>
+<text x="48" y="810" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: tap OpenAI or Gemini, or skip</text>
+<line x1="430" y1="818" x2="430" y2="844" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="40" y="850" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="40" y="850" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="56" y="883" font-size="22" font-weight="bold" fill="#111" text-anchor="start">A2  Step 2 of 3 · Your OpenAI key</text>
+<text x="64" y="942" font-size="24" font-weight="bold" fill="#111" text-anchor="start">Paste your OpenAI API key</text>
+<rect x="64" y="962" width="560" height="48" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="76" y="994" font-size="20" font-weight="normal" fill="#111" text-anchor="start">••••••••••••••••••••</text>
+<rect x="640" y="962" width="156" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="718.0" y="994" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Show</text>
+<text x="64" y="1046" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Where do I get a key?  (opens OpenAI)</text>
+<line x1="64" y1="1052" x2="400" y2="1052" stroke="#111" stroke-width="2"/>
+<text x="64" y="1090" font-size="20" font-weight="normal" fill="#111" text-anchor="start">A ChatGPT subscription is not an API key.</text>
+<rect x="64" y="1116" width="30" height="30" rx="3" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="106" y="1140" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Remember my key in this browser (off)</text>
+<text x="64" y="1176" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Off: key is lost when you close the tab.</text>
+<rect x="64" y="1226" width="150" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="139.0" y="1258" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Back</text>
+<rect x="600" y="1226" width="196" height="48" rx="6" fill="#333" stroke="#333" stroke-width="2"/>
+<text x="698.0" y="1258" font-size="20" font-weight="bold" fill="#fff" text-anchor="middle">Next</text>
+<text x="48" y="1318" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: one masked field, Show, key-help link</text>
+<text x="48" y="1344" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: key stays in this tab unless you tick Remember</text>
+<text x="48" y="1370" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: paste key, Next (nothing is sent yet)</text>
+<line x1="430" y1="1378" x2="430" y2="1404" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="40" y="1410" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="40" y="1410" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="56" y="1443" font-size="22" font-weight="bold" fill="#111" text-anchor="start">A3  Step 3 of 3 · Models, then Done</text>
+<text x="64" y="1500" font-size="22" font-weight="bold" fill="#111" text-anchor="start">Text model</text>
+<rect x="64" y="1512" width="732" height="48" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="76" y="1544" font-size="20" font-weight="normal" fill="#111" text-anchor="start">gpt-6-luna · Recommended low-cost option ▾</text>
+<text x="64" y="1596" font-size="22" font-weight="bold" fill="#111" text-anchor="start">Speech model (Above) / Image model (Metaphornik)</text>
+<rect x="64" y="1608" width="732" height="48" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="76" y="1640" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Set up when needed ▾  (optional)</text>
+<text x="64" y="1692" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Advanced: use another model ID</text>
+<line x1="64" y1="1698" x2="370" y2="1698" stroke="#111" stroke-width="2"/>
+<rect x="64" y="1722" width="732" height="52" rx="6" fill="#eee" stroke="#333" stroke-width="2"/>
+<text x="80" y="1756" font-size="20" font-weight="bold" fill="#111" text-anchor="start">AI settings · OpenAI · gpt-6-luna · Applied, not yet used</text>
+<rect x="64" y="1786" width="150" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="139.0" y="1818" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Back</text>
+<rect x="600" y="1786" width="196" height="48" rx="6" fill="#333" stroke="#333" stroke-width="2"/>
+<text x="698.0" y="1818" font-size="20" font-weight="bold" fill="#fff" text-anchor="middle">Done</text>
+<text x="48" y="1878" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: recommended model preselected, shortlist, summary line</text>
+<text x="48" y="1904" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: Applied only; first real use shows Working</text>
+<text x="48" y="1930" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: Done, then generate; Settings reopens at any step</text>
+<rect x="880" y="290" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="880" y="290" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="896" y="323" font-size="22" font-weight="bold" fill="#111" text-anchor="start">B1  No key · panel open</text>
+<text x="904" y="378" font-size="22" font-weight="bold" fill="#111" text-anchor="start">AI settings · No key. Saved results still open.</text>
+<text x="904" y="420" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Provider</text>
+<rect x="990" y="394" width="200" height="40" rx="6" fill="#eee" stroke="#111" stroke-width="4"/>
+<text x="1090" y="422" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">OpenAI</text>
+<rect x="1190" y="394" width="200" height="40" rx="6" fill="#fff" stroke="#111" stroke-width="2"/>
+<text x="1290" y="422" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Gemini</text>
+<text x="904" y="476" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Key</text>
+<rect x="990" y="448" width="430" height="44" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="1002" y="480" font-size="20" font-weight="normal" fill="#111" text-anchor="start">paste key here</text>
+<rect x="1430" y="448" width="100" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="1480.0" y="480" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Show</text>
+<rect x="1540" y="448" width="96" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="1588.0" y="480" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Clear</text>
+<text x="990" y="518" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Where do I get a key?</text>
+<line x1="990" y1="524" x2="1180" y2="524" stroke="#111" stroke-width="2"/>
+<text x="904" y="572" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Text</text>
+<rect x="990" y="544" width="646" height="44" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="1002" y="576" font-size="20" font-weight="normal" fill="#111" text-anchor="start">gpt-6-luna · Recommended low-cost ▾</text>
+<text x="904" y="628" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Speech/Image</text>
+<rect x="1040" y="600" width="596" height="44" rx="4" fill="#fafafa" stroke="#555" stroke-width="2"/>
+<text x="1052" y="632" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Set up when needed ▾</text>
+<rect x="904" y="662" width="30" height="30" rx="3" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="946" y="686" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Remember my key in this browser</text>
+<rect x="1440" y="670" width="196" height="48" rx="6" fill="#333" stroke="#333" stroke-width="2"/>
+<text x="1538.0" y="702" font-size="20" font-weight="bold" fill="#fff" text-anchor="middle">Apply</text>
+<text x="904" y="718" font-size="18" font-weight="normal" fill="#111" text-anchor="start">Advanced: other model ID</text>
+<text x="888" y="758" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: every field in one panel, key help, Show/Clear</text>
+<text x="888" y="784" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: requests go direct to your provider and may cost</text>
+<text x="888" y="810" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: choose provider, paste key, Apply</text>
+<line x1="1270" y1="818" x2="1270" y2="844" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="880" y="850" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="880" y="850" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="896" y="883" font-size="22" font-weight="bold" fill="#111" text-anchor="start">B2  Applied, then working</text>
+<rect x="904" y="916" width="732" height="56" rx="6" fill="#eee" stroke="#333" stroke-width="2"/>
+<text x="920" y="952" font-size="20" font-weight="bold" fill="#111" text-anchor="start">AI settings · OpenAI · gpt-6-luna</text>
+<rect x="1380" y="926" width="240" height="36" rx="18" fill="#fff" stroke="#111" stroke-width="2"/>
+<text x="1500" y="952" font-size="18" font-weight="bold" fill="#111" text-anchor="middle">Applied, not yet used</text>
+<text x="904" y="1016" font-size="20" font-weight="normal" fill="#111" text-anchor="start">After one real generation succeeds:</text>
+<rect x="904" y="1040" width="732" height="56" rx="6" fill="#eee" stroke="#333" stroke-width="2"/>
+<text x="920" y="1076" font-size="20" font-weight="bold" fill="#111" text-anchor="start">AI settings · OpenAI · gpt-6-luna</text>
+<rect x="1440" y="1050" width="180" height="36" rx="18" fill="#111" stroke="#111" stroke-width="2"/>
+<text x="1530" y="1076" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Working</text>
+<text x="904" y="1140" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Panel collapsed; open to change a model in one place.</text>
+<text x="904" y="1180" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Remembered key: chip reads "Key remembered · not yet used".</text>
+<rect x="904" y="1226" width="170" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="989.0" y="1258" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Open panel</text>
+<rect x="1090" y="1226" width="170" height="48" rx="6" fill="#fff" stroke="#333" stroke-width="2"/>
+<text x="1175.0" y="1258" font-size="20" font-weight="bold" fill="#111" text-anchor="middle">Forget key</text>
+<text x="888" y="1318" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: summary line with a status chip</text>
+<text x="888" y="1344" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: Applied is not Working: only a real success earns that</text>
+<text x="888" y="1370" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: keep generating; open panel to change</text>
+<line x1="1270" y1="1378" x2="1270" y2="1404" stroke="#333" stroke-width="3" marker-end="url(#ar)"/>
+<rect x="880" y="1410" width="780" height="440" rx="10" fill="#fff" stroke="#333" stroke-width="2"/>
+<rect x="880" y="1410" width="780" height="48" rx="10" fill="#ddd" stroke="#333" stroke-width="2"/>
+<text x="896" y="1443" font-size="22" font-weight="bold" fill="#111" text-anchor="start">B3  Problems and switching, fixed in place</text>
+<rect x="904" y="1476" width="732" height="56" rx="6" fill="#fff" stroke="#111" stroke-width="3" stroke-dasharray="8 5"/>
+<text x="920" y="1512" font-size="20" font-weight="bold" fill="#111" text-anchor="start">OpenAI did not accept this key. Paste a new one.</text>
+<rect x="904" y="1548" width="732" height="56" rx="6" fill="#fff" stroke="#111" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="920" y="1584" font-size="20" font-weight="normal" fill="#111" text-anchor="start">This account cannot use that model. Choose another.</text>
+<rect x="904" y="1620" width="732" height="56" rx="6" fill="#fff" stroke="#111" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="920" y="1656" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Over a limit or out of credit. Try later.</text>
+<text x="904" y="1720" font-size="20" font-weight="bold" fill="#111" text-anchor="start">Switch to Gemini:</text>
+<text x="904" y="1752" font-size="20" font-weight="normal" fill="#111" text-anchor="start">key field empties; old key is not reused;</text>
+<text x="904" y="1780" font-size="20" font-weight="normal" fill="#111" text-anchor="start">your custom model ID is kept until you press Reset.</text>
+<rect x="904" y="1794" width="732" height="40" rx="6" fill="#eee" stroke="#333" stroke-width="2"/>
+<text x="920" y="1822" font-size="20" font-weight="bold" fill="#111" text-anchor="start">Switched to Gemini. Add your Gemini key.</text>
+<text x="888" y="1878" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Sees: plain message beside the field to fix</text>
+<text x="888" y="1904" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Told: key fault, model fault and limit fault are different</text>
+<text x="888" y="1930" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Does: fix that one field, Apply again</text>
+<text x="40" y="1970" font-size="20" font-weight="normal" fill="#111" text-anchor="start">Provisional presets: OpenAI text gpt-6-luna. Gemini text: gemini-3.5-flash-lite (Newer low-cost option),</text>
+<text x="40" y="2000" font-size="20" font-weight="normal" fill="#111" text-anchor="start">gemini-3.1-flash-lite (Lower cost). Gemini speech gemini-3.8-flash-lite-tts; image gemini-3.1-flash-lite-image.</text>
+<text x="40" y="2030" font-size="20" font-weight="normal" fill="#111" text-anchor="start">OpenAI speech and image: Set up when needed (no verified pick yet); text generation never waits on them.</text>
+<text x="40" y="2060" font-size="20" font-weight="normal" fill="#111" text-anchor="start">No "best quality" claim: not compared on these tasks.</text>
+</svg>
