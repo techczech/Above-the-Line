@@ -1,13 +1,15 @@
 {
-  "checkedAt": "2026-10-24T02:06:13.732Z",
+  "checkedAt": "2026-10-24T20:32:01.446Z",
   "base": "http://127.0.0.1:4412",
   "checks": [
     "sample renders with locally bundled styles and multilingual fonts; JSON export preserves annotation",
-    "ZIP export includes validated annotation and all 15 original cached clips",
+    "delayed ZIP export waits for pending recordings and includes all 15 byte-identical originals",
     "PDF export uses bundled jsPDF and locally embedded fonts to produce a real PDF",
     "stanza PNG export produces a real image without a CDN dependency",
-    "ZIP annotation imports into a fresh keyless context",
-    "zero external requests, failing resources or page errors; desktop/mobile screenshots captured"
+    "ZIP imports all 15 byte-identical recordings into a fresh keyless context with sample audio requests blocked",
+    "failed s0-l2 load produces a visible missing-recording warning and ZIP with 14 byte-identical originals",
+    "text-only ZIP downloads within 1500ms while unrelated sample audio remains blocked",
+    "normal export context has zero external requests, failing resources or page errors; desktop/mobile screenshots captured"
   ],
   "downloads": {
     "zipBytes": 5797981,
@@ -17,6 +19,12 @@
   "externalRequests": [],
   "pageErrors": [],
   "failedResources": [],
+  "faultInjection": {
+    "missingRecording": "s0-l2",
+    "httpStatus": 404,
+    "requests": 1,
+    "remainingOriginalRecordings": 14
+  },
   "limits": [
     "No live model call or audible speech check. YouTube media playback remains an external optional feature."
   ]

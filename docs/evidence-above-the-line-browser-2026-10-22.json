@@ -48,19 +48,19 @@
   ],
   "bundledAudioResponses": [
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l1.raw",
-      "status": 200
-    },
-    {
-      "path": "/samples/audio/italian-poem-sample/s0-l2.raw",
-      "status": 200
-    },
-    {
       "path": "/samples/audio/italian-poem-sample/s0-l0.raw",
       "status": 200
     },
     {
+      "path": "/samples/audio/italian-poem-sample/s0-l1.raw",
+      "status": 200
+    },
+    {
       "path": "/samples/audio/italian-poem-sample/s0-l3.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l2.raw",
       "status": 200
     },
     {
@@ -72,15 +72,15 @@
       "status": 200
     },
     {
+      "path": "/samples/audio/italian-poem-sample/s0-l8.raw",
+      "status": 200
+    },
+    {
       "path": "/samples/audio/italian-poem-sample/s0-l6.raw",
       "status": 200
     },
     {
       "path": "/samples/audio/italian-poem-sample/s0-l7.raw",
-      "status": 200
-    },
-    {
-      "path": "/samples/audio/italian-poem-sample/s0-l8.raw",
       "status": 200
     },
     {
@@ -100,11 +100,11 @@
       "status": 200
     },
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l13.raw",
+      "path": "/samples/audio/italian-poem-sample/s0-l14.raw",
       "status": 200
     },
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l14.raw",
+      "path": "/samples/audio/italian-poem-sample/s0-l13.raw",
       "status": 200
     }
   ],
@@ -188,8 +188,8 @@
   "externalAssetsBlocked": [],
   "pageErrors": [],
   "limitations": [
+    "Runtime styles, fonts and export libraries are bundled; PDF/PNG/ZIP behaviour is verified separately by check-above-the-line-exports-browser.mjs.",
     "No paid requests; provider credentials and live CORS were not tested.",
     "Browser speech output depends on installed voices; sound was not auditioned."
-  ],
-  "additional_release_evidence": "evidence-above-the-line-exports-release.json"
+  ]
 }

@@ -43,3 +43,7 @@ The self-contained viewer preserves the interlinear original, literal translatio
 All authored viewer copy lives in `copy-above-the-line-viewer.md`, using flat YAML frontmatter with JSON-quoted string values. Edit those values, then rerun the CLI. The Markdown drives the output; it is not a detached companion export. Styling lives in `viewer-above-the-line.css`, behaviour in `viewer-above-the-line.js`, and packaging in `render-core-above-the-line.mjs`. These assets are embedded in the HTML; adjacent files are never fetched by the viewer.
 
 The app's Save offline HTML action uses these same assets and renderer. Copy this entire folder into a skill distribution; no canonical skill is authored or published here.
+
+## Licence
+
+The portable renderer is distributed under the [MIT licence](LICENSE.txt), copyright (c) 2025 Dominik Lukeš. Third-party dependencies retain their own licences.

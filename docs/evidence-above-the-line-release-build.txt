@@ -94,3 +94,12 @@ dist/assets/index-Bz6NSeXq.js                                           472.24 k
 ✓ built in 2.66s
 Verified 15 bundled audio references: every built file is nonempty and byte-identical to its original.
 PASS: readable canonical landing, local scripts/styles and bundled export libraries; preview noindex headers.
+
+Current local revalidation, 2026-10-24 (gpt-6.1-sol, medium):
+Command: npm run typecheck && npm run build
+Exit code: 0
+Selected stdout from this run (historical complete output is above):
+✓ 356 modules transformed.
+✓ built in 1.48s
+Verified 15 bundled audio references: every built file is nonempty and byte-identical to its original.
+PASS: readable canonical landing, local scripts/styles and bundled export libraries; preview noindex headers.
