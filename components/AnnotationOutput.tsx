@@ -186,7 +186,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
   return (
     <div className="mt-8">
       <div className="text-center mb-8">
-        <div className="group relative inline-flex justify-center items-center">
+        <div className="group relative inline-flex max-w-full min-w-0 justify-center items-center">
             {isEditingTitle ? (
               <input
                 ref={titleInputRef}
@@ -200,7 +200,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
               />
             ) : (
               <h2
-                className="text-3xl font-bold text-gray-900 dark:text-white truncate py-1 px-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                className="text-3xl font-bold text-gray-900 dark:text-white break-words whitespace-normal py-1 px-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                 title="Click to edit title"
                 onClick={() => setIsEditingTitle(true)}
               >
@@ -246,9 +246,9 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
         </div>
       </div>
 
-      <div className="flex justify-between items-center gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:justify-between lg:items-center">
         {/* Left-aligned interaction modes */}
-        <div className="flex items-center space-x-2 flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
             <button onClick={onEnterStudyMode} title="Switch to Study Mode (s)" className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition flex items-center gap-2">
                 <GraduationCapIcon className="text-base" /> Study Mode
             </button>
@@ -261,7 +261,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
         </div>
 
         {/* Right-aligned file actions */}
-        <div className="flex items-center space-x-2 flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
             <button onClick={onNavigateHome} title="Go to Home page" className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700 transition flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">home</span> Home
             </button>
@@ -283,7 +283,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
       </div>
       
       <div>
-        <div className="flex justify-center items-center space-x-6 p-3 mb-6 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 p-3 mb-6 rounded-lg bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
           <label className="flex items-center space-x-2 cursor-pointer text-sm">
             <input
               type="checkbox"

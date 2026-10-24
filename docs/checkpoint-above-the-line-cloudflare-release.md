@@ -17,3 +17,5 @@ Retain the checked visitor-key app, recordings, portable viewer and original lan
 - ZIP and PDF runtime dependencies are npm modules; browser-native Blob download replaces the external file-saver import. The optional YouTube API loads only when opening a video slideshow. Live YouTube playback and provider/CORS/audio quality remain unverified; no paid calls.
 - Cloudflare project above-the-line created for authorised preview preparation (assigned base host above-the-line-228.pages.dev). No custom domain changed; deployment pending below.
 - Licence is unchanged. Public skill publication waits on the concrete user licence/diff decision; local staging is permitted preparation.
+
+- Screenshot inspection found mobile overflow in the existing header and long annotation title. Header, action groups and annotation toggles now wrap; titles wrap within the page. The export browser test asserts a 390-pixel document stays within its viewport. No controls, data or language logic changed.

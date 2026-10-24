@@ -667,7 +667,7 @@ const App: React.FC = () => {
       )}
 
       <footer className="text-center mt-12 text-sm text-gray-500 dark:text-gray-400">
-        <p>Powered by Google Gemini</p>
+        <p>Generate with your own OpenAI or Gemini API key</p>
       </footer>
 
       {toastMessage && (

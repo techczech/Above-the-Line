@@ -1,0 +1,39 @@
+
+> above-the-line:-translanguager's-companion@0.0.0 test
+> node --test tests/*.test.mjs
+
+✔ every original bundled recording decodes complete PCM frames without altering bytes (21.248333ms)
+✔ PCM decoding honours byte offsets, little-endian samples and trailing partial frames (0.250167ms)
+✔ memory-only default, explicit persistence, opt-out and clear preserve unrelated data (1.525ms)
+✔ corrupt or blocked browser storage does not prevent keyless viewing (0.258666ms)
+✔ missing key sends no network request (0.375667ms)
+✔ openai text goes only to official origin with key in headers, never URL/body (19.780959ms)
+✔ openai TTS retains 24 kHz PCM and provider voice mapping (0.574625ms)
+✔ gemini text goes only to official origin with key in headers, never URL/body (0.512542ms)
+✔ gemini TTS retains 24 kHz PCM and provider voice mapping (0.551167ms)
+✔ provider errors are actionable and never echo provider bodies or thrown secrets (1.268875ms)
+✔ nested invalid generated/imported records are rejected atomically (1.709625ms)
+✔ all existing shipped records remain valid, including study history and timecodes (6.615ms)
+✔ exports project allowed fields and discard key/config fields at every nesting level (2.458625ms)
+✔ HTML treats model/import text as data and uses no external assets (0.792667ms)
+✔ Markdown source edit drives the packaged interface (0.58425ms)
+✔ portable folder works independently and failed CLI validation writes no HTML (216.324666ms)
+✔ annotation service validates model output and speaker TTS reuses selected profiles (2.253542ms)
+✔ sentence slideshow IDs survive saved-record load, JSON save and portable export (2.9225ms)
+✔ ordinary YouTube ab_channel and pp parameters survive without allowing credentials (1.240375ms)
+✔ openai clear invalidates stale speaker analysis before any speech request (3.203958ms)
+✔ openai replace invalidates stale speaker analysis before any speech request (1.16425ms)
+✔ openai clear-and-reapply invalidates stale speaker analysis before any speech request (0.370666ms)
+✔ openai switch-provider invalidates stale speaker analysis before any speech request (1.423875ms)
+✔ gemini clear invalidates stale speaker analysis before any speech request (0.246916ms)
+✔ gemini replace invalidates stale speaker analysis before any speech request (0.160209ms)
+✔ gemini clear-and-reapply invalidates stale speaker analysis before any speech request (0.132ms)
+✔ gemini switch-provider invalidates stale speaker analysis before any speech request (0.113208ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 497.646375

@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavi
   const navButtonClasses = "px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition flex items-center gap-1.5";
 
   return (
-    <header className="flex justify-between items-center mb-4 md:mb-6">
+    <header className="flex flex-col items-start gap-3 mb-4 md:mb-6 sm:flex-row sm:justify-between sm:items-center">
       <div onClick={onNavigateHome} className="cursor-pointer">
         <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
           Above The Line
@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ theme, setTheme, onNavigateHome, onNavi
         </p>
       </div>
       
-      <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1">
         <button onClick={onNavigateToSaved} className={navButtonClasses}>
           <span className="material-symbols-outlined text-lg">folder_managed</span>
           My Texts
