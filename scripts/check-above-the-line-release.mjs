@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+const html=readFileSync('dist/index.html','utf8');
+assert.match(html,/<link\s+rel="canonical"\s+href="https:\/\/abovetheline\.edutools\.fyi\/"/);
+assert.match(html,/<h1>Above the Line<\/h1>/);
+assert.match(html,/own API key/);
+assert.doesNotMatch(html,/cdn\.tailwindcss|fonts\.googleapis|fonts\.gstatic|cdnjs|cdn\.jsdelivr|type="importmap"/);
+for(const file of [...html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)].map(match=>'dist'+match[1]))assert.ok(existsSync(file),'missing bundled resource '+file);
+assert.match(readFileSync('dist/robots.txt','utf8'),/https:\/\/abovetheline\.edutools\.fyi\/sitemap.xml/);
+assert.match(readFileSync('dist/_headers','utf8'),/https:\/\/:version\.:project\.pages\.dev\/\*/);
+for(const file of ['App.tsx','components/AnnotatorView.tsx','components/AnnotationOutput.tsx'])assert.doesNotMatch(readFileSync(file,'utf8'),/window\.(JSZip|jspdf)|https:\/\/cdn\.jsdelivr/);
+console.log('PASS: readable canonical landing, local scripts/styles and bundled export libraries; preview noindex headers.');

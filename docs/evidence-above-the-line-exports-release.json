@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-10-24T01:49:51.622Z",
+  "base": "http://127.0.0.1:4412",
+  "checks": [
+    "sample renders with locally bundled styles and multilingual fonts; JSON export preserves annotation",
+    "ZIP export includes validated annotation and all 15 original cached clips",
+    "PDF export uses bundled jsPDF and locally embedded fonts to produce a real PDF",
+    "stanza PNG export produces a real image without a CDN dependency",
+    "ZIP annotation imports into a fresh keyless context",
+    "zero external requests, failing resources or page errors; desktop/mobile screenshots captured"
+  ],
+  "downloads": {
+    "zipBytes": 5797981,
+    "pdfBytes": 3943187,
+    "pngBytes": 190483
+  },
+  "externalRequests": [],
+  "pageErrors": [],
+  "failedResources": [],
+  "limits": [
+    "No live model call or audible speech check. YouTube media playback remains an external optional feature."
+  ]
+}

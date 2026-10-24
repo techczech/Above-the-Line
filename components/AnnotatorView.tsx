@@ -1,3 +1,5 @@
+import { downloadBlob } from '../utils/resultExport';
+import JSZip from 'jszip';
 import React, { useEffect, useCallback } from 'react';
 import { Annotation, SavedAnnotation, SlideshowData, StudySessionResult } from '../types';
 import AnnotationForm from './AnnotationForm';
@@ -69,15 +71,6 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
       return;
     }
   
-    const JSZip = window.JSZip;
-    if (!JSZip) {
-      console.error("JSZip library not loaded.");
-      return;
-    }
-  
-    // Dynamically import saveAs, ensuring we get the default export
-    const { default: saveAs } = await import('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm');
-  
     const zip = new JSZip();
     zip.file("annotation.json", JSON.stringify(validateResult(exportData), null, 2));
   
@@ -92,7 +85,7 @@ const AnnotatorView: React.FC<AnnotatorViewProps> = ({
     }
   
     const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.zip`);
+    downloadBlob(content, `${exportData.title.toLowerCase().replace(/\s+/g, '_')}.zip`);
   }, [handleSaveOnExport]);
   
   const handleKeyDown = useCallback((e: KeyboardEvent) => {

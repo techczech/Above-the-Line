@@ -74,10 +74,3 @@ export interface StudySession {
   createdAt: string; // ISO string
   updatedAt: string; // ISO string
 }
-
-declare global {
-    interface Window {
-        jspdf: any;
-        JSZip: any;
-    }
-}

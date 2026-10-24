@@ -139,7 +139,7 @@ const AnnotationOutput: React.FC<AnnotationOutputProps> = ({ annotation, title, 
   const exportAsPdf = useCallback(async () => {
     const savedAnnotation = onSaveOnExport();
     if (!savedAnnotation) return;
-    const { jsPDF } = window.jspdf;
+    const { jsPDF } = await import('jspdf');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const padding = 10;
     const pdfWidth = pdf.internal.pageSize.getWidth() - padding * 2;

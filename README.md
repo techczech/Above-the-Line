@@ -108,3 +108,10 @@ npm run build
 ```
 
 Provider details follow the official [OpenAI text-to-speech guide](https://developers.openai.com/api/docs/guides/text-to-speech), [GPT-4.1 mini reference](https://developers.openai.com/api/docs/models/gpt-4.1-mini), [Gemini speech guide](https://ai.google.dev/gemini-api/docs/speech-generation) and [Gemini API-key guide](https://ai.google.dev/gemini-api/docs/api-key). No paid provider calls are part of the automated checks.
+
+
+## Cloudflare preview release
+
+The app now bundles Tailwind typography, its Inter/Cardo/icon fonts, JSZip and jsPDF. ZIP import/export, PNG and PDF exports use local dependencies; no third-party CDN script is required. YouTube's optional player API loads only when a video slideshow is opened. The static landing page includes canonical metadata, robots and sitemap for `https://abovetheline.edutools.fyi/`; static `_headers` rules keep Pages preview addresses out of search results.
+
+`npm run build` checks both the 15 byte-identical bundled recordings and the production packaging. `scripts/check-above-the-line-exports-browser.mjs` exercises real downloads and keyless ZIP import using an installed Playwright module. Wrangler publishes `dist` without provider secrets or Functions. Preview preparation does not change the current public domain or retire GCP.

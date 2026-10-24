@@ -48,10 +48,6 @@
   ],
   "bundledAudioResponses": [
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l0.raw",
-      "status": 200
-    },
-    {
       "path": "/samples/audio/italian-poem-sample/s0-l1.raw",
       "status": 200
     },
@@ -60,11 +56,15 @@
       "status": 200
     },
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l4.raw",
+      "path": "/samples/audio/italian-poem-sample/s0-l0.raw",
       "status": 200
     },
     {
       "path": "/samples/audio/italian-poem-sample/s0-l3.raw",
+      "status": 200
+    },
+    {
+      "path": "/samples/audio/italian-poem-sample/s0-l4.raw",
       "status": 200
     },
     {
@@ -96,11 +96,11 @@
       "status": 200
     },
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l13.raw",
+      "path": "/samples/audio/italian-poem-sample/s0-l12.raw",
       "status": 200
     },
     {
-      "path": "/samples/audio/italian-poem-sample/s0-l12.raw",
+      "path": "/samples/audio/italian-poem-sample/s0-l13.raw",
       "status": 200
     },
     {
@@ -185,16 +185,11 @@
       "hash": "6b52cfc5bb394a572d5270092a6d3b8dcda063182a000adbf3671f46ee0422dd"
     }
   ],
-  "externalAssetsBlocked": [
-    "cdn.tailwindcss.com",
-    "fonts.googleapis.com",
-    "cdnjs.cloudflare.com",
-    "www.youtube.com"
-  ],
+  "externalAssetsBlocked": [],
   "pageErrors": [],
   "limitations": [
-    "Existing full-app CDN assets blocked deliberately; styling and PDF/ZIP CDN integrations were not verified.",
     "No paid requests; provider credentials and live CORS were not tested.",
     "Browser speech output depends on installed voices; sound was not auditioned."
-  ]
+  ],
+  "additional_release_evidence": "evidence-above-the-line-exports-release.json"
 }

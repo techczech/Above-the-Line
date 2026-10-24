@@ -538,6 +538,13 @@ const SlideshowPlayer: React.FC<SlideshowPlayerProps> = ({ annotation, annotatio
     if (showVideo && youtubeUrl) {
       if (!window.YT) {
         window.onYouTubeIframeAPIReady = () => loadVideo();
+        if (!document.querySelector('script[data-above-the-line-youtube]')) {
+          const script = document.createElement('script');
+          script.src = 'https://www.youtube.com/iframe_api';
+          script.dataset.aboveTheLineYoutube = 'true';
+          script.async = true;
+          document.head.appendChild(script);
+        }
       } else {
         loadVideo();
       }

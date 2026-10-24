@@ -1,3 +1,5 @@
+import { downloadBlob } from './utils/resultExport';
+import JSZip from 'jszip';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -380,12 +382,6 @@ const App: React.FC = () => {
     }
 
     try {
-      const JSZip = window.JSZip;
-      if (!JSZip) {
-        throw new Error("JSZip library not loaded.");
-      }
-      
-      const { default: saveAs } = await import('https://cdn.jsdelivr.net/npm/file-saver@2.0.5/+esm');
       
       const zip = new JSZip();
       showToast("Preparing export... this may take a moment.");
@@ -422,7 +418,7 @@ const App: React.FC = () => {
       }
 
       const content = await zip.generateAsync({ type: "blob" });
-      saveAs(content, `above_the_line_export_all.zip`);
+      downloadBlob(content, `above_the_line_export_all.zip`);
       
     } catch (error) {
       console.error("Failed to export all annotations:", error);
@@ -439,8 +435,6 @@ const App: React.FC = () => {
 
     try {
       if (file.name.endsWith('.zip')) {
-        const JSZip = window.JSZip;
-        if (!JSZip) throw new Error("ZIP library not loaded.");
         
         const zip = await JSZip.loadAsync(file);
         const jsonFile = zip.file('annotation.json');

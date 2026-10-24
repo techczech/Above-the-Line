@@ -173,6 +173,6 @@ try {
   await page.setViewportSize({width:390,height:844});
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)); checks.push('portable viewer fits 390px viewport');
   assert.deepEqual(errors,[]);
-  const receipt = {checks,apiCalls,bundledAudioResponses:audioResponses,bundledAudioHashes:cached,externalAssetsBlocked:[...external],pageErrors:errors,limitations:['Existing full-app CDN assets blocked deliberately; styling and PDF/ZIP CDN integrations were not verified.','No paid requests; provider credentials and live CORS were not tested.','Browser speech output depends on installed voices; sound was not auditioned.']};
+  const receipt = {checks,apiCalls,bundledAudioResponses:audioResponses,bundledAudioHashes:cached,externalAssetsBlocked:[...external],pageErrors:errors,limitations:['Runtime styles, fonts and export libraries are bundled; PDF/PNG/ZIP behaviour is verified separately by check-above-the-line-exports-browser.mjs.','No paid requests; provider credentials and live CORS were not tested.','Browser speech output depends on installed voices; sound was not auditioned.']};
   writeFileSync('docs/evidence-above-the-line-browser-2026-10-22.json',JSON.stringify(receipt,null,2)+'\n'); console.log(JSON.stringify(receipt,null,2));
 } finally { await context.close(); await browser.close(); }
