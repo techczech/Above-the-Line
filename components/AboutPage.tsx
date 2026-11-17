@@ -1,3 +1,4 @@
+import { CiteThisPage } from '../citation/CiteThisPage';
 import React from 'react';
 
 interface AboutPageProps {
@@ -87,6 +88,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigateHome }) => {
                 This site is free to use for now but makes no guarantees about future availability. You can get the source code to run your own on GitHub: <a href="https://github.com/techczech/Above-the-Line" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">https://github.com/techczech/Above-the-Line</a>.
             </p>
 
+      <CiteThisPage />
             <div className="text-center mt-8 not-prose">
                 <button 
                 onClick={onNavigateHome}
